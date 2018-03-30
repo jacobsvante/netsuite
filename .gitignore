@@ -1,0 +1,13 @@
+*.egg-info
+*.pyc
+*.sublime-*
+.cache
+.coverage
+.tox
+/build/
+/dist/
+/venv/
+/Pipfile
+/Pipfile.lock
+/.mypy*
+/.pytest_cache
