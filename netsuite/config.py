@@ -1,5 +1,5 @@
 import configparser
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
 
 from .constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION, NOT_SET
 
@@ -29,10 +29,13 @@ class Config:
     token_secret = None
     """The OAuth 1.0 token secret"""
 
+    preferences = None
+    """Additional preferences"""
+
     _settings_mapping: Tuple[
         Tuple[
             str,
-            Dict[str, object]
+            Dict[str, Any]
         ],
         ...
     ] = (
@@ -56,6 +59,10 @@ class Config:
             'token_secret',
             {'type': str, 'required': True},
         ),
+        (
+            'preferences',
+            {'type': dict, 'required': False, 'default': lambda: {}},
+        ),
     )
 
     def __init__(self, **opts) -> None:
@@ -70,6 +77,10 @@ class Config:
             type_ = opts['type']
             required = opts['required']
             self._validate_attr(attr, value, type_, required)
+
+            if value is NOT_SET and 'default' in opts:
+                value = opts['default']()
+
             setattr(self, attr, (None if value is NOT_SET else value))
 
     def _validate_attr(
@@ -93,5 +104,13 @@ def from_ini(
     with open(path) as fp:
         iniconf.read_file(fp)
 
-    config_dict = dict(iniconf[section].items())
+    config_dict = {'preferences': {}}
+
+    for key, val in iniconf[section].items():
+        if key.startswith('preferences_'):
+            _, key = key.split('_', 1)
+            config_dict['preferences'][key] = val
+        else:
+            config_dict[key] = val
+
     return Config(**config_dict)

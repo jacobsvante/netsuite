@@ -1,31 +1,39 @@
 import logging
 import re
 from functools import wraps
-from typing import Callable, Dict, List, Sequence, Union
+from typing import Any, Callable, Dict, List, Sequence, Union
 
 import requests
 import zeep
 from zeep.cache import SqliteCache
 
-from . import passport
+from . import constants, passport
 from .config import Config
 from .util import cached_property
 
 logger = logging.getLogger(__name__)
 
 
-def WebServiceCall(path: str = None, extract: Callable = None) -> Callable:
+def WebServiceCall(
+    path: str = None,
+    extract: Callable = None,
+    *,
+    default: Any = constants.NOT_SET,
+) -> Callable:
     """
     Decorator for NetSuite methods returning SOAP responses
 
     Args:
         path:
-            A dot-separated path for specifying where relevant data resides
+            A dot-separated path for specifying where relevant data resides.
         extract:
-            A function to extract data from response before returning it
+            A function to extract data from response before returning it.
+        default:
+            If the existing path does not exist in response, return this
+            instead.
 
     Returns:
-        Decorator to use on `NetSuite` methods
+        Decorator to use on `NetSuite` web service methods
     """
     def decorator(fn):
         @wraps(fn)
@@ -34,7 +42,13 @@ def WebServiceCall(path: str = None, extract: Callable = None) -> Callable:
 
             if path is not None:
                 for part in path.split('.'):
-                    response = getattr(response, part)
+                    try:
+                        response = getattr(response, part)
+                    except AttributeError:
+                        if default is constants.NOT_SET:
+                            raise
+                        else:
+                            return default
 
             if extract is not None:
                 response = extract(response)
@@ -143,9 +157,14 @@ class NetSuite:
     def generate_passport(self) -> Dict[str, zeep.xsd.Element]:
         return passport.make(self.client, self.config)
 
-    def _set_default_soapheaders(self, client: zeep.Client) -> None:
+    @staticmethod
+    def _set_default_soapheaders(
+        client: zeep.Client,
+        preferences: dict = None,
+    ) -> None:
         client.set_default_soapheaders({
             # https://netsuite.custhelp.com/app/answers/detail/a_id/40934
+            # (you need to be logged in to SuiteAnswers for this link to work)
             # 'preferences': {
             #     'warningAsError': True/False,
             #     'disableMandatoryCustomFieldValidation': True/False,
@@ -153,20 +172,18 @@ class NetSuite:
             #     'ignoreReadOnlyFields': True/False,
             #     'runServerSuiteScriptAndTriggerWorkflows': True/False,
             # },
-            # TODO: Add ability to re-generate OAuth token for each use of the
-            #       TokenPassport. In the meantime it has to be passed in to
-            #       every service request like this:
-            #           `_soapheaders=self.generate_passport()`
-            # }, **self.generate_passport())
         })
 
     def _generate_client(self) -> zeep.Client:
-        c = zeep.Client(
+        client = zeep.Client(
             self.wsdl_url,
             transport=self.transport,
         )
-        self._set_default_soapheaders(c)
-        return c
+        self._set_default_soapheaders(
+            client,
+            preferences=self.config.preferences,
+        )
+        return client
 
     def _get_namespace(self, name: str, sub_namespace: str) -> str:
         return (
@@ -391,7 +408,9 @@ class NetSuite:
 
     @WebServiceCall(
         'body.readResponseList.readResponse',
-        extract=lambda resp: [r['record'] for r in resp],
+        extract=lambda resp: [
+            r['record'] for r in resp if r['status']['isSuccess']
+        ],
     )
     def getList(
         self,
@@ -420,7 +439,8 @@ class NetSuite:
         )
 
     @WebServiceCall(
-        'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability'
+        'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability',
+        default=[],
     )
     def getItemAvailability(
         self,
@@ -429,21 +449,18 @@ class NetSuite:
         externalIds: Sequence[str] = (),
     ) -> List[Dict]:
         assert internalIds or externalIds
+
+        item_filters = [
+            {'type': 'inventoryItem', 'internalId': internalId}
+            for internalId in internalIds
+        ] + [
+            {'type': 'inventoryItem', 'externalId': externalId}
+            for externalId in externalIds
+        ]
+
         return self.request(
             'getItemAvailability',
-            itemAvailabilityFilter={
-                'item': [
-                    {
-                        'recordRef': {
-                            'type': 'inventoryItem', 'internalId': internalId,
-                        },
-                    } for internalId in internalIds
-                ] + [
-                    {
-                        'recordRef': {
-                            'type': 'inventoryItem', 'externalId': externalId,
-                        },
-                    } for externalId in externalIds
-                ],
-            },
+            itemAvailabilityFilter=[{
+                'item': {'recordRef': item_filters},
+            }],
         )
