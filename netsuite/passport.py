@@ -20,6 +20,7 @@ class TokenPassport(Passport):
     def __init__(
         self,
         client: zeep.Client,
+        underscored_version: str,
         *,
         account: str,
         consumer_key: str,
@@ -33,6 +34,7 @@ class TokenPassport(Passport):
         self.consumer_secret = consumer_secret
         self.token_id = token_id
         self.token_secret = token_secret
+        self.underscored_version = underscored_version
 
     def _generate_timestamp(self) -> str:
         """Generate timestamp
@@ -69,14 +71,14 @@ class TokenPassport(Passport):
         return base64.b64encode(hashed).decode()
 
     def _get_signature(self, nonce: str, timestamp: str) -> zeep.xsd.Element:
-        TokenPassportSignature = self.client.get_type('{urn:core_2017_2.platform.webservices.netsuite.com}TokenPassportSignature')
+        TokenPassportSignature = self.client.get_type('{urn:core_%s.platform.webservices.netsuite.com}TokenPassportSignature' % self.underscored_version)
         return TokenPassportSignature(
             self._get_signature_value(nonce, timestamp),
             algorithm='HMAC-SHA256',
         )
 
     def get_element(self) -> zeep.xsd.Element:
-        TokenPassport = self.client.get_element('{urn:messages_2017_2.platform.webservices.netsuite.com}tokenPassport')
+        TokenPassport = self.client.get_element('{urn:messages_%s.platform.webservices.netsuite.com}tokenPassport' % self.underscored_version)
         nonce = self._generate_nonce()
         timestamp = self._generate_timestamp()
         signature = self._get_signature(nonce, timestamp)
@@ -90,7 +92,7 @@ class TokenPassport(Passport):
         )
 
 
-def make(client: zeep.Client, config: Config) -> Dict[str, zeep.xsd.Element]:
+def make(client: zeep.Client, underscored_version: str, config: Config) -> Dict[str, zeep.xsd.Element]:
     if 'password' in config:
         raise NotImplementedError
         # return {
@@ -99,6 +101,7 @@ def make(client: zeep.Client, config: Config) -> Dict[str, zeep.xsd.Element]:
     else:
         token_passport = TokenPassport(
             client,
+            underscored_version,
             account=config.account,
             consumer_key=config.consumer_key,
             consumer_secret=config.consumer_secret,

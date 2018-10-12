@@ -155,7 +155,11 @@ class NetSuite:
         )
 
     def generate_passport(self) -> Dict[str, zeep.xsd.Element]:
-        return passport.make(self.client, self.config)
+        return passport.make(
+            self.client,
+            self.underscored_version_no_micro,
+            self.config
+        )
 
     @staticmethod
     def _set_default_soapheaders(
