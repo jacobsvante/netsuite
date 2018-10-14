@@ -71,14 +71,14 @@ class TokenPassport(Passport):
         return base64.b64encode(hashed).decode()
 
     def _get_signature(self, nonce: str, timestamp: str) -> zeep.xsd.Element:
-        TokenPassportSignature = self.client.get_type('{urn:core_%s.platform.webservices.netsuite.com}TokenPassportSignature' % self.underscored_version)
+        TokenPassportSignature = self.client.get_type('{urn:core_%s.platform.webservices.netsuite.com}TokenPassportSignature' % (self.underscored_version))
         return TokenPassportSignature(
             self._get_signature_value(nonce, timestamp),
             algorithm='HMAC-SHA256',
         )
 
     def get_element(self) -> zeep.xsd.Element:
-        TokenPassport = self.client.get_element('{urn:messages_%s.platform.webservices.netsuite.com}tokenPassport' % self.underscored_version)
+        TokenPassport = self.client.get_element('{urn:messages_%s.platform.webservices.netsuite.com}tokenPassport' % (self.underscored_version))
         nonce = self._generate_nonce()
         timestamp = self._generate_timestamp()
         signature = self._get_signature(nonce, timestamp)
