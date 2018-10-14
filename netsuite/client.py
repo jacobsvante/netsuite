@@ -457,12 +457,18 @@ class NetSuite:
     ) -> Union[Dict, List[Dict]]:
         """Get a single record"""
         assert internalId or externalId
+
+        record_ref = self.Core.RecordRef(
+            type=recordType,
+            internalId=internalId,
+        ) if internalId else self.Core.RecordRef(
+            type=recordType,
+            externalId=externalId,
+        )
+
         return self.request(
             'get',
-            baseRef=self.Core.RecordRef(
-                type=recordType,
-                internalId=internalId,
-            ),
+            baseRef=record_ref
         )
 
 
