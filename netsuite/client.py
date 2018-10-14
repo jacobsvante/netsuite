@@ -155,7 +155,11 @@ class NetSuite:
         )
 
     def generate_passport(self) -> Dict[str, zeep.xsd.Element]:
-        return passport.make(self.client, self.config)
+        return passport.make(
+            self.client,
+            self.underscored_version_no_micro,
+            self.config
+        )
 
     @staticmethod
     def _set_default_soapheaders(
@@ -437,6 +441,75 @@ class NetSuite:
                 ],
             )
         )
+
+
+    @WebServiceCall(
+        'body.readResponse',
+        extract=lambda resp:
+            resp['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def get(
+        self,
+        recordType: str,
+        *,
+        internalId: int = 0,
+        externalId: str = '',
+    ) -> Union[Dict, List[Dict]]:
+        """Get a single record"""
+        assert internalId or externalId
+        return self.request(
+            'get',
+            baseRef=self.Core.RecordRef(
+                type=recordType,
+                internalId=internalId,
+            ),
+        )
+
+
+    def getAll(
+        self,
+        recordType: str,
+    ) -> List[Dict]:
+        """Get all records of a given type"""
+        return self.request(
+            'getAll',
+            record=self.Core.GetAllRecord(
+                recordType=recordType,
+            ),
+        )
+
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp:
+            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def add(
+        self,
+        record: Dict,
+    ) -> Dict:
+        """Get all records of a given type"""
+        return self.request(
+            'add',
+            record=record,
+        )
+
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp:
+            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def upsert(
+        self,
+        record: Dict,
+    ) -> Dict:
+        """Get all records of a given type"""
+        return self.request(
+            'upsert',
+            record=record,
+        )
+
 
     @WebServiceCall(
         'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability',
