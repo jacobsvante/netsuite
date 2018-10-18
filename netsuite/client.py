@@ -476,7 +476,7 @@ class NetSuite:
         self,
         recordType: str,
     ) -> List[Dict]:
-        """Get all records of a given type"""
+        """Get all records of a given type."""
         return self.request(
             'getAll',
             record=self.Core.GetAllRecord(
@@ -494,7 +494,7 @@ class NetSuite:
         self,
         record: Dict,
     ) -> Dict:
-        """Get all records of a given type"""
+        """Insert a single record."""
         return self.request(
             'add',
             record=record,
@@ -510,10 +510,25 @@ class NetSuite:
         self,
         record: Dict,
     ) -> Dict:
-        """Get all records of a given type"""
+        """Upsert a single record."""
         return self.request(
             'upsert',
             record=record,
+        )
+
+    @WebServiceCall(
+        'body.writeResponseList',
+        extract=lambda resp:
+            [record['baseRef'] if record['status']['isSuccess'] else record['status']['statusDetail'] for record in resp],
+    )
+    def upsertList(
+        self,
+        records: List[Dict],
+    ) -> Dict:
+        """Upsert a list of records."""
+        return self.request(
+            'upsertList',
+            record=records,
         )
 
 
