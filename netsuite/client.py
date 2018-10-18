@@ -524,7 +524,7 @@ class NetSuite:
     def upsertList(
         self,
         records: List[Dict],
-    ) -> Dict:
+    ) -> List[Dict]:
         """Upsert a list of records."""
         return self.request(
             'upsertList',
