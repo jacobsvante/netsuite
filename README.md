@@ -18,8 +18,3 @@ Programmatic use only:
 With CLI support:
 
     pip install netsuite[cli]
-
-
-## Notes
-
-Please note that only token based authentication is supported currently (which is preferable because we can avoid password changes etc).

@@ -1,5 +1,5 @@
 import configparser
-from typing import Any, Dict, Tuple
+from typing import Dict
 
 from .constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION, NOT_SET
 
@@ -47,13 +47,7 @@ class Config:
     preferences = None
     """Additional preferences"""
 
-    _settings_mapping: Tuple[
-        Tuple[
-            str,
-            Dict[str, Any]
-        ],
-        ...
-    ] = (
+    _settings_mapping = (
         (
             'account',
             {'type': str, 'required': True},

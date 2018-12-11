@@ -1,5 +1,6 @@
 import logging
 import re
+import warnings
 from functools import wraps
 from typing import Any, Callable, Dict, List, Sequence, Union
 
@@ -59,9 +60,8 @@ def WebServiceCall(
 
 
 class NetSuite:
-    sandbox = True
-    version = '2017.2.0'
-    wsdl_url_tmpl = 'https://webservices.{subpath}netsuite.com/wsdl/v{underscored_version}/netsuite.wsdl'
+    version = '2018.1.0'
+    wsdl_url_tmpl = 'https://{account_id}.suitetalk.api.netsuite.com/wsdl/v{underscored_version}/netsuite.wsdl'
 
     def __repr__(self) -> str:
         return f'<NetSuite {self.hostname}({self.version})>'
@@ -70,14 +70,19 @@ class NetSuite:
         self,
         config: Union[Config, Dict],
         *,
-        sandbox: bool = None,
         version: str = None,
         wsdl_url: str = None,
         cache: zeep.cache.Base = None,
         session: requests.Session = None,
+        sandbox: bool = None,
     ) -> None:
         if sandbox is not None:
-            self.sandbox = sandbox
+            warnings.warn(
+                'The `sandbox` flag has been deprecated and no longer has '
+                'any effect. Please locate the correct account ID for your '
+                'sandbox instead (usually `_SB1`)',
+                DeprecationWarning,
+            )
 
         if version is not None:
             assert re.match(r'\d+\.\d+\.\d+', version)
@@ -139,7 +144,8 @@ class NetSuite:
     def _generate_wsdl_url(self) -> str:
         return self.wsdl_url_tmpl.format(
             underscored_version=self.underscored_version,
-            subpath='sandbox.' if self.sandbox else '',
+            # https://followingnetsuite.wordpress.com/2018/10/18/suitetalk-sandbox-urls-addendum/
+            account_id=self.config.account.lower().replace('_', '-'),
         )
 
     def _generate_cache(self) -> zeep.cache.Base:
@@ -155,7 +161,7 @@ class NetSuite:
         )
 
     def generate_passport(self) -> Dict[str, zeep.xsd.Element]:
-        return passport.make(self.client, self.config)
+        return passport.make(self, self.config)
 
     @staticmethod
     def _set_default_soapheaders(
