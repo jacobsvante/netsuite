@@ -25,7 +25,7 @@ def _set_log_level(log_level):
 def interact(
     log_level=None,
     config_path=DEFAULT_INI_PATH,
-    config_section=DEFAULT_INI_SECTION,
+    config_section=DEFAULT_INI_SECTION
 ):
     """Starts a REPL to enable live interaction with NetSuite webservices"""
     _set_log_level(log_level)

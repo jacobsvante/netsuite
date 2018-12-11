@@ -50,7 +50,7 @@ class TokenPassport(Passport):
         consumer_key: str,
         consumer_secret: str,
         token_id: str,
-        token_secret: str,
+        token_secret: str
     ) -> None:
         self.ns = ns
         self.account = account

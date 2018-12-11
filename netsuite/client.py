@@ -74,8 +74,9 @@ class NetSuite:
         wsdl_url: str = None,
         cache: zeep.cache.Base = None,
         session: requests.Session = None,
-        sandbox: bool = None,
+        sandbox: bool = None
     ) -> None:
+
         if sandbox is not None:
             warnings.warn(
                 'The `sandbox` flag has been deprecated and no longer has '
@@ -127,7 +128,7 @@ class NetSuite:
 
     def _make_config(
         self,
-        values_obj: Dict,
+        values_obj: Dict
     ) -> Config:
         if isinstance(values_obj, Config):
             return values_obj
@@ -208,7 +209,7 @@ class NetSuite:
     def _type_factory(
         self,
         name: str,
-        sub_namespace: str,
+        sub_namespace: str
     ) -> zeep.client.Factory:
         return self.client.type_factory(
             self._get_namespace(name, sub_namespace)
@@ -420,14 +421,14 @@ class NetSuite:
         'body.readResponseList.readResponse',
         extract=lambda resp: [
             r['record'] for r in resp if r['status']['isSuccess']
-        ],
+        ]
     )
     def getList(
         self,
         recordType: str,
         *,
         internalIds: Sequence[int] = (),
-        externalIds: Sequence[str] = (),
+        externalIds: Sequence[str] = ()
     ) -> List[Dict]:
         """Get a list of records"""
         assert internalIds or externalIds
@@ -450,7 +451,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability',
-        default=[],
+        default=[]
     )
     def getItemAvailability(
         self,
