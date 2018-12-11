@@ -8,6 +8,7 @@ from typing import Any, Callable, Dict, List, Sequence, Union
 import requests
 import zeep
 from zeep.cache import SqliteCache
+from zeep.xsd.valueobjects import CompoundValue
 
 from . import constants, helpers, passport
 from .config import Config
@@ -162,7 +163,7 @@ class NetSuite:
             cache=self.cache,
         )
 
-    def generate_passport(self) -> Dict[str, zeep.xsd.Element]:
+    def generate_passport(self) -> Dict:
         return passport.make(self, self.config)
 
     def to_builtin(self, obj, *args, **kw):
@@ -430,9 +431,12 @@ class NetSuite:
         *,
         internalIds: Sequence[int] = (),
         externalIds: Sequence[str] = ()
-    ) -> List[Dict]:
+    ) -> List[CompoundValue]:
         """Get a list of records"""
-        assert internalIds or externalIds
+
+        if len(list(internalIds) + list(externalIds)) == 0:
+            raise ValueError('Please specify `internalId` and/or `externalId`')
+
         return self.request(
             'getList',
             self.Messages.GetListRequest(
@@ -450,7 +454,6 @@ class NetSuite:
             )
         )
 
-
     @WebServiceCall(
         'body.readResponse',
         extract=lambda resp:
@@ -460,30 +463,31 @@ class NetSuite:
         self,
         recordType: str,
         *,
-        internalId: int = 0,
-        externalId: str = '',
-    ) -> Union[Dict, List[Dict]]:
+        internalId: int = None,
+        externalId: str = None
+    ) -> CompoundValue:
         """Get a single record"""
-        assert internalId or externalId
+        if len([v for v in (internalId, externalId) if v is not None]) != 1:
+            raise ValueError('Specify either `internalId` or `externalId`')
 
-        record_ref = self.Core.RecordRef(
-            type=recordType,
-            internalId=internalId,
-        ) if internalId else self.Core.RecordRef(
-            type=recordType,
-            externalId=externalId,
-        )
+        if internalId:
+            record_ref = self.Core.RecordRef(
+                type=recordType,
+                internalId=internalId,
+            )
+        else:
+            self.Core.RecordRef(
+                type=recordType,
+                externalId=externalId,
+            )
 
-        return self.request(
-            'get',
-            baseRef=record_ref
-        )
+        return self.request('get', baseRef=record_ref)
 
-
-    def getAll(
-        self,
-        recordType: str,
-    ) -> List[Dict]:
+    @WebServiceCall(
+        'body.getAllResult',
+        extract=lambda resp: resp['recordList']['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail']
+    )
+    def getAll(self, recordType: str) -> List[CompoundValue]:
         """Get all records of a given type."""
         return self.request(
             'getAll',
@@ -492,53 +496,32 @@ class NetSuite:
             ),
         )
 
-
     @WebServiceCall(
         'body.writeResponse',
         extract=lambda resp:
             resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
     )
-    def add(
-        self,
-        record: Dict,
-    ) -> Dict:
+    def add(self, record: Dict) -> CompoundValue:
         """Insert a single record."""
-        return self.request(
-            'add',
-            record=record,
-        )
-
+        return self.request('add', record=record)
 
     @WebServiceCall(
         'body.writeResponse',
         extract=lambda resp:
             resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
     )
-    def upsert(
-        self,
-        record: Dict,
-    ) -> Dict:
+    def upsert(self, record: Dict) -> CompoundValue:
         """Upsert a single record."""
-        return self.request(
-            'upsert',
-            record=record,
-        )
+        return self.request('upsert', record=record)
 
     @WebServiceCall(
         'body.writeResponseList',
         extract=lambda resp:
             [record['baseRef'] if record['status']['isSuccess'] else record['status']['statusDetail'] for record in resp],
     )
-    def upsertList(
-        self,
-        records: List[Dict],
-    ) -> List[Dict]:
+    def upsertList(self, records: List[Dict]) -> List[CompoundValue]:
         """Upsert a list of records."""
-        return self.request(
-            'upsertList',
-            record=records,
-        )
-
+        return self.request('upsertList', record=records)
 
     @WebServiceCall(
         'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability',
@@ -551,7 +534,8 @@ class NetSuite:
         externalIds: Sequence[str] = (),
         lastQtyAvailableChange: datetime = None
     ) -> List[Dict]:
-        assert internalIds or externalIds
+        if len(list(internalIds) + list(externalIds)) == 0:
+            raise ValueError('Please specify `internalId` and/or `externalId`')
 
         item_filters = [
             {'type': 'inventoryItem', 'internalId': internalId}
