@@ -450,6 +450,96 @@ class NetSuite:
             )
         )
 
+
+    @WebServiceCall(
+        'body.readResponse',
+        extract=lambda resp:
+            resp['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def get(
+        self,
+        recordType: str,
+        *,
+        internalId: int = 0,
+        externalId: str = '',
+    ) -> Union[Dict, List[Dict]]:
+        """Get a single record"""
+        assert internalId or externalId
+
+        record_ref = self.Core.RecordRef(
+            type=recordType,
+            internalId=internalId,
+        ) if internalId else self.Core.RecordRef(
+            type=recordType,
+            externalId=externalId,
+        )
+
+        return self.request(
+            'get',
+            baseRef=record_ref
+        )
+
+
+    def getAll(
+        self,
+        recordType: str,
+    ) -> List[Dict]:
+        """Get all records of a given type."""
+        return self.request(
+            'getAll',
+            record=self.Core.GetAllRecord(
+                recordType=recordType,
+            ),
+        )
+
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp:
+            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def add(
+        self,
+        record: Dict,
+    ) -> Dict:
+        """Insert a single record."""
+        return self.request(
+            'add',
+            record=record,
+        )
+
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp:
+            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def upsert(
+        self,
+        record: Dict,
+    ) -> Dict:
+        """Upsert a single record."""
+        return self.request(
+            'upsert',
+            record=record,
+        )
+
+    @WebServiceCall(
+        'body.writeResponseList',
+        extract=lambda resp:
+            [record['baseRef'] if record['status']['isSuccess'] else record['status']['statusDetail'] for record in resp],
+    )
+    def upsertList(
+        self,
+        records: List[Dict],
+    ) -> List[Dict]:
+        """Upsert a list of records."""
+        return self.request(
+            'upsertList',
+            record=records,
+        )
+
+
     @WebServiceCall(
         'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability',
         default=[]
