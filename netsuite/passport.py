@@ -2,11 +2,13 @@ import base64
 import hmac
 import random
 from datetime import datetime
-from typing import Dict
+from typing import Dict, TypeVar
 
-import zeep
+from zeep.xsd.valueobjects import CompoundValue
 
 from .config import Config
+
+NetSuite = TypeVar('NetSuite')
 
 
 class Passport:
@@ -15,11 +17,34 @@ class Passport:
         raise NotImplementedError
 
 
+class UserCredentialsPassport(Passport):
+
+    def __init__(
+        self,
+        ns: NetSuite,
+        *,
+        account: str,
+        email: str,
+        password: str
+    ) -> None:
+        self.ns = ns
+        self.account = account
+        self.email = email
+        self.password = password
+
+    def get_element(self) -> CompoundValue:
+        return self.ns.Core.Passport(
+            account=self.account,
+            email=self.email,
+            password=self.password,
+        )
+
+
 class TokenPassport(Passport):
 
     def __init__(
         self,
-        client: zeep.Client,
+        ns: NetSuite,
         *,
         account: str,
         consumer_key: str,
@@ -27,7 +52,7 @@ class TokenPassport(Passport):
         token_id: str,
         token_secret: str,
     ) -> None:
-        self.client = client
+        self.ns = ns
         self.account = account
         self.consumer_key = consumer_key
         self.consumer_secret = consumer_secret
@@ -68,19 +93,17 @@ class TokenPassport(Passport):
         ).digest()
         return base64.b64encode(hashed).decode()
 
-    def _get_signature(self, nonce: str, timestamp: str) -> zeep.xsd.Element:
-        TokenPassportSignature = self.client.get_type('{urn:core_2017_2.platform.webservices.netsuite.com}TokenPassportSignature')
-        return TokenPassportSignature(
+    def _get_signature(self, nonce: str, timestamp: str) -> CompoundValue:
+        return self.ns.Core.TokenPassportSignature(
             self._get_signature_value(nonce, timestamp),
             algorithm='HMAC-SHA256',
         )
 
-    def get_element(self) -> zeep.xsd.Element:
-        TokenPassport = self.client.get_element('{urn:messages_2017_2.platform.webservices.netsuite.com}tokenPassport')
+    def get_element(self) -> CompoundValue:
         nonce = self._generate_nonce()
         timestamp = self._generate_timestamp()
         signature = self._get_signature(nonce, timestamp)
-        return TokenPassport(
+        return self.ns.Core.TokenPassport(
             account=self.account,
             consumerKey=self.consumer_key,
             token=self.token_id,
@@ -90,15 +113,10 @@ class TokenPassport(Passport):
         )
 
 
-def make(client: zeep.Client, config: Config) -> Dict[str, zeep.xsd.Element]:
-    if 'password' in config:
-        raise NotImplementedError
-        # return {
-        #     'passport': UsernamePassport(..),
-        # }
-    else:
+def make(ns: NetSuite, config: Config) -> Dict:
+    if config.auth_type == 'token':
         token_passport = TokenPassport(
-            client,
+            ns,
             account=config.account,
             consumer_key=config.consumer_key,
             consumer_secret=config.consumer_secret,
@@ -106,3 +124,18 @@ def make(client: zeep.Client, config: Config) -> Dict[str, zeep.xsd.Element]:
             token_secret=config.token_secret,
         )
         return {'tokenPassport': token_passport.get_element()}
+    elif config.auth_type == 'credentials':
+        passport = UserCredentialsPassport(
+            ns,
+            account=config.account,
+            email=config.email,
+            password=config.password,
+        )
+        return {
+            'applicationInfo': {
+                'applicationId': config.application_id,
+            },
+            'passport': passport.get_element(),
+        }
+    else:
+        raise NotImplementedError(f'config.auth_type={config.auth_type}')

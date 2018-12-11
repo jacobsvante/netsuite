@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup_kwargs = dict(
     name='netsuite',
-    version='0.1.1',
+    version='0.2.0',
     description='Wrapper around Netsuite SuiteTalk Web Services',
     packages=['netsuite'],
     include_package_data=True,
@@ -42,6 +42,7 @@ setup_kwargs = dict(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
 

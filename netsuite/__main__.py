@@ -18,19 +18,21 @@ def _set_log_level(log_level):
         netsuite.logger.setLevel(level)
 
 
-@argh.arg('-c', '--config-section')
+@argh.arg('-l', '--log-level', help='The log level to use')
+@argh.arg('-p', '--config-path', help='The config file to get settings from')
+@argh.arg('-c', '--config-section', help='The config section to get settings from')
 @argh.arg('-p', '--config-path')
 def interact(
-    log_level: 'The log level to use' = None,
-    config_path: 'The config file to get settings from.' = DEFAULT_INI_PATH,
-    config_section: 'The config section to get settings from.' = DEFAULT_INI_SECTION,
+    log_level=None,
+    config_path=DEFAULT_INI_PATH,
+    config_section=DEFAULT_INI_SECTION,
 ):
     """Starts a REPL to enable live interaction with NetSuite webservices"""
     _set_log_level(log_level)
 
     conf = config.from_ini(path=config_path, section=config_section)
-    ns = netsuite.NetSuite(conf, sandbox=True)
-    # print(ns.getList('customer', internalIds=['11397']))
+
+    ns = netsuite.NetSuite(conf)
 
     user_ns = {'ns': ns}
 
