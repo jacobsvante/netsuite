@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 (2018-12-11)
+
+* Feature: Helper `NetSuite.to_builtin` to convert zeep objects to python builtins
+* Feature: Add `lastQtyAvailableChange` filter
+
 ## 0.2.0 (2018-12-11)
 
 * Breaking change: Sandbox is now configured through account ID, `sandbox` flag is now a no-op
