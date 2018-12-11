@@ -8,7 +8,7 @@ import requests
 import zeep
 from zeep.cache import SqliteCache
 
-from . import constants, passport
+from . import constants, helpers, passport
 from .config import Config
 from .util import cached_property
 
@@ -163,10 +163,14 @@ class NetSuite:
     def generate_passport(self) -> Dict[str, zeep.xsd.Element]:
         return passport.make(self, self.config)
 
+    def to_builtin(self, obj, *args, **kw):
+        """Turn zeep XML object into python built-in data structures"""
+        return helpers.to_builtin(obj, *args, **kw)
+
     @staticmethod
     def _set_default_soapheaders(
         client: zeep.Client,
-        preferences: dict = None,
+        preferences: dict = None
     ) -> None:
         client.set_default_soapheaders({
             # https://netsuite.custhelp.com/app/answers/detail/a_id/40934
