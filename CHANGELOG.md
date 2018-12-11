@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 (2018-12-11)
+
+* Breaking change: Sandbox is now configured through account ID, `sandbox` flag is now a no-op
+* Breaking change: New default version is 2018.1.0
+* Breaking change: Account specific domains are now used when `wsdl_url` is left unspecified
+* Feature: Support regular credentials Passport
+* Info: Listing Python 3.7 as a supported version
+
 ## 0.1.1 (2018-04-02)
 
 * Fix: `getItemAvailability` only read first passed in external/internal ID
