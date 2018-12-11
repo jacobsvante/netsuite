@@ -1,6 +1,7 @@
 import logging
 import re
 import warnings
+from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, List, Sequence, Union
 
@@ -458,6 +459,7 @@ class NetSuite:
         *,
         internalIds: Sequence[int] = (),
         externalIds: Sequence[str] = (),
+        lastQtyAvailableChange: datetime = None
     ) -> List[Dict]:
         assert internalIds or externalIds
 
@@ -473,5 +475,6 @@ class NetSuite:
             'getItemAvailability',
             itemAvailabilityFilter=[{
                 'item': {'recordRef': item_filters},
+                'lastQtyAvailableChange': lastQtyAvailableChange
             }],
         )
