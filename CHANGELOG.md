@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2019-04-10)
+
+* Feature: Added support for making requests to restlets
+* Feature: New command to utilize the new restlet request capability
+* Info: Removed `requests-ntlm` dependency which was never used
+* Info: Don't specify `lxml` as a dependency. Implicitly take dependency from `zeep` instead.
+* Info: Document usage of CLI utils
+
 ## 0.2.2 (2018-12-11)
 
 * Feature: Added `get`, `getAll`, `add`, `upsert` and `upsertList` methods. Big thanks go out to @matmunn for the original PR. (#6)

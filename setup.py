@@ -2,8 +2,8 @@ from setuptools import setup
 
 setup_kwargs = dict(
     name='netsuite',
-    version='0.2.2',
-    description='Wrapper around Netsuite SuiteTalk Web Services',
+    version='0.3.0',
+    description='Wrapper around Netsuite SuiteTalk Web Services and Restlets',
     packages=['netsuite'],
     include_package_data=True,
     author='Jacob Magnusson',
@@ -12,8 +12,7 @@ setup_kwargs = dict(
     license='BSD',
     platforms='any',
     install_requires=[
-        'lxml',
-        'requests-ntlm',
+        'requests-oauthlib',
         'zeep',
     ],
     extras_require={

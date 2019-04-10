@@ -12,6 +12,7 @@ from zeep.xsd.valueobjects import CompoundValue
 
 from . import constants, helpers, passport
 from .config import Config
+from .restlet import NetsuiteRestlet
 from .util import cached_property
 
 logger = logging.getLogger(__name__)
@@ -95,6 +96,11 @@ class NetSuite:
         self.__wsdl_url = wsdl_url
         self.__cache = cache
         self.__session = session
+        self.__restlet = NetsuiteRestlet(self.__config)
+
+    @property
+    def restlet(self):
+        return self.__restlet
 
     @cached_property
     def wsdl_url(self) -> str:
