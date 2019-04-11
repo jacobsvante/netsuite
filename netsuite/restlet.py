@@ -2,7 +2,6 @@ import json
 import logging
 from typing import Any
 
-import requests
 import requests_oauthlib
 
 from . import util
@@ -18,6 +17,7 @@ class NetsuiteRestlet:
     def __init__(self, config, *, hostname=None):
         self.__config = config
         self.__hostname = hostname or self._make_default_hostname()
+        self._request_session = self._make_request_session()
 
     @property
     def config(self):
@@ -52,7 +52,6 @@ class NetsuiteRestlet:
         raise_on_bad_status: bool = True,
     ):
         url = self._make_url(script_id=script_id, deploy=deploy)
-        auth = self._make_auth()
         headers = self._make_headers()
 
         req_headers_json = json.dumps(headers)
@@ -61,7 +60,7 @@ class NetsuiteRestlet:
             f'Headers: {req_headers_json}'
         )
 
-        resp = requests.post(url, headers=headers, auth=auth, json=payload)
+        resp = self._request_session.post(url, headers=headers, json=payload)
 
         resp_headers_json = json.dumps(dict(resp.headers))
         logger.debug(f'Got response headers: {resp_headers_json}')
@@ -83,8 +82,8 @@ class NetsuiteRestlet:
         path = self._make_restlet_path(script_id=script_id, deploy=deploy)
         return f'https://{self.hostname}{path}'
 
-    def _make_auth(self):
-        return requests_oauthlib.OAuth1(
+    def _make_request_session(self):
+        return requests_oauthlib.OAuth1Session(
             client_key=self.config.consumer_key,
             client_secret=self.config.consumer_secret,
             resource_owner_key=self.config.token_id,

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 (2019-04-11)
+
+* Enhancement: Decrease restlet request time on subsequent requests by half by re-using the OAuth session
+
 ## 0.3.0 (2019-04-10)
 
 * Feature: Added support for making requests to restlets
