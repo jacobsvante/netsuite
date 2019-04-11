@@ -507,7 +507,7 @@ class NetSuite:
         extract=lambda resp:
             resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
     )
-    def add(self, record: Dict) -> CompoundValue:
+    def add(self, record: CompoundValue) -> CompoundValue:
         """Insert a single record."""
         return self.request('add', record=record)
 
@@ -516,16 +516,33 @@ class NetSuite:
         extract=lambda resp:
             resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
     )
-    def upsert(self, record: Dict) -> CompoundValue:
+    def update(self, record: CompoundValue) -> CompoundValue:
+        """Insert a single record."""
+        return self.request('update', record=record)
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp:
+            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+    )
+    def upsert(self, record: CompoundValue) -> CompoundValue:
         """Upsert a single record."""
         return self.request('upsert', record=record)
+
+    @WebServiceCall(
+        'body.searchResult',
+        extract=lambda resp: resp['recordList']['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail']
+    )
+    def search(self, record: CompoundValue) -> List[CompoundValue]:
+        """Search records"""
+        return self.request('search', searchRecord=record)
 
     @WebServiceCall(
         'body.writeResponseList',
         extract=lambda resp:
             [record['baseRef'] if record['status']['isSuccess'] else record['status']['statusDetail'] for record in resp],
     )
-    def upsertList(self, records: List[Dict]) -> List[CompoundValue]:
+    def upsertList(self, records: List[CompoundValue]) -> List[CompoundValue]:
         """Upsert a list of records."""
         return self.request('upsertList', record=records)
 
