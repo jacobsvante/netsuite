@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2019-04-29)
+
+* Enhancement: Add support for specifying operation/request timeouts
+* Enhancement: Throw an exception if Suitetalk returns a response error
+
 ## 0.3.2 (2019-04-11)
 
 * Feature: Add support for `update` and `search` operations
