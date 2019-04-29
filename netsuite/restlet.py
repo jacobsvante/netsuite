@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Any
+from typing import Any, Tuple, Union
 
 import requests_oauthlib
 
@@ -34,14 +34,19 @@ class NetsuiteRestlet:
         *,
         deploy: int = 1,
         raise_on_bad_status: bool = True,
+        timeout: Union[int, Tuple[int, int]] = None,
+        **requests_kw
     ):
-        raw_request = self.raw_request(
+        resp = self.raw_request(
             script_id=script_id,
             payload=payload,
             deploy=deploy,
             raise_on_bad_status=raise_on_bad_status,
+            timeout=timeout,
+            **requests_kw
         )
-        return raw_request.json()
+        util.raise_for_status_with_body(resp)
+        return resp.json()
 
     def raw_request(
         self,
@@ -50,6 +55,8 @@ class NetsuiteRestlet:
         *,
         deploy: int = 1,
         raise_on_bad_status: bool = True,
+        timeout: Union[int, Tuple[int, int]] = None,
+        **requests_kw
     ):
         url = self._make_url(script_id=script_id, deploy=deploy)
         headers = self._make_headers()
@@ -60,12 +67,17 @@ class NetsuiteRestlet:
             f'Headers: {req_headers_json}'
         )
 
-        resp = self._request_session.post(url, headers=headers, json=payload)
+        resp = self._request_session.post(
+            url,
+            headers=headers,
+            json=payload,
+            timeout=timeout,
+            **requests_kw
+        )
 
         resp_headers_json = json.dumps(dict(resp.headers))
         logger.debug(f'Got response headers: {resp_headers_json}')
 
-        util.raise_for_status_with_body(resp)
         return resp
 
     def _make_default_hostname(self):

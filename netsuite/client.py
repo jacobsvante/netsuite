@@ -1,6 +1,7 @@
 import logging
 import re
 import warnings
+from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, List, Sequence, Union
@@ -175,6 +176,12 @@ class NetSuite:
     def to_builtin(self, obj, *args, **kw):
         """Turn zeep XML object into python built-in data structures"""
         return helpers.to_builtin(obj, *args, **kw)
+
+    @contextmanager
+    def with_timeout(self, timeout: int):
+        """Run SuiteTalk operation with the specified timeout"""
+        with self.transport.settings(timeout=timeout):
+            yield
 
     @staticmethod
     def _set_default_soapheaders(
