@@ -19,6 +19,10 @@ from .util import cached_property
 logger = logging.getLogger(__name__)
 
 
+class NetsuiteResponseError(Exception):
+    """Raised when a Netsuite result was marked as unsuccessful"""
+
+
 def WebServiceCall(
     path: str = None,
     extract: Callable = None,
@@ -30,7 +34,7 @@ def WebServiceCall(
 
     Args:
         path:
-            A dot-separated path for specifying where relevant data resides.
+            A dot-separated path for specifying where relevant data resides (where the `status` attribute is set)
         extract:
             A function to extract data from response before returning it.
         default:
@@ -54,6 +58,22 @@ def WebServiceCall(
                             raise
                         else:
                             return default
+
+            try:
+                response_status = response['status']
+            except TypeError:
+                response_status = None
+                for record in response:
+                    # NOTE: Status is set on each returned record for lists,
+                    #       really strange...
+                    response_status = record['status']
+                    break
+
+            is_success = response_status['isSuccess']
+
+            if not is_success:
+                response_detail = response_status['statusDetail']
+                raise NetsuiteResponseError(response_detail)
 
             if extract is not None:
                 response = extract(response)
@@ -434,9 +454,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.readResponseList.readResponse',
-        extract=lambda resp: [
-            r['record'] for r in resp if r['status']['isSuccess']
-        ]
+        extract=lambda resp: [r['record'] for r in resp]
     )
     def getList(
         self,
@@ -469,8 +487,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.readResponse',
-        extract=lambda resp:
-            resp['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+        extract=lambda resp: resp['record'],
     )
     def get(
         self,
@@ -498,7 +515,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.getAllResult',
-        extract=lambda resp: resp['recordList']['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail']
+        extract=lambda resp: resp['recordList']['record'],
     )
     def getAll(self, recordType: str) -> List[CompoundValue]:
         """Get all records of a given type."""
@@ -511,8 +528,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.writeResponse',
-        extract=lambda resp:
-            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+        extract=lambda resp: resp['baseRef'],
     )
     def add(self, record: CompoundValue) -> CompoundValue:
         """Insert a single record."""
@@ -520,8 +536,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.writeResponse',
-        extract=lambda resp:
-            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+        extract=lambda resp: resp['baseRef'],
     )
     def update(self, record: CompoundValue) -> CompoundValue:
         """Insert a single record."""
@@ -529,8 +544,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.writeResponse',
-        extract=lambda resp:
-            resp['baseRef'] if resp['status']['isSuccess'] else resp['status']['statusDetail'],
+        extract=lambda resp: resp['baseRef'],
     )
     def upsert(self, record: CompoundValue) -> CompoundValue:
         """Upsert a single record."""
@@ -538,7 +552,7 @@ class NetSuite:
 
     @WebServiceCall(
         'body.searchResult',
-        extract=lambda resp: resp['recordList']['record'] if resp['status']['isSuccess'] else resp['status']['statusDetail']
+        extract=lambda resp: resp['recordList']['record'],
     )
     def search(self, record: CompoundValue) -> List[CompoundValue]:
         """Search records"""
@@ -546,15 +560,15 @@ class NetSuite:
 
     @WebServiceCall(
         'body.writeResponseList',
-        extract=lambda resp:
-            [record['baseRef'] if record['status']['isSuccess'] else record['status']['statusDetail'] for record in resp],
+        extract=lambda resp: [record['baseRef'] for record in resp],
     )
     def upsertList(self, records: List[CompoundValue]) -> List[CompoundValue]:
         """Upsert a list of records."""
         return self.request('upsertList', record=records)
 
     @WebServiceCall(
-        'body.getItemAvailabilityResult.itemAvailabilityList.itemAvailability',
+        'body.getItemAvailabilityResult',
+        extract=lambda resp: resp['itemAvailabilityList']['itemAvailability'],
         default=[]
     )
     def getItemAvailability(
