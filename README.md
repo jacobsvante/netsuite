@@ -186,7 +186,7 @@ A small subset:
 
 Suppose we want to find all of the recently created vendors. In the customer search example, we already knew what 
 namespaces our types belonged to, so we just used those factories. Let's just say for now we don't know what factories
-our namespaces correspond to. Instead of looking at the WSDL, we can use `get_factory_name` and/or `get_type_factory`.
+our namespaces correspond to. Instead of looking at the WSDL, we can use `get_type_factory_name` and/or `get_type_class`.
 
 
 #### `get_type_factory_name`
