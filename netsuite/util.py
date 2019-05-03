@@ -1,4 +1,7 @@
+import sys
 import requests
+
+from io import StringIO
 
 __all__ = ('cached_property', 'raise_for_status_with_body')
 
@@ -46,3 +49,38 @@ def raise_for_status_with_body(
         if on_bad_status is not None:
             on_bad_status()
         raise ex
+
+
+class Capturing(list):
+    """
+    taken from https://stackoverflow.com/questions/16571150/how-to-capture-stdout-output-from-a-python-function-call
+
+    Captures stdout
+
+    Example:
+
+        with Capturing() as output:
+            print('hello world')
+
+        print ('displays on screen')
+
+        with Capturing(output) as output:  # note the constructor argument
+            print ('hello world2')
+
+        print ('done')
+        print ('output:', output)
+
+        # displays on screen
+        # done
+        # output: ['hello world', 'hello world2']
+
+    """
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio    # free up some memory
+        sys.stdout = self._stdout

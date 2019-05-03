@@ -14,13 +14,17 @@ from zeep.xsd.valueobjects import CompoundValue
 from . import constants, helpers, passport
 from .config import Config
 from .restlet import NetsuiteRestlet
-from .util import cached_property
+from .util import cached_property, Capturing
 
 logger = logging.getLogger(__name__)
 
 
 class NetsuiteResponseError(Exception):
     """Raised when a Netsuite result was marked as unsuccessful"""
+
+class NoSuchTypeError(Exception):
+    """Raised when attempting to fetch a factory or get a factory name for an undefined type."""
+
 
 
 def WebServiceCall(
@@ -126,6 +130,13 @@ class NetSuite:
     @cached_property
     def wsdl_url(self) -> str:
         return self.__wsdl_url or self._generate_wsdl_url()
+
+    @cached_property
+    def types_dump(self):
+        with Capturing() as dump:
+            self.client.wsdl.dump()
+        starting_point = dump.index('Global types:') + 1
+        return [line.strip() for line in dump[starting_point:]]
 
     @cached_property
     def cache(self) -> zeep.cache.Base:
@@ -433,6 +444,25 @@ class NetSuite:
     @cached_property
     def SupplyChainTypes(self) -> zeep.client.Factory:
         return self._type_factory('types.supplychain', 'lists')
+
+    def get_type(self, type_name: str):
+        for type_def in self.types_dump:
+            if f'xsd:{type_name}' in type_def or f':{type_name}(' in type_def:
+                return type_def
+
+    def get_type_factory_name(self, type_name: str):
+        type_description = self.get_type(type_name)
+        if not type_description:
+            raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
+        namespace_index = int(type_description.split(':')[0][2:])
+        return constants.FACTORIES[namespace_index]
+
+    def get_type_class(self, type_name: str):
+        type_description = self.get_type(type_name)
+        if not type_description:
+            raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
+        namespace_index = int(type_description.split(':')[0][2:])
+        return getattr(self._type_factory(*constants.URN_AS_ARGS[namespace_index]), type_name)
 
     def request(
         self,
