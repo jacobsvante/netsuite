@@ -131,12 +131,6 @@ class NetSuite:
     def wsdl_url(self) -> str:
         return self.__wsdl_url or self._generate_wsdl_url()
 
-    @cached_property
-    def types_dump(self):
-        with Capturing() as dump:
-            self.client.wsdl.dump()
-        starting_point = dump.index('Global types:') + 1
-        return [line.strip() for line in dump[starting_point:]]
 
     @cached_property
     def cache(self) -> zeep.cache.Base:
@@ -260,6 +254,32 @@ class NetSuite:
         return self.client.type_factory(
             self._get_namespace(name, sub_namespace)
         )
+
+    @cached_property
+    def types_dump(self):
+        with Capturing() as dump:
+            self.client.wsdl.dump()
+        starting_point = dump.index('Global types:') + 1
+        return [line.strip() for line in dump[starting_point:]]
+
+    def get_type(self, type_name: str):
+        for type_def in self.types_dump:
+            if f'xsd:{type_name}' in type_def or f':{type_name}(' in type_def:
+                return type_def
+
+    def get_type_factory_name(self, type_name: str):
+        type_description = self.get_type(type_name)
+        if not type_description:
+            raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
+        namespace_index = int(type_description.split(':')[0][2:])
+        return constants.FACTORIES[namespace_index]
+
+    def get_type_class(self, type_name: str):
+        type_description = self.get_type(type_name)
+        if not type_description:
+            raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
+        namespace_index = int(type_description.split(':')[0][2:])
+        return getattr(self._type_factory(*constants.URN_AS_ARGS[namespace_index]), type_name)
 
     @cached_property
     def Core(self) -> zeep.client.Factory:
@@ -444,25 +464,6 @@ class NetSuite:
     @cached_property
     def SupplyChainTypes(self) -> zeep.client.Factory:
         return self._type_factory('types.supplychain', 'lists')
-
-    def get_type(self, type_name: str):
-        for type_def in self.types_dump:
-            if f'xsd:{type_name}' in type_def or f':{type_name}(' in type_def:
-                return type_def
-
-    def get_type_factory_name(self, type_name: str):
-        type_description = self.get_type(type_name)
-        if not type_description:
-            raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
-        namespace_index = int(type_description.split(':')[0][2:])
-        return constants.FACTORIES[namespace_index]
-
-    def get_type_class(self, type_name: str):
-        type_description = self.get_type(type_name)
-        if not type_description:
-            raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
-        namespace_index = int(type_description.split(':')[0][2:])
-        return getattr(self._type_factory(*constants.URN_AS_ARGS[namespace_index]), type_name)
 
     def request(
         self,
