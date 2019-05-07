@@ -25,7 +25,7 @@ With CLI support:
 It is recommended that you use token based authentication when allow 3rd party applications (such as this) to access your
 NetSuite instance. You can follow this [guide](http://mikebian.co/using-netsuites-token-based-authentication-with-suitetalk/)
 ([archived here](https://web.archive.org/web/20180829235439/http://mikebian.co/using-netsuites-token-based-authentication-with-suitetalk/), just in case)
-to enable token based authentication if you do not know how. Remember to copy the relevant tokens and keys
+to enable token based authentication. Remember to copy the relevant tokens and keys
 from various points in the guide to your `netsuite.ini` file! It will look something like this:
 
 ```ini
@@ -149,19 +149,21 @@ record = CustomerSearch(basic=customer_search_basic)
 response = client.request('search', record)
 ```
 
-### Advanced Usage
+### Advanced Usage and Discovery
 Before you can really use the API, you have to have an idea of what you're looking for. The client has a few
-helper methods to facilitate the process of discovering functionality.
+helper methods to facilitate the process of discovering types and functionality defined in the service.
 
 * [`get_type`](#get_type)
 * [`get_type_factory_name`](#get_type_factory_name)
 * [`get_type_class`](#get_type_class)
+* [`search_types`](#search_types)
+* [`search_type_args`](#search_type_args)
 * [`types_dump`](#types_dump)
 
 Let's say that we want to do a search for Vendor, but we know nothing about the types or service calls required to make 
 that happen. All we know is how to do a customer search. Based on what we know about doing a customer search,
 it stands to reason that there is probably a `VendorSearchBasic` and a `VendorSearch` 
-type, but we don't know anything about them, like what namespace they are in or how to construct them. 
+type, but we don't know what namespace they are in or how to construct them. 
 
 
 #### `get_type`
@@ -184,9 +186,11 @@ A small subset:
 * `lastName: ns0:SearchStringField`
 * `lastModifiedDate: ns0:SearchDateField`
 
-Suppose we want to find all of the recently created vendors. In the customer search example, we already knew what 
-namespaces our types belonged to, so we just used those factories. Let's just say for now we don't know what factories
-our namespaces correspond to. Instead of looking at the WSDL, we can use `get_type_factory_name` and/or `get_type_class`.
+Suppose we want to find all of the recently modified vendors. In the customer search snippet above, we already knew what 
+factories we should be using to generate the Customer types. Let's just say for now we don't know what factories
+we will be using for our Vendor search functionality. 
+
+Instead of searching through the WSDL, we can use `get_type_factory_name` and/or `get_type_class`.
 
 
 #### `get_type_factory_name`
@@ -223,11 +227,46 @@ response = client.request('search', record)
 for `SearchDateFieldOperator` [here](http://www.netsuite.com/help/helpcenter/en_US/srbrowser/Browser2018_1/schema/enum/searchdatefieldoperator.html?mode=package). 
 These pages are indexed so a simple web search should help you find things like this.**
 
+
+#### `search_types`
+
+If you only have a vague idea of what you are looking for, you can use `search_types` to discover new type names. 
+For example, if you wanted to know what type definitions have "Vendor" in the name:
+
+```
+type_definitions_containing_substring_vendor = client.search_types('Vendor')
+
+#[
+#    'ns17:ItemVendor(vendor: ns0:RecordRef, vendorCode: xsd:string, **)',
+#    'ns17:ItemVendorList(itemVendor: ns17:ItemVendor[], replaceAll: xsd:boolean)',
+#    . . . 
+#]
+```
+Or if you want to see which types have an argument matching the substring
+
+#### `search_type_args`
+
+```
+type_definitions_with_vendor_in_arg_names = client.search_type_args('Vendor')
+
+[
+    . . .
+    'ns17:ServicePurchaseItem(nullFieldList: ns0:NullField, . . ., vendorName: xsd:string, . . .)'
+    . . . 
+]
+
+
+
+```
+
+
+
+
 If all of that fails, you can always try perusing the output of 
 
 #### `types_dump`
 ```
 print(client.types_dump)
 ``` 
-
+The output is very large, so be mindful of that.
 

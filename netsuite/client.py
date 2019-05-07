@@ -4,7 +4,7 @@ import warnings
 from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, List, Sequence, Union
+from typing import Any, Callable, Dict, List, Sequence, Union, Optional
 
 import requests
 import zeep
@@ -256,18 +256,81 @@ class NetSuite:
         )
 
     @cached_property
-    def types_dump(self):
+    def types_dump(self) -> List[str]:
+        """
+        Returns a list of strings with each item describing a different type defined in the service WSDL. This is a
+        convenience method that snags the stdout of zeep.client.wsdl.dump(). The output is very verbose.
+        :return: list of string with each item describing a different type in the service WSDL.
+
+        Example:
+
+        types_list = client.types_dump
+        """
         with Capturing() as dump:
             self.client.wsdl.dump()
         starting_point = dump.index('Global types:') + 1
         return [line.strip() for line in dump[starting_point:]]
 
-    def get_type(self, type_name: str):
+    def search_types(self, query: str) -> List[str]:
+        """
+        Returns all (case insensitive) matches to types listed in the WSDL.
+        :param query: string to search for in WSDL types definitions
+        :return: list of all types defined in the WSDL that at least partially match the query string
+
+        Example:
+
+        type_definitions_containing_substring_vendor = client.search_types('Vendor')
+        """
+        query = query.lower()
+        # boolean, integer, float, etc.
+        basic_types = [type_def for type_def in self.types_dump
+                       if 'xsd:' in type_def and query in type_def.lower() and '(' not in type_def]
+        # VendorSearch, VendorSearchBasic, etc.
+        wsdl_types = [type_def for type_def in self.types_dump if '(' in type_def and query in type_def.split('(')[0].lower()]
+        return basic_types + wsdl_types
+
+    def search_type_args(self, query: str) -> List[str]:
+        """
+        Returns all (case insensitive) matches where query is a substring of an argument to a type constructor defined
+        in the WSDL.
+        :param query: string to search for in WSDL types definitions arguments
+        :return: list of all types defined in the WSDL that have at least one argument matching the query string
+
+        Example:
+
+        type_definitions_with_vendor_in_arg_names = client.search_type_args('Vendor')
+        """
+        query = query.lower()
+        return [type_def for type_def in self.types_dump if '(' in type_def and query in type_def.split('(')[1].lower()]
+
+    def get_type(self, type_name: str) -> Optional[str]:
+        """
+        Returns type definition matching (case sensitive) type_name from WSDL.
+        :param type_name: case sensitive string matching the name of a type defined in the WSDL.
+        :return:
+
+        Example:
+
+        client.get_type('VendorSearch')
+
+        # `ns13:VendorSearch(basic: ns5:VendorSearchBasic, **)`
+        """
         for type_def in self.types_dump:
             if f'xsd:{type_name}' in type_def or f':{type_name}(' in type_def:
                 return type_def
 
-    def get_type_factory_name(self, type_name: str):
+    def get_type_factory_name(self, type_name: str) -> str:
+        """
+        Returns the name of the type factory containing this particular type.
+        :param type_name: name of type that we want to be able to generate
+        :return: name of factory capable of generating type_name objects.
+
+        Example:
+
+        client.get_type_factory_name('VendorSearch')
+
+        #'Relationships'
+        """
         type_description = self.get_type(type_name)
         if not type_description:
             raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
@@ -275,6 +338,16 @@ class NetSuite:
         return constants.FACTORIES[namespace_index]
 
     def get_type_class(self, type_name: str):
+        """
+        Returns the Class object (practically, a type constructor) corresponding to the case-sensitive type_name
+        :param type_name: name of type class
+        :return: Class object corresponding to the case-sensitive type_name
+
+        Example:
+
+        VendorSearch = client.get_type_class('VendorSearch')
+        vendor_search_obj = VendorSearch(*args, **kwargs)
+        """
         type_description = self.get_type(type_name)
         if not type_description:
             raise NoSuchTypeError(f'Type {type_name} not defined in the WSDL.')
