@@ -191,7 +191,7 @@ our namespaces correspond to. Instead of looking at the WSDL, we can use `get_ty
 
 #### `get_type_factory_name`
 ```
-print(client.get_type_factor_name('VendorSearch'))
+print(client.get_type_factory_name('VendorSearch'))
 # `Relationships`
 ```
 Now we know in the future that we can generate an instance of that type using
