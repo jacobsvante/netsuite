@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 class NetsuiteResponseError(Exception):
     """Raised when a Netsuite result was marked as unsuccessful"""
 
+
 class NoSuchTypeError(Exception):
     """Raised when attempting to fetch a factory or get a factory name for an undefined type."""
-
 
 
 def WebServiceCall(
@@ -130,7 +130,6 @@ class NetSuite:
     @cached_property
     def wsdl_url(self) -> str:
         return self.__wsdl_url or self._generate_wsdl_url()
-
 
     @cached_property
     def cache(self) -> zeep.cache.Base:
