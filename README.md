@@ -62,3 +62,27 @@ Example usage:
 
 In [1]:
 ```
+
+## Python
+
+### configuration
+
+Same as CLI part
+
+### Save and run the Py file with following content
+
+```Python
+from netsuite import config, NetSuite
+import os
+
+# Read configuration file from current folder
+path  = __file__
+folderPath  = path.rsplit(os.sep,1)[0]
+iniFile = os.sep.join([folderPath, 'info.ini'])
+
+# Run a query: getList
+cfg = config.from_ini(path=iniFile, section='netsuite')
+ns = NetSuite(cfg)
+print(ns.getList('customer', internalIds=['1337']))
+```
+
