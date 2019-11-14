@@ -12,3 +12,7 @@
 /.mypy*
 /.pytest_cache
 netsuite.ini
+
+# IDEs
+.idea/
+.vscode/

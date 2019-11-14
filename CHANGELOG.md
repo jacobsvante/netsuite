@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.5.0 (2019-11-14)
+ 
+* Breaking: `upsertList` response returns `[]WriteResponse{status, baseRef}` instance instead of `BaseRef` instance. This allows inspection or unexpected write statuses.
+* Fix: `get` method no longer raise error on when return when using an externalId
+* Feature: Add support for `delete` method
+* Feature: Add implementation of `deleteList` method, which sometimes behaves unexpectedly (according to SuiteTalk response), use at own peril
+* Feature: Add API discovery methods (outlined in README)
+* Info: Update README with getting-started examples
+* Info: Add doc-strings with examples for the following methods: `add`, `update`, `upsert`, `delete`
+    
+
 ## 0.4.0 (2019-04-29)
 
 * Enhancement: Add support for specifying operation/request timeouts

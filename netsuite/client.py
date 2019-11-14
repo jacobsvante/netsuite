@@ -609,7 +609,7 @@ class NetSuite:
                 internalId=internalId,
             )
         else:
-            self.Core.RecordRef(
+            record_ref = self.Core.RecordRef(
                 type=recordType,
                 externalId=externalId,
             )
@@ -634,7 +634,23 @@ class NetSuite:
         extract=lambda resp: resp['baseRef'],
     )
     def add(self, record: CompoundValue) -> CompoundValue:
-        """Insert a single record."""
+        """
+        Insert a single record. It is recommended that you use a consistent convention for externalId to facilitate
+        record reference via get and upsert methods.
+
+        example:
+            InventoryItem = client.get_type_class('InventoryItem') # InventoryItem constructor
+            RecordRef = client.get_type_class('RecordRef') # RecordRef constructor
+
+            tax_schedule = RecordRef(internalId=1) # corresponds to default tax_schedule
+            item_dict = {"itemId": "1", "displayName": "Red", "taxSchedule": tax_schedule}
+            item = InventoryItem(**item_dict, externalId=f"{item_dict['itemId']}-{item_dict['displayName']}")
+
+            client.add(item)
+
+        :param record: RecordRef{name: str, type: str, internalId: str, externalId: str}
+        :return: RecordRef
+        """
         return self.request('add', record=record)
 
     @WebServiceCall(
@@ -642,7 +658,24 @@ class NetSuite:
         extract=lambda resp: resp['baseRef'],
     )
     def update(self, record: CompoundValue) -> CompoundValue:
-        """Insert a single record."""
+        """
+        Update a single record.
+
+        example:
+
+            InventoryItem = client.get_type_class('InventoryItem') # InventoryItem constructor
+            RecordRef = client.get_type_class('RecordRef') # RecordRef constructor
+
+            tax_schedule = RecordRef(internalId=1) # corresponds to default tax_schedule
+            item_dict = {"itemId": "1", "displayName": "Red", "taxSchedule": tax_schedule}
+            item = InventoryItem(**item_dict, externalId=f"{item_dict['itemId']}-{item_dict['displayName']}")
+            item.displayName = "Red-Different-Now"
+
+            client.update(item)
+
+        :param record: RecordRef{name: str, type: str, internalId: str, externalId: str}
+        :return: RecordRef
+        """
         return self.request('update', record=record)
 
     @WebServiceCall(
@@ -650,8 +683,69 @@ class NetSuite:
         extract=lambda resp: resp['baseRef'],
     )
     def upsert(self, record: CompoundValue) -> CompoundValue:
-        """Upsert a single record."""
+        """
+        Upsert a single record; method requires externalId to be defined for RecordRef. If externalId exists,
+        the record corresponding to that externalId is updated. Otherwise, a new one will be created.
+
+        example:
+            InventoryItem = client.get_type_class('InventoryItem') # InventoryItem constructor
+            RecordRef = client.get_type_class('RecordRef') # RecordRef constructor
+
+            tax_schedule = RecordRef(internalId=1) # corresponds to default tax_schedule
+            item_dict = {"itemId": "1", "displayName": "Red", "taxSchedule": tax_schedule}
+            item = InventoryItem(**item_dict, externalId=f"{item_dict['itemId']}-{item_dict['displayName']}")
+
+            client.upsert(item)
+
+        :param record: RecordRef{name: str, type: str, internalId: str, externalId: str}
+        :return: RecordRef
+        """
         return self.request('upsert', record=record)
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp: resp,
+    )
+    def delete(self, record: CompoundValue, deletion_reason: CompoundValue=None) -> CompoundValue:
+
+        """
+        Delete a single record.
+
+        https://<environmentid>.app.netsuite.com/app/help/helpcenter.nl?fid=section_N3486046.html
+        NetSuite.delete(RecordRef, RecordRef<DeletionReason>)
+
+        ex:
+            record_dict = { 'name': 'Green', 'internalId': '382', 'externalId': None, 'type': 'inventoryItem' }
+            RecordRef = client.get_type_class('RecordRef') # RecordRef constructor
+            record = RecordRef(**record_dict)
+
+            client.delete(record, None) # DeletionReason can be None
+
+        :param record: RecordRef with internalId or externalId and type specified for targeted record deletion
+        :param deletion_reason: RecordRef of DeletionReason, which contains a reason code and description
+            that can be managed in NetSuite UI
+        :return: WriteResponse<DeleteResponse{status: {statusDetail: list, isSuccess: bool}, baseRef: RecordRef}>
+        """
+        return self.request('delete', record, deletion_reason)
+
+
+    @WebServiceCall(
+        'body.writeResponse',
+        extract=lambda resp: resp,
+    )
+    def deleteList(self, records: List[CompoundValue], deletion_reason: List[CompoundValue]) -> CompoundValue:
+        """
+        Delete a list of records.
+
+        :param records: a list of RecordRef objects corresponding to items to be deleted.
+        :param deletion_reason: RecordRef of DeletionReason, which contains a reason code and description
+            that can be managed in NetSuite UI
+        :return: List[WriteResponse<DeleteResponse{status: {statusDetail: list, isSuccess: bool}, baseRef: RecordRef}]
+        """
+
+        logger.WARNING("deleteList implementation is not stable, expect errors.")
+
+        return self.request('deleteList', records, deletion_reason)
 
     @WebServiceCall(
         'body.searchResult',
@@ -663,10 +757,14 @@ class NetSuite:
 
     @WebServiceCall(
         'body.writeResponseList',
-        extract=lambda resp: [record['baseRef'] for record in resp],
+        extract=lambda resp: resp,
     )
     def upsertList(self, records: List[CompoundValue]) -> List[CompoundValue]:
-        """Upsert a list of records."""
+        """
+
+        :param records: list of RecordRef objects corresponding to items to be deleted
+        :return: List[WriteResponse<DeleteResponse{status: {statusDetail: list, isSuccess: bool}, baseRef: RecordRef}>]
+        """
         return self.request('upsertList', record=records)
 
     @WebServiceCall(
