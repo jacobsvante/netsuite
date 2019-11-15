@@ -9,6 +9,7 @@ from typing import Any, Callable, Dict, List, Sequence, Union, Optional
 import requests
 import zeep
 from zeep.cache import SqliteCache
+from zeep.xsd import ComplexType
 from zeep.xsd.valueobjects import CompoundValue
 
 from . import constants, helpers, passport
@@ -565,7 +566,7 @@ class NetSuite:
         *,
         internalIds: Sequence[int] = (),
         externalIds: Sequence[str] = ()
-    ) -> List[CompoundValue]:
+    ) -> ComplexType:
         """Get a list of records"""
 
         if len(list(internalIds) + list(externalIds)) == 0:
@@ -620,7 +621,7 @@ class NetSuite:
         'body.getAllResult',
         extract=lambda resp: resp['recordList']['record'],
     )
-    def getAll(self, recordType: str) -> List[CompoundValue]:
+    def getAll(self, recordType: str) -> ComplexType:
         """Get all records of a given type."""
         return self.request(
             'getAll',
@@ -706,7 +707,7 @@ class NetSuite:
         'body.writeResponse',
         extract=lambda resp: resp,
     )
-    def delete(self, record: CompoundValue, deletion_reason: CompoundValue=None) -> CompoundValue:
+    def delete(self, record: CompoundValue, deletion_reason: CompoundValue = None) -> CompoundValue:
 
         """
         Delete a single record.
@@ -727,7 +728,6 @@ class NetSuite:
         :return: WriteResponse<DeleteResponse{status: {statusDetail: list, isSuccess: bool}, baseRef: RecordRef}>
         """
         return self.request('delete', record, deletion_reason)
-
 
     @WebServiceCall(
         'body.writeResponse',
@@ -778,7 +778,7 @@ class NetSuite:
         internalIds: Sequence[int] = (),
         externalIds: Sequence[str] = (),
         lastQtyAvailableChange: datetime = None
-    ) -> List[Dict]:
+    ) -> ComplexType:
         if len(list(internalIds) + list(externalIds)) == 0:
             raise ValueError('Please specify `internalId` and/or `externalId`')
 
