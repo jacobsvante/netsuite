@@ -127,7 +127,7 @@ import netsuite.restlet as nsRestlet
 config = netsuite.config.from_ini()
 client = nsRestlet(config=config)
 reqBody = {"savedSearchId": 987}
-nsClient.request(script_id=500, deploy=1, payload=reqBody)
+response=client.request(script_id=500, deploy=1, payload=reqBody)
 ```
 
 #### Fetch Records by ID
