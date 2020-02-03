@@ -30,7 +30,7 @@ class NetsuiteRestlet:
     def request(
         self,
         script_id: int,
-        payload: Any = None,
+        payload: dict,
         *,
         deploy: int = 1,
         raise_on_bad_status: bool = True,
@@ -51,7 +51,7 @@ class NetsuiteRestlet:
     def raw_request(
         self,
         script_id: int,
-        payload: Any = None,
+        payload: dict,
         *,
         deploy: int = 1,
         raise_on_bad_status: bool = True,
@@ -68,11 +68,7 @@ class NetsuiteRestlet:
         )
 
         resp = self._request_session.post(
-            url,
-            headers=headers,
-            json=payload,
-            timeout=timeout,
-            **requests_kw
+            url, headers=headers, json=payload, timeout=timeout, **requests_kw
         )
 
         resp_headers_json = json.dumps(dict(resp.headers))
