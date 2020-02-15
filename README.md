@@ -125,7 +125,7 @@ os.environ['NETSUITE_CONFIG'] = '/path/to/netsuite.ini'
 import netsuite.restlet as nsRestlet
 
 config = netsuite.config.from_ini()
-client = nsRestlet(config=config)
+client = nsRestlet.NetsuiteRestlet(config=config)
 reqBody = {"savedSearchId": 987}
 response=client.request(script_id=500, deploy=1, payload=reqBody)
 ```
