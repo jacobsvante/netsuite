@@ -136,7 +136,7 @@ class NetSuiteTransport(Transport):
 
 
 class NetSuite:
-    version = '2018.1.0'
+    version = '2019.2.0'
     wsdl_url_tmpl = 'https://{account_id}.suitetalk.api.netsuite.com/wsdl/v{underscored_version}/netsuite.wsdl'
 
     def __repr__(self) -> str:
