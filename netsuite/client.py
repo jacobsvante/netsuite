@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, List, Sequence, Union
+from urllib.parse import urlparse
 
 import requests
 import zeep
@@ -100,19 +101,13 @@ class NetSuiteTransport(Transport):
         """
         Assign the dynamic host domain component to a class variable
         """
-
-        _wsdl = kwargs['wsdl_url']
-
+        wsdl_url = kwargs['wsdl_url']
         kwargs.pop('wsdl_url',None)
-        
-        # Find first slash after domain name
-        idx = _wsdl.index('/', 8) + 1
 
-        # We only want the dynamic domain
-        _wsdl=_wsdl[:idx]
-        self._wsdl = _wsdl
-        
-        super(NetSuiteTransport, self).__init__(**kwargs)
+        parsed_wsdl_url = urlparse(wsdl_url)
+        self._wsdl_url = f'{parsed_wsdl_url.scheme}://{parsed_wsdl_url.netloc}/'
+
+        super().__init__(**kwargs)
 
     def _fix_address(self, address):
         """
@@ -120,20 +115,20 @@ class NetSuiteTransport(Transport):
         """
         
         idx = address.index('/',8) + 1;
-        address = self._wsdl + address[idx:]
+        address = self._wsdl_url + address[idx:]
         return address
     
     def get(self, address, params, headers):
         """
         Update the GET address before providing it to zeep.transports.transport
         """
-        return super(NetSuiteTransport, self).get(self._fix_address(address), params, headers)
+        return super().get(self._fix_address(address), params, headers)
 
     def post(self, address, message, headers):
         """
         Update the POST address before providing it to zeep.transports.transport
         """
-        return super(NetSuiteTransport, self).post(self._fix_address(address), message, headers)
+        return super().post(self._fix_address(address), message, headers)
 
 
 class NetSuite:
