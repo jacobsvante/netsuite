@@ -121,7 +121,8 @@ class NetSuiteTransport(Transport):
         
         idx = address.index('/',8) + 1;
         address = self._wsdl + address[idx:]
-        
+        return address
+    
     def get(self, address, params, headers):
         """
         Update the GET address before providing it to zeep.transports.transport
