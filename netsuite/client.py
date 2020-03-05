@@ -97,13 +97,10 @@ class NetSuiteTransport(Transport):
     Wrap the zeep transports service with our address modifications
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, wsdl_url, *args, **kwargs):
         """
         Assign the dynamic host domain component to a class variable
         """
-        wsdl_url = kwargs['wsdl_url']
-        kwargs.pop('wsdl_url',None)
-
         parsed_wsdl_url = urlparse(wsdl_url)
         self._wsdl_url = f'{parsed_wsdl_url.scheme}://{parsed_wsdl_url.netloc}/'
 
@@ -234,7 +231,7 @@ class NetSuite:
 
     def _generate_transport(self) -> zeep.transports.Transport:
         return NetSuiteTransport(
-            wsdl_url=self._generate_wsdl_url(),
+            self._generate_wsdl_url(),
             session=self.session,
             cache=self.cache,
         )
