@@ -5,10 +5,12 @@ from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, List, Sequence, Union
+from urllib.parse import urlparse
 
 import requests
 import zeep
 from zeep.cache import SqliteCache
+from zeep.transports import Transport
 from zeep.xsd.valueobjects import CompoundValue
 
 from . import constants, helpers, passport
@@ -83,8 +85,51 @@ def WebServiceCall(
     return decorator
 
 
+class NetSuiteTransport(Transport):
+    """
+    NetSuite dynamic domain wrapper for zeep.transports.transport
+
+    Latest NetSuite WSDL now uses relative definition addresses
+
+    zeep maps reflective remote calls to the base WSDL address,
+    rather than the dynamic subscriber domain
+
+    Wrap the zeep transports service with our address modifications
+    """
+
+    def __init__(self, wsdl_url, *args, **kwargs):
+        """
+        Assign the dynamic host domain component to a class variable
+        """
+        parsed_wsdl_url = urlparse(wsdl_url)
+        self._wsdl_url = f'{parsed_wsdl_url.scheme}://{parsed_wsdl_url.netloc}/'
+
+        super().__init__(**kwargs)
+
+    def _fix_address(self, address):
+        """
+        Munge the address to the dynamic domain, not the default
+        """
+        
+        idx = address.index('/',8) + 1;
+        address = self._wsdl_url + address[idx:]
+        return address
+    
+    def get(self, address, params, headers):
+        """
+        Update the GET address before providing it to zeep.transports.transport
+        """
+        return super().get(self._fix_address(address), params, headers)
+
+    def post(self, address, message, headers):
+        """
+        Update the POST address before providing it to zeep.transports.transport
+        """
+        return super().post(self._fix_address(address), message, headers)
+
+
 class NetSuite:
-    version = '2018.1.0'
+    version = '2019.2.0'
     wsdl_url_tmpl = 'https://{account_id}.suitetalk.api.netsuite.com/wsdl/v{underscored_version}/netsuite.wsdl'
 
     def __repr__(self) -> str:
@@ -185,7 +230,8 @@ class NetSuite:
         return requests.Session()
 
     def _generate_transport(self) -> zeep.transports.Transport:
-        return zeep.transports.Transport(
+        return NetSuiteTransport(
+            self._generate_wsdl_url(),
             session=self.session,
             cache=self.cache,
         )
