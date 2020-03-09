@@ -110,11 +110,11 @@ class NetSuiteTransport(Transport):
         """
         Munge the address to the dynamic domain, not the default
         """
-        
-        idx = address.index('/',8) + 1;
+
+        idx = address.index('/', 8) + 1
         address = self._wsdl_url + address[idx:]
         return address
-    
+
     def get(self, address, params, headers):
         """
         Update the GET address before providing it to zeep.transports.transport
