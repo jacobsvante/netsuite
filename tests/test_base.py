@@ -20,4 +20,4 @@ def test_netsuite_hostname(dummy_config):
 
 def test_netsuite_wsdl_url(dummy_config):
     ns = netsuite.NetSuite(dummy_config)
-    assert ns.wsdl_url == 'https://123456.suitetalk.api.netsuite.com/wsdl/v2018_1_0/netsuite.wsdl'
+    assert ns.wsdl_url == 'https://123456.suitetalk.api.netsuite.com/wsdl/v2019_2_0/netsuite.wsdl'
