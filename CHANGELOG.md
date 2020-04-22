@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.1 (2020-03-09)
+
+* Extend Zeep Transport GET and POST HTTP methods to apply the account-specific dynamic domain as the remote host
+* Update the NetSuite WSDL compatibility to 2019.2
+
 ## 0.4.0 (2019-04-29)
 
 * Enhancement: Add support for specifying operation/request timeouts
