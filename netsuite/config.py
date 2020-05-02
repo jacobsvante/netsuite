@@ -3,8 +3,8 @@ from typing import Dict
 
 from .constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION, NOT_SET
 
-TOKEN = 'token'
-CREDENTIALS = 'credentials'
+TOKEN = "token"
+CREDENTIALS = "credentials"
 
 
 class Config:
@@ -48,42 +48,15 @@ class Config:
     """Additional preferences"""
 
     _settings_mapping = (
-        (
-            'account',
-            {'type': str, 'required': True},
-        ),
-        (
-            'consumer_key',
-            {'type': str, 'required_for_auth_type': TOKEN},
-        ),
-        (
-            'consumer_secret',
-            {'type': str, 'required_for_auth_type': TOKEN},
-        ),
-        (
-            'token_id',
-            {'type': str, 'required_for_auth_type': TOKEN},
-        ),
-        (
-            'token_secret',
-            {'type': str, 'required_for_auth_type': TOKEN},
-        ),
-        (
-            'application_id',
-            {'type': str, 'required_for_auth_type': CREDENTIALS},
-        ),
-        (
-            'email',
-            {'type': str, 'required_for_auth_type': CREDENTIALS},
-        ),
-        (
-            'password',
-            {'type': str, 'required_for_auth_type': CREDENTIALS},
-        ),
-        (
-            'preferences',
-            {'type': dict, 'required': False, 'default': lambda: {}},
-        ),
+        ("account", {"type": str, "required": True},),
+        ("consumer_key", {"type": str, "required_for_auth_type": TOKEN},),
+        ("consumer_secret", {"type": str, "required_for_auth_type": TOKEN},),
+        ("token_id", {"type": str, "required_for_auth_type": TOKEN},),
+        ("token_secret", {"type": str, "required_for_auth_type": TOKEN},),
+        ("application_id", {"type": str, "required_for_auth_type": CREDENTIALS},),
+        ("email", {"type": str, "required_for_auth_type": CREDENTIALS},),
+        ("password", {"type": str, "required_for_auth_type": CREDENTIALS},),
+        ("preferences", {"type": dict, "required": False, "default": lambda: {}},),
     )
 
     def __init__(self, **opts) -> None:
@@ -93,7 +66,7 @@ class Config:
         return hasattr(self, key)
 
     def _set_auth_type(self, value: str) -> None:
-        self._validate_attr('auth_type', value, str, True, {})
+        self._validate_attr("auth_type", value, str, True, {})
         self.auth_type = value
         assert self.auth_type in (TOKEN, CREDENTIALS)
 
@@ -105,60 +78,53 @@ class Config:
 
     def _set(self, dct: Dict[str, object]) -> None:
         # As other setting validations depend on auth_type we set it first
-        auth_type = dct.get('auth_type', self.auth_type)
+        auth_type = dct.get("auth_type", self.auth_type)
         self._set_auth_type(auth_type)
 
         for attr, opts in self._settings_mapping:
             value = dct.get(attr, NOT_SET)
-            type_ = opts['type']
+            type_ = opts["type"]
 
             required = opts.get(
-                'required',
-                opts.get('required_for_auth_type') == auth_type
+                "required", opts.get("required_for_auth_type") == auth_type
             )
 
             self._validate_attr(attr, value, type_, required, opts)
 
-            if value is NOT_SET and 'default' in opts:
-                value = opts['default']()
+            if value is NOT_SET and "default" in opts:
+                value = opts["default"]()
 
             setattr(self, attr, (None if value is NOT_SET else value))
 
     def _validate_attr(
-        self,
-        attr: str,
-        value: object,
-        type_: object,
-        required: bool,
-        opts: dict
+        self, attr: str, value: object, type_: object, required: bool, opts: dict
     ) -> None:
         if required and value is NOT_SET:
-            required_for_auth_type = opts.get('required_for_auth_type')
+            required_for_auth_type = opts.get("required_for_auth_type")
             if required_for_auth_type:
                 raise ValueError(
-                    f'Attribute {attr} is required for auth_type='
-                    f'`{required_for_auth_type}`'
+                    f"Attribute {attr} is required for auth_type="
+                    f"`{required_for_auth_type}`"
                 )
             else:
-                raise ValueError(f'Attribute {attr} is required')
+                raise ValueError(f"Attribute {attr} is required")
         if value is not NOT_SET and not isinstance(value, type_):
-            raise ValueError(f'Attribute {attr} is not of type `{type_}`')
+            raise ValueError(f"Attribute {attr} is not of type `{type_}`")
 
 
 def from_ini(
-    path: str = DEFAULT_INI_PATH,
-    section: str = DEFAULT_INI_SECTION
+    path: str = DEFAULT_INI_PATH, section: str = DEFAULT_INI_SECTION
 ) -> Config:
     iniconf = configparser.ConfigParser()
     with open(path) as fp:
         iniconf.read_file(fp)
 
-    config_dict = {'preferences': {}}
+    config_dict = {"preferences": {}}
 
     for key, val in iniconf[section].items():
-        if key.startswith('preferences_'):
-            _, key = key.split('_', 1)
-            config_dict['preferences'][key] = val
+        if key.startswith("preferences_"):
+            _, key = key.split("_", 1)
+            config_dict["preferences"][key] = val
         else:
             config_dict[key] = val
 

@@ -1,9 +1,9 @@
 import datetime
-from uuid import UUID
 from decimal import Decimal
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, Type, Union
+from uuid import UUID
 
 import orjson as _orjson
 
