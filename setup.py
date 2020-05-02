@@ -24,7 +24,7 @@ extras_require['all'] = [
 
 setup_kwargs = dict(
     name='netsuite',
-    version='0.5.0',
+    version='0.5.1',
     description='Wrapper around Netsuite SuiteTalk SOAP/REST Web Services and Restlets',
     packages=['netsuite'],
     include_package_data=True,
