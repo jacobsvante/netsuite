@@ -2,6 +2,9 @@ import asyncio
 import logging
 from typing import Iterable, Optional
 
+from . import json
+from .types import JsonDict
+
 try:
     import httpx
 except ImportError:
@@ -12,8 +15,6 @@ try:
 except ImportError:
     OAuth1Auth = None
 
-from . import json
-from .types import JsonDict
 
 logger = logging.getLogger(__name__)
 
@@ -164,7 +165,9 @@ class NetSuiteRestApi:
                 )
 
         resp_headers_json = json.dumps_str(dict(resp.headers))
-        logger.debug(f"Got response headers from NetSuite REST API: {resp_headers_json}")
+        logger.debug(
+            f"Got response headers from NetSuite REST API: {resp_headers_json}"
+        )
 
         return resp
 

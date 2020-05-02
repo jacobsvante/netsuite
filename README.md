@@ -169,3 +169,23 @@ In [1]: rest_api_results = await ns.rest_api.get("
 ```
 $ echo '{"savedSearchId": 987}' | netsuite restlet 123 -
 ```
+
+
+## Developing
+
+1. Fork repo in GitHub
+1. Clone the forked repo: `git clone git@github.com:MYUSERNAME/netsuite.git`
+1. Install package in editable mode, with all dependencies: `pip install -e '.[all,test,lint]'`
+1. Ensure that pre-commit hooks are installed with: `pre-commit install`
+1. Create new branch: `git branch -d my-shiny-pull-request-branch`
+1. Code!
+1. Run unit tests with: `tox`
+1. Commit, push and submit pull request
+
+
+## Creating a new git / PyPI release (maintainers)
+
+1. Tag the release in git: `git tag -a "X.Y.Z" -m "Version X.Y.Z"`
+1. Push the tag upstream: `git push --tags`
+1. Build the release: `rm -rf build dist; python3 setup.py sdist bdist_wheel`
+1. Push the release: `twine upload dist/*`

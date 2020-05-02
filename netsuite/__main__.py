@@ -6,11 +6,11 @@ import inspect
 import logging
 import logging.config
 import pathlib
-import pkg_resources
 import sys
 import tempfile
 
 import IPython
+import pkg_resources
 import traitlets
 
 import netsuite

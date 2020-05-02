@@ -1,12 +1,13 @@
 import requests
 
-__all__ = ('cached_property', 'raise_for_status_with_body')
+__all__ = ("cached_property", "raise_for_status_with_body")
 
 
 class cached_property:
     """ Decorator that turns an instance method into a cached property
     From https://speakerdeck.com/u/mitsuhiko/p/didntknow, slide #69
     """
+
     __NOT_SET = object()
 
     def __init__(self, func):
@@ -25,10 +26,7 @@ class cached_property:
         return value
 
 
-def raise_for_status_with_body(
-    response,
-    on_bad_status=None
-):
+def raise_for_status_with_body(response, on_bad_status=None):
     """Raise exception on bad HTTP status and capture response body
 
     Also:
@@ -42,7 +40,7 @@ def raise_for_status_with_body(
     except requests.exceptions.RequestException as ex:
         body = response.text
         if body and len(ex.args) == 1:
-            ex.args = (ex.args[0] + f'\nBody: {body}', )
+            ex.args = (ex.args[0] + f"\nBody: {body}",)
         if on_bad_status is not None:
             on_bad_status()
         raise ex
