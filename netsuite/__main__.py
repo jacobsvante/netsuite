@@ -195,7 +195,7 @@ async def rest_api_openapi_serve(config, args) -> str:
 <html>
     <head>
     <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui.css">
-    <title>OpenAPI for </title>
+    <title>NetSuite REST Record API</title>
     </head>
     <body>
     <div id="swagger-ui">
