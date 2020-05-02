@@ -1,9 +1,31 @@
 from setuptools import setup
 
+extras_require = {
+    'rest_api': [
+        'authlib',
+        # NOTE: authlib doesn't work with httpx 0.12.1 So we're locking the httpx
+        #       version to one that is compatible. See:
+        #       https://github.com/lepture/authlib/issues/210#issuecomment-612311003
+        # TODO: Remove version lock once fixed upstream.
+        'httpx==0.12.0',
+    ],
+    'cli': ['ipython'],
+    'test': {
+        'coverage>=4.2',
+        'flake8>=3.0.4',
+        'mypy>=0.560',
+        'pytest>=3.0.3',
+        'responses>=0.5.1',
+    },
+}
+extras_require['all'] = [
+    dep for name, lst in extras_require.items() if name != 'test' for dep in lst
+]
+
 setup_kwargs = dict(
     name='netsuite',
-    version='0.4.1',
-    description='Wrapper around Netsuite SuiteTalk Web Services and Restlets',
+    version='0.5.0',
+    description='Wrapper around Netsuite SuiteTalk SOAP/REST Web Services and Restlets',
     packages=['netsuite'],
     include_package_data=True,
     author='Jacob Magnusson',
@@ -14,20 +36,9 @@ setup_kwargs = dict(
     install_requires=[
         'requests-oauthlib',
         'zeep',
+        'orjson',
     ],
-    extras_require={
-        'cli': [
-            'argh',
-            'ipython',
-        ],
-        'test': {
-            'coverage>=4.2',
-            'flake8>=3.0.4',
-            'mypy>=0.560',
-            'pytest>=3.0.3',
-            'responses>=0.5.1',
-        },
-    },
+    extras_require=extras_require,
     entry_points={
         'console_scripts': [
             'netsuite = netsuite.__main__:main',
@@ -42,6 +53,7 @@ setup_kwargs = dict(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
 )
 

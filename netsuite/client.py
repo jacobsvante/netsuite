@@ -16,6 +16,7 @@ from zeep.xsd.valueobjects import CompoundValue
 from . import constants, helpers, passport
 from .config import Config
 from .restlet import NetsuiteRestlet
+from .rest_api import NetSuiteRestApi
 from .util import cached_property
 
 logger = logging.getLogger(__name__)
@@ -162,11 +163,23 @@ class NetSuite:
         self.__wsdl_url = wsdl_url
         self.__cache = cache
         self.__session = session
-        self.__restlet = NetsuiteRestlet(self.__config)
 
-    @property
+    @cached_property
     def restlet(self):
-        return self.__restlet
+        return NetsuiteRestlet(self.__config)
+
+    @cached_property
+    def rest_api(self):
+        if self.__config.is_token_auth():
+            return NetSuiteRestApi(
+                account=self.config.account,
+                consumer_key=self.config.consumer_key,
+                consumer_secret=self.config.consumer_secret,
+                token_id=self.config.token_id,
+                token_secret=self.config.token_secret,
+            )
+        else:
+            raise RuntimeError("Rest API is currently only implemented with token auth")
 
     @cached_property
     def wsdl_url(self) -> str:
