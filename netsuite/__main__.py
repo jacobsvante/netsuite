@@ -100,13 +100,17 @@ def restlet(config, args) -> str:
 async def rest_api_get(config, args) -> str:
     rest_api = _get_rest_api_or_error(config)
     params = {}
-    if args.expandSubResources:
+    if args.expandSubResources is True:
         params["expandSubResources"] = "true"
-    if args.limit:
+    if args.limit is not None:
         params["limit"] = args.limit
-    if args.offset:
+    if args.offset is not None:
         params["offset"] = args.offset
-    if args.query:
+    if args.fields is not None:
+        params["fields"] = ",".join(args.fields)
+    if args.expand is not None:
+        params["expand"] = ",".join(args.expand)
+    if args.query is not None:
         params["q"] = args.query
     resp = await rest_api.get(args.subpath, params=params)
     return json.dumps_str(resp)
@@ -319,8 +323,21 @@ rest_api_get_parser.add_argument(
     action="store_true",
     help="Automatically expand all sublists, sublist lines and subrecords on this record. Only works for detail endpoints e.g. /record/v1/invoice/123.",
 )
-rest_api_get_parser.add_argument("-l", "--limit", type=int, default=1000)
-rest_api_get_parser.add_argument("-o", "--offset", type=int, default=0)
+rest_api_get_parser.add_argument("-l", "--limit", type=int)
+rest_api_get_parser.add_argument("-o", "--offset", type=int)
+rest_api_get_parser.add_argument(
+    "-f",
+    "--fields",
+    metavar="field",
+    nargs="*",
+    help="Only include the given fields in response",
+)
+rest_api_get_parser.add_argument(
+    "-E",
+    "--expand",
+    nargs="*",
+    help="Expand the given sublist lines and subrecords on this record. Only works for detail endpoints e.g. /record/v1/invoice/123.",
+)
 
 rest_api_post_parser = rest_api_subparser.add_parser(
     "post", description="Make a POST request to NetSuite REST web services"

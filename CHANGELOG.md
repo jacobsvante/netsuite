@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.2 (2020-05-02)
+
+* Fix: Only forward explicitly passed in parameters for `netsuite rest-api get` command. Fixes error `Invalid query parameter name: limit. Allowed query parameters are: fields, expand, expandSubResources.`
+* Feature: Add ability to have `netsuite rest-api get` only return a given list of fields via `--fields`
+* Feature: Add ability for `netsuite rest-api get` to only expand a given set of sublist and subrecord types via `--expand`
+
+## 0.5.1 (2020-05-02)
+
+* Fix HTML title in OpenAPI Swagger docs
+
 ## 0.5.0 (2020-05-02)
 
 * Feature: Support for SuiteTalk REST Web Services, including standard GET, POST, PATCH, PUT, DELETE requests as well as making SuiteQL queries. For now it's an optional dependency (install with `pip install netsuite[rest_api]`)
