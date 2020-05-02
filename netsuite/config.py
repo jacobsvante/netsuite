@@ -97,6 +97,12 @@ class Config:
         self.auth_type = value
         assert self.auth_type in (TOKEN, CREDENTIALS)
 
+    def is_token_auth(self) -> bool:
+        return self.auth_type == TOKEN
+
+    def is_credentials_auth(self) -> bool:
+        return self.auth_type == CREDENTIALS
+
     def _set(self, dct: Dict[str, object]) -> None:
         # As other setting validations depend on auth_type we set it first
         auth_type = dct.get('auth_type', self.auth_type)

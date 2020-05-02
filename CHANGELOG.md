@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0 (2020-05-02)
+
+* Feature: Support for SuiteTalk REST Web Services, including standard GET, POST, PATCH, PUT, DELETE requests as well as making SuiteQL queries. For now it's an optional dependency (install with `pip install netsuite[rest_api]`)
+* Feature: Start a HTTP server via command line to browse REST API OpenAPI spec docs for a given set of records (utilizes Swagger UI)
+* Breaking change: `--log-level`, `--config-path` and `--config-section` must now be passed directly to the `netsuite` command, and not its sub-commands.
+
 ## 0.4.1 (2020-03-09)
 
 * Extend Zeep Transport GET and POST HTTP methods to apply the account-specific dynamic domain as the remote host
