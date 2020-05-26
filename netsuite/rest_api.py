@@ -8,7 +8,10 @@ from .types import JsonDict
 try:
     import httpx
 except ImportError:
-    httpx = None
+
+    class httpx:
+        Response = None  # NOTE: For type hint to work
+
 
 try:
     from authlib.integrations.httpx_client import OAuth1Auth

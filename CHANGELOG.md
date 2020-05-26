@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3 (2020-05-26)
+
+* Fix: Couldn't import `netsuite` unless `httpx` was installed. Fixes #18
+
 ## 0.5.2 (2020-05-02)
 
 * Fix: Only forward explicitly passed in parameters for `netsuite rest-api get` command. Fixes error `Invalid query parameter name: limit. Allowed query parameters are: fields, expand, expandSubResources.`
