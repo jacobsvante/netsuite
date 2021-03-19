@@ -98,7 +98,7 @@ def restlet(config, args) -> str:
 
 
 async def rest_api_get(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     params = {}
     if args.expandSubResources is True:
         params["expandSubResources"] = "true"
@@ -117,7 +117,7 @@ async def rest_api_get(config, args) -> str:
 
 
 async def rest_api_post(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     with args.payload_file as fh:
         payload_str = fh.read()
 
@@ -128,7 +128,7 @@ async def rest_api_post(config, args) -> str:
 
 
 async def rest_api_put(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     with args.payload_file as fh:
         payload_str = fh.read()
 
@@ -139,7 +139,7 @@ async def rest_api_put(config, args) -> str:
 
 
 async def rest_api_patch(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     with args.payload_file as fh:
         payload_str = fh.read()
 
@@ -150,14 +150,14 @@ async def rest_api_patch(config, args) -> str:
 
 
 async def rest_api_delete(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
 
     resp = await rest_api.delete(args.subpath)
     return json.dumps_str(resp)
 
 
 async def rest_api_suiteql(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
 
     with args.q_file as fh:
         q = fh.read()
@@ -168,19 +168,19 @@ async def rest_api_suiteql(config, args) -> str:
 
 
 async def rest_api_jsonschema(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     resp = await rest_api.jsonschema(args.record_type)
     return json.dumps_str(resp)
 
 
 async def rest_api_openapi(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     resp = await rest_api.openapi(args.record_types)
     return json.dumps_str(resp)
 
 
 async def rest_api_openapi_serve(config, args) -> str:
-    rest_api = _get_rest_api_or_error(config)
+    rest_api = _get_rest_api_or_error(config, args)
     if len(args.record_types) == 0:
         logger.warning(
             "Fetching OpenAPI spec for ALL known record types... This will take a long "
@@ -252,8 +252,8 @@ def _load_config_or_error(path: str, section: str) -> config.Config:
             raise ex
 
 
-def _get_rest_api_or_error(config: config.Config):
-    ns = netsuite.NetSuite(config)
+def _get_rest_api_or_error(config: config.Config, args: argparse.Namespace):
+    ns = netsuite.NetSuite(config, args=args)
 
     try:
         return ns.rest_api  # Cached property that initializes NetSuiteRestApi
@@ -303,6 +303,13 @@ restlet_parser.add_argument("payload")
 restlet_parser.add_argument("-d", "--deploy", type=int, default=1)
 
 rest_api_parser = subparsers.add_parser("rest-api", aliases=["r"])
+rest_api_parser.add_argument(
+    "-t",
+    "--timeout",
+    type=int,
+    default=60,
+    help="The connection timeout of the request in seconds. Default: 60"
+)
 rest_api_subparser = rest_api_parser.add_subparsers()
 
 rest_api_get_parser = rest_api_subparser.add_parser(

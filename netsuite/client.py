@@ -1,3 +1,4 @@
+import argparse
 import logging
 import re
 import warnings
@@ -6,6 +7,7 @@ from datetime import datetime
 from functools import wraps
 from typing import Any, Callable, Dict, List, Sequence, Union
 from urllib.parse import urlparse
+from operator import attrgetter
 
 import requests
 import zeep
@@ -145,6 +147,7 @@ class NetSuite:
         cache: zeep.cache.Base = None,
         session: requests.Session = None,
         sandbox: bool = None,
+        args: argparse.Namespace = None
     ) -> None:
 
         if sandbox is not None:
@@ -163,6 +166,7 @@ class NetSuite:
         self.__wsdl_url = wsdl_url
         self.__cache = cache
         self.__session = session
+        self.__args = args
 
     @cached_property
     def restlet(self):
@@ -177,6 +181,7 @@ class NetSuite:
                 consumer_secret=self.config.consumer_secret,
                 token_id=self.config.token_id,
                 token_secret=self.config.token_secret,
+                default_timeout=self.args.timeout
             )
         else:
             raise RuntimeError("Rest API is currently only implemented with token auth")
@@ -204,6 +209,10 @@ class NetSuite:
     @property
     def config(self) -> Config:
         return self.__config
+
+    @property
+    def args(self) -> argparse.Namespace:
+        return self.__args
 
     @cached_property
     def hostname(self) -> str:

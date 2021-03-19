@@ -48,7 +48,7 @@ class NetSuiteRestApi:
         consumer_secret: str,
         token_id: str,
         token_secret: str,
-        default_timeout: str = 60,
+        default_timeout: int,
         concurrent_requests: int = 10,
     ):
         if not self.has_required_dependencies():
