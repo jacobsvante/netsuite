@@ -147,7 +147,7 @@ class NetSuite:
         cache: zeep.cache.Base = None,
         session: requests.Session = None,
         sandbox: bool = None,
-        args: argparse.Namespace = None
+        args: argparse.Namespace = argparse.Namespace(timeout=60)
     ) -> None:
 
         if sandbox is not None:
