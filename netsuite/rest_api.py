@@ -57,10 +57,12 @@ class NetSuiteRestApi:
                 "Install with `pip install netsuite[rest_api]`"
             )
         self._account = account
+        self._consumer_key = consumer_key
+        self._consumer_secret = consumer_secret
+        self._token_id = token_id
+        self._token_secret = token_secret
         self._hostname = self._make_hostname()
-        self._auth = self._make_auth(
-            account, consumer_key, consumer_secret, token_id, token_secret
-        )
+        self._auth = self._make_auth()
         self._default_timeout = default_timeout
         self._request_semaphore = asyncio.Semaphore(concurrent_requests)
 
@@ -149,7 +151,7 @@ class NetSuiteRestApi:
         timeout = request_kw.pop("timeout", self._default_timeout)
 
         if "json" in request_kw:
-            request_kw["data"] = json.dumps_str(request_kw.pop("json"))
+            auth = self._make_auth(force_include_body=True)
 
         kw = {**request_kw}
         logger.debug(
@@ -181,20 +183,14 @@ class NetSuiteRestApi:
     def _make_url(self, subpath: str):
         return f"https://{self._hostname}/services/rest{subpath}"
 
-    @staticmethod
-    def _make_auth(
-        account: str,
-        consumer_key: str,
-        consumer_secret: str,
-        token_id: str,
-        token_secret: str,
-    ):
+    def _make_auth(self, force_include_body: bool = False):
         return OAuth1Auth(
-            client_id=consumer_key,
-            client_secret=consumer_secret,
-            token=token_id,
-            token_secret=token_secret,
-            realm=account,
+            client_id=self._consumer_key,
+            client_secret=self._consumer_secret,
+            token=self._token_id,
+            token_secret=self._token_secret,
+            realm=self._account,
+            force_include_body=force_include_body
         )
 
     def _make_default_headers(self):
