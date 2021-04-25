@@ -4,8 +4,6 @@ import random
 from datetime import datetime
 from typing import Dict, TypeVar
 
-from zeep.xsd.valueobjects import CompoundValue
-
 from .config import Config
 
 NetSuite = TypeVar("NetSuite")
@@ -25,7 +23,7 @@ class UserCredentialsPassport(Passport):
         self.email = email
         self.password = password
 
-    def get_element(self) -> CompoundValue:
+    def get_element(self):
         return self.ns.Core.Passport(
             account=self.account,
             email=self.email,
@@ -85,13 +83,13 @@ class TokenPassport(Passport):
         ).digest()
         return base64.b64encode(hashed).decode()
 
-    def _get_signature(self, nonce: str, timestamp: str) -> CompoundValue:
-        return self.ns.Core.TokenPassportSignature(
+    def _get_signature(self, nonce: str, timestamp: str):
+        return self.ns.Core.TokenPassportSignature(  # type: ignore[attr-defined]
             self._get_signature_value(nonce, timestamp),
             algorithm="HMAC-SHA256",
         )
 
-    def get_element(self) -> CompoundValue:
+    def get_element(self):
         nonce = self._generate_nonce()
         timestamp = self._generate_timestamp()
         signature = self._get_signature(nonce, timestamp)
@@ -107,6 +105,11 @@ class TokenPassport(Passport):
 
 def make(ns: NetSuite, config: Config) -> Dict:
     if config.auth_type == "token":
+        assert isinstance(config.account, str)
+        assert isinstance(config.consumer_key, str)
+        assert isinstance(config.consumer_secret, str)
+        assert isinstance(config.token_id, str)
+        assert isinstance(config.token_secret, str)
         token_passport = TokenPassport(
             ns,
             account=config.account,
@@ -117,6 +120,9 @@ def make(ns: NetSuite, config: Config) -> Dict:
         )
         return {"tokenPassport": token_passport.get_element()}
     elif config.auth_type == "credentials":
+        assert isinstance(config.account, str)
+        assert isinstance(config.email, str)
+        assert isinstance(config.password, str)
         passport = UserCredentialsPassport(
             ns,
             account=config.account,

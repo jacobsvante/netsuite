@@ -1,16 +1,15 @@
 import asyncio
 import logging
-from typing import Iterable, Optional
+from typing import Sequence
 
 from . import json
-from .types import JsonDict
 
 try:
     import httpx
 except ImportError:
 
-    class httpx:
-        Response = None  # NOTE: For type hint to work
+    class httpx:  # type: ignore[no-redef]
+        Response = None
 
 
 try:
@@ -48,7 +47,7 @@ class NetSuiteRestApi:
         consumer_secret: str,
         token_id: str,
         token_secret: str,
-        default_timeout: str = 60,
+        default_timeout: int = 60,
         concurrent_requests: int = 10,
     ):
         if not self.has_required_dependencies():
@@ -69,7 +68,7 @@ class NetSuiteRestApi:
     def has_required_dependencies(cls) -> bool:
         return httpx is not None and OAuth1Auth is not None
 
-    async def get(self, subpath: str, **request_kw) -> JsonDict:
+    async def get(self, subpath: str, **request_kw):
         return await self.request("GET", subpath, **request_kw)
 
     async def post(self, subpath: str, **request_kw):
@@ -88,7 +87,7 @@ class NetSuiteRestApi:
     async def delete(self, subpath: str, **request_kw):
         return await self.request("DELETE", subpath, **request_kw)
 
-    async def suiteql(self, q: str, limit: int = 10, offset: int = 0) -> JsonDict:
+    async def suiteql(self, q: str, limit: int = 10, offset: int = 0):
         return await self.request(
             "POST",
             "/query/v1/suiteql",
@@ -97,7 +96,7 @@ class NetSuiteRestApi:
             params={"limit": limit, "offset": offset},
         )
 
-    async def jsonschema(self, record_type: str, **request_kw) -> JsonDict:
+    async def jsonschema(self, record_type: str, **request_kw):
         headers = {
             **request_kw.pop("headers", {}),
             "Accept": "application/schema+json",
@@ -109,7 +108,7 @@ class NetSuiteRestApi:
             **request_kw,
         )
 
-    async def openapi(self, record_types: Iterable[str] = (), **request_kw) -> JsonDict:
+    async def openapi(self, record_types: Sequence[str] = (), **request_kw):
         headers = {
             **request_kw.pop("headers", {}),
             "Accept": "application/swagger+json",
@@ -127,9 +126,7 @@ class NetSuiteRestApi:
             **request_kw,
         )
 
-    async def request(
-        self, method: str, subpath: str, **request_kw
-    ) -> Optional[JsonDict]:
+    async def request(self, method: str, subpath: str, **request_kw):
         resp = await self._raw_request(method, subpath, **request_kw)
 
         if resp.status_code < 200 or resp.status_code > 299:

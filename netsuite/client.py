@@ -4,7 +4,7 @@ import warnings
 from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
-from typing import Any, Callable, Dict, List, Sequence, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Union
 from urllib.parse import urlparse
 
 import requests
@@ -141,7 +141,7 @@ class NetSuite:
 
     def __init__(
         self,
-        config: Union[Config, Dict],
+        config: Union[Config, Dict[str, Any]],
         *,
         version: str = None,
         wsdl_url: str = None,
@@ -216,7 +216,7 @@ class NetSuite:
     def service(self) -> zeep.client.ServiceProxy:
         return self.client.service
 
-    def _make_config(self, values_obj: Dict) -> Config:
+    def _make_config(self, values_obj: Union[Config, Dict[str, Any]]) -> Config:
         if isinstance(values_obj, Config):
             return values_obj
         return Config(**values_obj)
@@ -233,7 +233,7 @@ class NetSuite:
         return self.wsdl_url_tmpl.format(
             underscored_version=self.underscored_version,
             # https://followingnetsuite.wordpress.com/2018/10/18/suitetalk-sandbox-urls-addendum/
-            account_id=self.config.account.lower().replace("_", "-"),
+            account_id=(self.config.account or "").lower().replace("_", "-"),
         )
 
     def _generate_cache(self) -> zeep.cache.Base:
@@ -483,7 +483,7 @@ class NetSuite:
     def SupplyChainTypes(self) -> zeep.client.Factory:
         return self._type_factory("types.supplychain", "lists")
 
-    def request(self, service_name: str, *args, **kw) -> zeep.xsd.ComplexType:
+    def request(self, service_name: str, *args, **kw):
         """
         Make a web service request to NetSuite
 
@@ -504,13 +504,21 @@ class NetSuite:
         self,
         recordType: str,
         *,
-        internalIds: Sequence[int] = (),
-        externalIds: Sequence[str] = (),
+        internalIds: Optional[Sequence[int]] = None,
+        externalIds: Optional[Sequence[str]] = None,
     ) -> List[CompoundValue]:
         """Get a list of records"""
+        if internalIds is None:
+            internalIds = []
+        else:
+            internalIds = list(internalIds)
+        if externalIds is None:
+            externalIds = []
+        else:
+            externalIds = list(externalIds)
 
-        if len(list(internalIds) + list(externalIds)) == 0:
-            raise ValueError("Please specify `internalId` and/or `externalId`")
+        if len(internalIds) + len(externalIds) == 0:
+            return []
 
         return self.request(
             "getList",
@@ -617,12 +625,21 @@ class NetSuite:
     def getItemAvailability(
         self,
         *,
-        internalIds: Sequence[int] = (),
-        externalIds: Sequence[str] = (),
+        internalIds: Optional[Sequence[int]] = None,
+        externalIds: Optional[Sequence[str]] = None,
         lastQtyAvailableChange: datetime = None,
     ) -> List[Dict]:
-        if len(list(internalIds) + list(externalIds)) == 0:
-            raise ValueError("Please specify `internalId` and/or `externalId`")
+        if internalIds is None:
+            internalIds = []
+        else:
+            internalIds = list(internalIds)
+        if externalIds is None:
+            externalIds = []
+        else:
+            externalIds = list(externalIds)
+
+        if len(internalIds) + len(externalIds) == 0:
+            return []
 
         item_filters = [
             {"type": "inventoryItem", "internalId": internalId}

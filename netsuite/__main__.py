@@ -179,7 +179,7 @@ async def rest_api_openapi(config, args) -> str:
     return json.dumps_str(resp)
 
 
-async def rest_api_openapi_serve(config, args) -> str:
+async def rest_api_openapi_serve(config, args):
     rest_api = _get_rest_api_or_error(config)
     if len(args.record_types) == 0:
         logger.warning(
@@ -241,9 +241,9 @@ async def rest_api_openapi_serve(config, args) -> str:
         tempdir.rmdir()
 
 
-def _load_config_or_error(path: str, section: str) -> config.Config:
+def _load_config_or_error(path: str, section: str) -> config.Config:  # type: ignore[return]
     try:
-        return config.from_ini(path=path, section=section)
+        conf = config.from_ini(path=path, section=section)
     except FileNotFoundError:
         parser.error(f"Config file {path} not found")
     except KeyError as ex:
@@ -251,6 +251,8 @@ def _load_config_or_error(path: str, section: str) -> config.Config:
             parser.error(f"No config section `{section}` in file {path}")
         else:
             raise ex
+    else:
+        return conf
 
 
 def _get_rest_api_or_error(config: config.Config):

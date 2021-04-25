@@ -1,5 +1,5 @@
 import configparser
-from typing import Dict
+from typing import Any, Dict, Optional, Tuple
 
 from .constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION, NOT_SET
 
@@ -17,37 +17,37 @@ class Config:
             Dictionary keys/values that will be set as attribute names/values
     """
 
-    auth_type = TOKEN
+    auth_type: str = TOKEN
     """The authentication type to use, either 'token' or 'credentials'"""
 
-    account = None
+    account: Optional[str] = None
     """The NetSuite account ID"""
 
-    consumer_key = None
+    consumer_key: Optional[str] = None
     """The OAuth 1.0 consumer key"""
 
-    consumer_secret = None
+    consumer_secret: Optional[str] = None
     """The OAuth 1.0 consumer secret"""
 
-    token_id = None
+    token_id: Optional[str] = None
     """The OAuth 1.0 token ID"""
 
-    token_secret = None
+    token_secret: Optional[str] = None
     """The OAuth 1.0 token secret"""
 
-    application_id = None
+    application_id: Optional[str] = None
     """Application ID, used with auth_type=credentials"""
 
-    email = None
+    email: Optional[str] = None
     """Account e-mail, used with auth_type=credentials"""
 
-    password = None
+    password: Optional[str] = None
     """Account password, used with auth_type=credentials"""
 
     preferences = None
     """Additional preferences"""
 
-    _settings_mapping = (
+    _settings_mapping: Tuple[Tuple[str, Dict[str, Any]], ...] = (
         (
             "account",
             {"type": str, "required": True},
@@ -86,13 +86,13 @@ class Config:
         ),
     )
 
-    def __init__(self, **opts) -> None:
+    def __init__(self, **opts):
         self._set(opts)
 
     def __contains__(self, key: str) -> bool:
         return hasattr(self, key)
 
-    def _set_auth_type(self, value: str) -> None:
+    def _set_auth_type(self, value: str):
         self._validate_attr("auth_type", value, str, True, {})
         self.auth_type = value
         assert self.auth_type in (TOKEN, CREDENTIALS)
@@ -103,7 +103,7 @@ class Config:
     def is_credentials_auth(self) -> bool:
         return self.auth_type == CREDENTIALS
 
-    def _set(self, dct: Dict[str, object]) -> None:
+    def _set(self, dct: Dict[str, Any]):
         # As other setting validations depend on auth_type we set it first
         auth_type = dct.get("auth_type", self.auth_type)
         self._set_auth_type(auth_type)
@@ -124,8 +124,8 @@ class Config:
             setattr(self, attr, (None if value is NOT_SET else value))
 
     def _validate_attr(
-        self, attr: str, value: object, type_: object, required: bool, opts: dict
-    ) -> None:
+        self, attr: str, value: Any, type_: Any, required: bool, opts: Dict[str, Any]
+    ):
         if required and value is NOT_SET:
             required_for_auth_type = opts.get("required_for_auth_type")
             if required_for_auth_type:
@@ -146,7 +146,7 @@ def from_ini(
     with open(path) as fp:
         iniconf.read_file(fp)
 
-    config_dict = {"preferences": {}}
+    config_dict: Dict[str, Any] = {"preferences": {}}
 
     for key, val in iniconf[section].items():
         if key.startswith("preferences_"):
