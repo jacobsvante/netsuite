@@ -557,7 +557,7 @@ class NetSuite:
                 internalId=internalId,
             )
         else:
-            self.Core.RecordRef(
+            record_ref = self.Core.RecordRef(
                 type=recordType,
                 externalId=externalId,
             )
