@@ -27,7 +27,10 @@ class NetsuiteResponseError(Exception):
 
 
 def WebServiceCall(
-    path: str = None, extract: Callable = None, *, default: Any = constants.NOT_SET,
+    path: str = None,
+    extract: Callable = None,
+    *,
+    default: Any = constants.NOT_SET,
 ) -> Callable:
     """
     Decorator for NetSuite methods returning SOAP responses
@@ -241,7 +244,9 @@ class NetSuite:
 
     def _generate_transport(self) -> zeep.transports.Transport:
         return NetSuiteTransport(
-            self._generate_wsdl_url(), session=self.session, cache=self.cache,
+            self._generate_wsdl_url(),
+            session=self.session,
+            cache=self.cache,
         )
 
     def generate_passport(self) -> Dict:
@@ -274,9 +279,13 @@ class NetSuite:
         )
 
     def _generate_client(self) -> zeep.Client:
-        client = zeep.Client(self.wsdl_url, transport=self.transport,)
+        client = zeep.Client(
+            self.wsdl_url,
+            transport=self.transport,
+        )
         self._set_default_soapheaders(
-            client, preferences=self.config.preferences,
+            client,
+            preferences=self.config.preferences,
         )
         return client
 
@@ -507,18 +516,25 @@ class NetSuite:
             "getList",
             self.Messages.GetListRequest(
                 baseRef=[
-                    self.Core.RecordRef(type=recordType, internalId=internalId,)
+                    self.Core.RecordRef(
+                        type=recordType,
+                        internalId=internalId,
+                    )
                     for internalId in internalIds
                 ]
                 + [
-                    self.Core.RecordRef(type=recordType, externalId=externalId,)
+                    self.Core.RecordRef(
+                        type=recordType,
+                        externalId=externalId,
+                    )
                     for externalId in externalIds
                 ],
             ),
         )
 
     @WebServiceCall(
-        "body.readResponse", extract=lambda resp: resp["record"],
+        "body.readResponse",
+        extract=lambda resp: resp["record"],
     )
     def get(
         self, recordType: str, *, internalId: int = None, externalId: str = None
@@ -528,46 +544,58 @@ class NetSuite:
             raise ValueError("Specify either `internalId` or `externalId`")
 
         if internalId:
-            record_ref = self.Core.RecordRef(type=recordType, internalId=internalId,)
+            record_ref = self.Core.RecordRef(
+                type=recordType,
+                internalId=internalId,
+            )
         else:
             self.Core.RecordRef(
-                type=recordType, externalId=externalId,
+                type=recordType,
+                externalId=externalId,
             )
 
         return self.request("get", baseRef=record_ref)
 
     @WebServiceCall(
-        "body.getAllResult", extract=lambda resp: resp["recordList"]["record"],
+        "body.getAllResult",
+        extract=lambda resp: resp["recordList"]["record"],
     )
     def getAll(self, recordType: str) -> List[CompoundValue]:
         """Get all records of a given type."""
         return self.request(
-            "getAll", record=self.Core.GetAllRecord(recordType=recordType,),
+            "getAll",
+            record=self.Core.GetAllRecord(
+                recordType=recordType,
+            ),
         )
 
     @WebServiceCall(
-        "body.writeResponse", extract=lambda resp: resp["baseRef"],
+        "body.writeResponse",
+        extract=lambda resp: resp["baseRef"],
     )
     def add(self, record: CompoundValue) -> CompoundValue:
         """Insert a single record."""
         return self.request("add", record=record)
 
     @WebServiceCall(
-        "body.writeResponse", extract=lambda resp: resp["baseRef"],
+        "body.writeResponse",
+        extract=lambda resp: resp["baseRef"],
     )
     def update(self, record: CompoundValue) -> CompoundValue:
         """Insert a single record."""
         return self.request("update", record=record)
 
     @WebServiceCall(
-        "body.writeResponse", extract=lambda resp: resp["baseRef"],
+        "body.writeResponse",
+        extract=lambda resp: resp["baseRef"],
     )
     def upsert(self, record: CompoundValue) -> CompoundValue:
         """Upsert a single record."""
         return self.request("upsert", record=record)
 
     @WebServiceCall(
-        "body.searchResult", extract=lambda resp: resp["recordList"]["record"],
+        "body.searchResult",
+        extract=lambda resp: resp["recordList"]["record"],
     )
     def search(self, record: CompoundValue) -> List[CompoundValue]:
         """Search records"""

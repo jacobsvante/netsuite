@@ -222,7 +222,8 @@ async def rest_api_openapi_serve(config, args) -> str:
 </html>"""
     html_file.write_text(html)
     handler_class = functools.partial(
-        http.server.SimpleHTTPRequestHandler, directory=str(tempdir),
+        http.server.SimpleHTTPRequestHandler,
+        directory=str(tempdir),
     )
     logger.info(
         f"NetSuite REST Record API docs available at http://{args.bind}:{args.port}"
@@ -310,7 +311,8 @@ rest_api_get_parser = rest_api_subparser.add_parser(
 )
 rest_api_get_parser.set_defaults(func=rest_api_get)
 rest_api_get_parser.add_argument(
-    "subpath", help="The subpath to GET, e.g. `/record/v1/salesOrder`",
+    "subpath",
+    help="The subpath to GET, e.g. `/record/v1/salesOrder`",
 )
 rest_api_get_parser.add_argument(
     "-q",
@@ -344,7 +346,8 @@ rest_api_post_parser = rest_api_subparser.add_parser(
 )
 rest_api_post_parser.set_defaults(func=rest_api_post)
 rest_api_post_parser.add_argument(
-    "subpath", help="The subpath to POST to, e.g. `/record/v1/salesOrder`",
+    "subpath",
+    help="The subpath to POST to, e.g. `/record/v1/salesOrder`",
 )
 rest_api_post_parser.add_argument("payload_file", type=argparse.FileType("r"))
 
@@ -353,7 +356,8 @@ rest_api_put_parser = rest_api_subparser.add_parser(
 )
 rest_api_put_parser.set_defaults(func=rest_api_put)
 rest_api_put_parser.add_argument(
-    "subpath", help="The subpath to PUT to, e.g. `/record/v1/salesOrder/eid:abc123`",
+    "subpath",
+    help="The subpath to PUT to, e.g. `/record/v1/salesOrder/eid:abc123`",
 )
 rest_api_put_parser.add_argument("payload_file", type=argparse.FileType("r"))
 
@@ -362,7 +366,8 @@ rest_api_patch_parser = rest_api_subparser.add_parser(
 )
 rest_api_patch_parser.set_defaults(func=rest_api_patch)
 rest_api_patch_parser.add_argument(
-    "subpath", help="The subpath to PATCH to, e.g. `/record/v1/salesOrder/eid:abc123`",
+    "subpath",
+    help="The subpath to PATCH to, e.g. `/record/v1/salesOrder/eid:abc123`",
 )
 rest_api_patch_parser.add_argument("payload_file", type=argparse.FileType("r"))
 

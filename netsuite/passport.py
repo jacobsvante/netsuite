@@ -27,7 +27,9 @@ class UserCredentialsPassport(Passport):
 
     def get_element(self) -> CompoundValue:
         return self.ns.Core.Passport(
-            account=self.account, email=self.email, password=self.password,
+            account=self.account,
+            email=self.email,
+            password=self.password,
         )
 
 
@@ -63,7 +65,13 @@ class TokenPassport(Passport):
 
     def _get_signature_message(self, nonce: str, timestamp: str) -> str:
         return "&".join(
-            (self.account, self.consumer_key, self.token_id, nonce, timestamp,)
+            (
+                self.account,
+                self.consumer_key,
+                self.token_id,
+                nonce,
+                timestamp,
+            )
         )
 
     def _get_signature_key(self) -> str:
@@ -79,7 +87,8 @@ class TokenPassport(Passport):
 
     def _get_signature(self, nonce: str, timestamp: str) -> CompoundValue:
         return self.ns.Core.TokenPassportSignature(
-            self._get_signature_value(nonce, timestamp), algorithm="HMAC-SHA256",
+            self._get_signature_value(nonce, timestamp),
+            algorithm="HMAC-SHA256",
         )
 
     def get_element(self) -> CompoundValue:
@@ -109,10 +118,15 @@ def make(ns: NetSuite, config: Config) -> Dict:
         return {"tokenPassport": token_passport.get_element()}
     elif config.auth_type == "credentials":
         passport = UserCredentialsPassport(
-            ns, account=config.account, email=config.email, password=config.password,
+            ns,
+            account=config.account,
+            email=config.email,
+            password=config.password,
         )
         return {
-            "applicationInfo": {"applicationId": config.application_id,},
+            "applicationInfo": {
+                "applicationId": config.application_id,
+            },
             "passport": passport.get_element(),
         }
     else:

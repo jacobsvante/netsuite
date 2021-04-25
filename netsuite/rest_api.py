@@ -73,7 +73,11 @@ class NetSuiteRestApi:
         return await self.request("GET", subpath, **request_kw)
 
     async def post(self, subpath: str, **request_kw):
-        return await self.request("POST", subpath, **request_kw,)
+        return await self.request(
+            "POST",
+            subpath,
+            **request_kw,
+        )
 
     async def put(self, subpath: str, **request_kw):
         return await self.request("PUT", subpath, **request_kw)

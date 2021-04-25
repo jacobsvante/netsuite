@@ -48,15 +48,42 @@ class Config:
     """Additional preferences"""
 
     _settings_mapping = (
-        ("account", {"type": str, "required": True},),
-        ("consumer_key", {"type": str, "required_for_auth_type": TOKEN},),
-        ("consumer_secret", {"type": str, "required_for_auth_type": TOKEN},),
-        ("token_id", {"type": str, "required_for_auth_type": TOKEN},),
-        ("token_secret", {"type": str, "required_for_auth_type": TOKEN},),
-        ("application_id", {"type": str, "required_for_auth_type": CREDENTIALS},),
-        ("email", {"type": str, "required_for_auth_type": CREDENTIALS},),
-        ("password", {"type": str, "required_for_auth_type": CREDENTIALS},),
-        ("preferences", {"type": dict, "required": False, "default": lambda: {}},),
+        (
+            "account",
+            {"type": str, "required": True},
+        ),
+        (
+            "consumer_key",
+            {"type": str, "required_for_auth_type": TOKEN},
+        ),
+        (
+            "consumer_secret",
+            {"type": str, "required_for_auth_type": TOKEN},
+        ),
+        (
+            "token_id",
+            {"type": str, "required_for_auth_type": TOKEN},
+        ),
+        (
+            "token_secret",
+            {"type": str, "required_for_auth_type": TOKEN},
+        ),
+        (
+            "application_id",
+            {"type": str, "required_for_auth_type": CREDENTIALS},
+        ),
+        (
+            "email",
+            {"type": str, "required_for_auth_type": CREDENTIALS},
+        ),
+        (
+            "password",
+            {"type": str, "required_for_auth_type": CREDENTIALS},
+        ),
+        (
+            "preferences",
+            {"type": dict, "required": False, "default": lambda: {}},
+        ),
     )
 
     def __init__(self, **opts) -> None:

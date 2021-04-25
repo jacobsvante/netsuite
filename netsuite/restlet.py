@@ -82,7 +82,10 @@ class NetsuiteRestlet:
         return f"{account_slugified}.restlets.api.netsuite.com"
 
     def _make_restlet_path(self, script_id: int, deploy: int = 1):
-        return self._restlet_path_tmpl.format(script_id=script_id, deploy=deploy,)
+        return self._restlet_path_tmpl.format(
+            script_id=script_id,
+            deploy=deploy,
+        )
 
     def _make_url(self, script_id: int, deploy: int = 1):
         path = self._make_restlet_path(script_id=script_id, deploy=deploy)

@@ -4,7 +4,7 @@ __all__ = ("cached_property", "raise_for_status_with_body")
 
 
 class cached_property:
-    """ Decorator that turns an instance method into a cached property
+    """Decorator that turns an instance method into a cached property
     From https://speakerdeck.com/u/mitsuhiko/p/didntknow, slide #69
     """
 
