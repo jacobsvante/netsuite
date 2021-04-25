@@ -1,0 +1,638 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.3">
+    
+    
+      
+        <title>netsuite</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.e35208c4.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ef6f36e2.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+  
+    
+    <script>function __prefix(e){return new URL(".",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#netsuite" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="netsuite" class="md-header__button md-logo" aria-label="netsuite" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            netsuite
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              netsuite
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="netsuite" class="md-nav__button md-logo" aria-label="netsuite" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    netsuite
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          netsuite
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        netsuite
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    CLI
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest-api-make-requests-to-netsuite-rest-api" class="md-nav__link">
+    rest-api - Make requests to NetSuite REST API
+  </a>
+  
+    <nav class="md-nav" aria-label="rest-api - Make requests to NetSuite REST API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-get" class="md-nav__link">
+    netsuite rest-api get
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-post" class="md-nav__link">
+    netsuite rest-api post
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-put" class="md-nav__link">
+    netsuite rest-api put
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-patch" class="md-nav__link">
+    netsuite rest-api patch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-delete" class="md-nav__link">
+    netsuite rest-api delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-jsonschema" class="md-nav__link">
+    netsuite rest-api jsonschema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-openapi" class="md-nav__link">
+    netsuite rest-api openapi
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-openapi-serve" class="md-nav__link">
+    netsuite rest-api openapi-serve
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interact-interact-with-soaprest-web-services-and-restlets" class="md-nav__link">
+    interact - Interact with SOAP/REST web services and restlets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restlet-make-requests-to-restlets" class="md-nav__link">
+    restlet - Make requests to restlets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#developers" class="md-nav__link">
+    Developers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    CLI
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    Configuration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rest-api-make-requests-to-netsuite-rest-api" class="md-nav__link">
+    rest-api - Make requests to NetSuite REST API
+  </a>
+  
+    <nav class="md-nav" aria-label="rest-api - Make requests to NetSuite REST API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-get" class="md-nav__link">
+    netsuite rest-api get
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-post" class="md-nav__link">
+    netsuite rest-api post
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-put" class="md-nav__link">
+    netsuite rest-api put
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-patch" class="md-nav__link">
+    netsuite rest-api patch
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-delete" class="md-nav__link">
+    netsuite rest-api delete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-jsonschema" class="md-nav__link">
+    netsuite rest-api jsonschema
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-openapi" class="md-nav__link">
+    netsuite rest-api openapi
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#netsuite-rest-api-openapi-serve" class="md-nav__link">
+    netsuite rest-api openapi-serve
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interact-interact-with-soaprest-web-services-and-restlets" class="md-nav__link">
+    interact - Interact with SOAP/REST web services and restlets
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restlet-make-requests-to-restlets" class="md-nav__link">
+    restlet - Make requests to restlets
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#developers" class="md-nav__link">
+    Developers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="netsuite">netsuite</h1>
+<p>Make requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets</p>
+<h2 id="installation">Installation</h2>
+<p>Programmatic use only:</p>
+<pre><code>pip install netsuite
+</code></pre>
+<p>With NetSuite SuiteTalk REST Web Services API support:</p>
+<pre><code>pip install netsuite[rest_api]
+</code></pre>
+<p>With CLI support:</p>
+<pre><code>pip install netsuite[cli]
+</code></pre>
+<p>With all features:</p>
+<pre><code>pip install netsuite[all]
+</code></pre>
+<h2 id="cli">CLI</h2>
+<h3 id="configuration">Configuration</h3>
+<p>To use the command line utilities you must add a config file with a section in this format:</p>
+<pre><code class="language-ini">[netsuite]
+auth_type = token
+account = 123456
+consumer_key = 789123
+consumer_secret = 456789
+token_id = 012345
+token_secret = 678901
+</code></pre>
+<p>You can add multiple sections like this. The <code>netsuite</code> section will be read by default, but can be overridden using the <code>-c</code> flag.</p>
+<p>The default location that will be read is <code>~/.config/netsuite.ini</code>. This can overriden with the <code>-p</code> flag.</p>
+<p>Append <code>--help</code> to the commands to see full documentation.</p>
+<h3 id="rest-api-make-requests-to-netsuite-rest-api"><code>rest-api</code> - Make requests to NetSuite REST API</h3>
+<p>See the NetSuite help center for info on how to use the REST API. The <code>netsuite rest-api openapi-serve</code> command is also a big help.</p>
+<h4 id="netsuite-rest-api-get"><code>netsuite rest-api get</code></h4>
+<p>List endpoint examples:</p>
+<pre><code>$ netsuite rest-api get /record/v1/customer
+</code></pre>
+<pre><code>$ netsuite rest-api get /record/v1/invoice --limit 10 --offset 30
+</code></pre>
+<pre><code>$ netsuite rest-api get /record/v1/salesOrder --query 'email IS &quot;john.doe@example.com&quot;'
+</code></pre>
+<p>Detail endpoint examples:</p>
+<pre><code>$ netsuite rest-api get /record/v1/salesOrder/1337
+</code></pre>
+<pre><code>$ netsuite rest-api get /record/v1/invoice/123 --expandSubResources
+</code></pre>
+<h4 id="netsuite-rest-api-post"><code>netsuite rest-api post</code></h4>
+<p>Examples:</p>
+<pre><code>$ cat ~/customer-no-1-data.json | netsuite rest-api post /record/v1/customer -
+</code></pre>
+<h4 id="netsuite-rest-api-put"><code>netsuite rest-api put</code></h4>
+<p>Examples:</p>
+<pre><code>$ cat ~/customer-no-1-data.json | netsuite rest-api put /record/v1/customer/123 -
+</code></pre>
+<h4 id="netsuite-rest-api-patch"><code>netsuite rest-api patch</code></h4>
+<p>Examples:</p>
+<pre><code>$ cat ~/changed-customer-data.json | netsuite rest-api patch /record/v1/customer/123 -
+</code></pre>
+<h4 id="netsuite-rest-api-delete"><code>netsuite rest-api delete</code></h4>
+<p>Examples:</p>
+<pre><code>$ netsuite rest-api delete /record/v1/customer/123
+</code></pre>
+<h4 id="netsuite-rest-api-jsonschema"><code>netsuite rest-api jsonschema</code></h4>
+<p>Examples:</p>
+<pre><code>$ netsuite rest-api jsonschema salesOrder
+{&quot;type&quot;:&quot;object&quot;,&quot;properties&quot;:...
+</code></pre>
+<h4 id="netsuite-rest-api-openapi"><code>netsuite rest-api openapi</code></h4>
+<p>Examples:</p>
+<pre><code>$ netsuite rest-api openapi salesOrder customer invoice
+{&quot;openapi&quot;:&quot;3.0.1&quot;,&quot;info&quot;:{&quot;title&quot;:&quot;NetSuite REST Record API&quot;...
+</code></pre>
+<h4 id="netsuite-rest-api-openapi-serve"><code>netsuite rest-api openapi-serve</code></h4>
+<p>Start a server that fetches and lists the OpenAPI spec for the given record types, using <a href="https://swagger.io/tools/swagger-ui/">Swagger UI</a>. Defaults to port 8000.</p>
+<p>Examples:</p>
+<pre><code>$ netsuite rest-api openapi-serve customer salesOrder
+INFO:netsuite:Fetching OpenAPI spec for record types customer, salesOrder...
+INFO:netsuite:NetSuite REST API docs available at http://127.0.0.1:8001
+</code></pre>
+<p>It's also possible to fetch the OpenAPI spec for all known record types. This will however take a long time (60+ seconds).</p>
+<pre><code>$ netsuite rest-api openapi-serve
+WARNING:netsuite:Fetching OpenAPI spec for ALL known record types... This will take a long time! (Consider providing only the record types of interest by passing their names to this command as positional arguments)
+INFO:netsuite:NetSuite REST API docs available at http://127.0.0.1:8001
+</code></pre>
+<h3 id="interact-interact-with-soaprest-web-services-and-restlets"><code>interact</code> - Interact with SOAP/REST web services and restlets</h3>
+<p>Starts an IPython REPL where you can interact with the client.</p>
+<pre><code>$ netsuite interact
+Welcome to Netsuite WS client interactive mode
+Available vars:
+    `ns` - NetSuite client
+
+Example usage:
+    ws_results = ns.getList('customer', internalIds=[1337])
+    restlet_results = ns.restlet.request(987)
+    rest_api_results = await ns.rest_api.get(&quot;/record/v1/salesOrder&quot;)
+
+In [1]: rest_api_results = await ns.rest_api.get(&quot;
+</code></pre>
+<h3 id="restlet-make-requests-to-restlets"><code>restlet</code> - Make requests to restlets</h3>
+<pre><code>$ echo '{&quot;savedSearchId&quot;: 987}' | netsuite restlet 123 -
+</code></pre>
+<h2 id="developers">Developers</h2>
+<p>To run the tests, do:</p>
+<ol>
+<li>Install Poetry (https://python-poetry.org/docs/)</li>
+<li>Install dependencies <code>poetry install --extras all</code></li>
+<li>Run tests: <code>poetry run pytest</code></li>
+</ol>
+<p>Before committing and publishing a pull request, do:</p>
+<ol>
+<li>Install pre-commit globally: <code>pip install pre-commit</code></li>
+<li>Run <code>pre-commit install</code> to install the Git hook</li>
+</ol>
+<p><a href="https://pre-commit.com/">pre-commit</a> will ensure that all code is formatted per our conventions. Failing to run this will probably make the CI tests fail in the PR instead.</p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.4ea5477f.min.js"></script>
+      
+    
+  </body>
+</html>
