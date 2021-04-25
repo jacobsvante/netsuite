@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing
 
+## [0.6.2](https://github.com/jmagnusson/netsuite/compare/v0.6.1...v0.6.2) - 2021-04-25
+
+### Fixed
+- `NetSuiteRestApi` no longer requires a running asyncio loop to be instantiated
+
 ## [0.6.1](https://github.com/jmagnusson/netsuite/compare/v0.6.0...v0.6.1) - 2021-04-25
 
 ### Fixed

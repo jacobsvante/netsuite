@@ -3,6 +3,7 @@ import logging
 from typing import Sequence
 
 from . import json
+from .util import cached_property
 
 try:
     import httpx
@@ -62,7 +63,13 @@ class NetSuiteRestApi:
         self._token_secret = token_secret
         self._hostname = self._make_hostname()
         self._default_timeout = default_timeout
-        self._request_semaphore = asyncio.Semaphore(concurrent_requests)
+        self._concurrent_requests = concurrent_requests
+
+    @cached_property
+    def request_semaphore(self) -> asyncio.Semaphore:
+        # NOTE: Shouldn't be put in __init__ as we might not have a running
+        #       event loop at that time.
+        return asyncio.Semaphore(self._concurrent_requests)
 
     @classmethod
     def has_required_dependencies(cls) -> bool:
@@ -157,7 +164,7 @@ class NetSuiteRestApi:
             f"Making {method.upper()} request to {url}. Keyword arguments: {kw}"
         )
 
-        async with self._request_semaphore:
+        async with self.request_semaphore:
             async with httpx.AsyncClient() as c:
                 resp = await c.request(
                     method=method,
