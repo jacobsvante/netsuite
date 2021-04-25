@@ -62,7 +62,6 @@ class NetSuiteRestApi:
         self._token_id = token_id
         self._token_secret = token_secret
         self._hostname = self._make_hostname()
-        self._auth = self._make_auth()
         self._default_timeout = default_timeout
         self._request_semaphore = asyncio.Semaphore(concurrent_requests)
 
@@ -147,11 +146,10 @@ class NetSuiteRestApi:
         url = self._make_url(subpath)
         headers = {**self._make_default_headers(), **request_kw.pop("headers", {})}
 
-        auth = request_kw.pop("auth", self._auth)
         timeout = request_kw.pop("timeout", self._default_timeout)
 
         if "json" in request_kw:
-            auth = self._make_auth(force_include_body=True)
+            request_kw["data"] = json.dumps_str(request_kw.pop("json"))
 
         kw = {**request_kw}
         logger.debug(
@@ -164,7 +162,7 @@ class NetSuiteRestApi:
                     method=method,
                     url=url,
                     headers=headers,
-                    auth=auth,
+                    auth=self._make_auth(),
                     timeout=timeout,
                     **kw,
                 )
@@ -183,14 +181,14 @@ class NetSuiteRestApi:
     def _make_url(self, subpath: str):
         return f"https://{self._hostname}/services/rest{subpath}"
 
-    def _make_auth(self, force_include_body: bool = False):
+    def _make_auth(self):
         return OAuth1Auth(
             client_id=self._consumer_key,
             client_secret=self._consumer_secret,
             token=self._token_id,
             token_secret=self._token_secret,
             realm=self._account,
-            force_include_body=force_include_body
+            force_include_body=True,
         )
 
     def _make_default_headers(self):
