@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing
 
+## [0.6.3](https://github.com/jmagnusson/netsuite/compare/v0.6.2...v0.6.3) - 2021-04-26
+
+### Added
+- Ability to supply custom headers to REST API requests made from CLI via "-H/--header" flag
+- Support custom payload, headers and params in suiteql REST API method
+
 ## [0.6.2](https://github.com/jmagnusson/netsuite/compare/v0.6.1...v0.6.2) - 2021-04-25
 
 ### Fixed

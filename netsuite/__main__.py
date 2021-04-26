@@ -8,6 +8,7 @@ import logging.config
 import pathlib
 import sys
 import tempfile
+from typing import Dict, List, Optional, Union
 
 import IPython
 import pkg_resources
@@ -18,6 +19,8 @@ from netsuite import config, json
 from netsuite.constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION
 
 logger = logging.getLogger("netsuite")
+
+ParsedHeaders = Dict[str, Union[List[str], str]]
 
 
 def main():
@@ -112,7 +115,9 @@ async def rest_api_get(config, args) -> str:
         params["expand"] = ",".join(args.expand)
     if args.query is not None:
         params["q"] = args.query
-    resp = await rest_api.get(args.subpath, params=params)
+    resp = await rest_api.get(
+        args.subpath, params=params, headers=_parse_headers_arg(args.header)
+    )
     return json.dumps_str(resp)
 
 
@@ -123,7 +128,9 @@ async def rest_api_post(config, args) -> str:
 
     payload = json.loads(payload_str)
 
-    resp = await rest_api.post(args.subpath, json=payload)
+    resp = await rest_api.post(
+        args.subpath, json=payload, headers=_parse_headers_arg(args.header)
+    )
     return json.dumps_str(resp)
 
 
@@ -134,7 +141,9 @@ async def rest_api_put(config, args) -> str:
 
     payload = json.loads(payload_str)
 
-    resp = await rest_api.put(args.subpath, json=payload)
+    resp = await rest_api.put(
+        args.subpath, json=payload, headers=_parse_headers_arg(args.header)
+    )
     return json.dumps_str(resp)
 
 
@@ -145,14 +154,15 @@ async def rest_api_patch(config, args) -> str:
 
     payload = json.loads(payload_str)
 
-    resp = await rest_api.patch(args.subpath, json=payload)
+    resp = await rest_api.patch(
+        args.subpath, json=payload, headers=_parse_headers_arg(args.header)
+    )
     return json.dumps_str(resp)
 
 
 async def rest_api_delete(config, args) -> str:
     rest_api = _get_rest_api_or_error(config)
-
-    resp = await rest_api.delete(args.subpath)
+    resp = await rest_api.delete(args.subpath, headers=_parse_headers_arg(args.header))
     return json.dumps_str(resp)
 
 
@@ -162,7 +172,12 @@ async def rest_api_suiteql(config, args) -> str:
     with args.q_file as fh:
         q = fh.read()
 
-    resp = await rest_api.suiteql(q=q, limit=args.limit, offset=args.offset)
+    resp = await rest_api.suiteql(
+        q=q,
+        limit=args.limit,
+        offset=args.offset,
+        headers=_parse_headers_arg(args.header),
+    )
 
     return json.dumps_str(resp)
 
@@ -241,29 +256,6 @@ async def rest_api_openapi_serve(config, args):
         tempdir.rmdir()
 
 
-def _load_config_or_error(path: str, section: str) -> config.Config:  # type: ignore[return]
-    try:
-        conf = config.from_ini(path=path, section=section)
-    except FileNotFoundError:
-        parser.error(f"Config file {path} not found")
-    except KeyError as ex:
-        if ex.args == (section,):
-            parser.error(f"No config section `{section}` in file {path}")
-        else:
-            raise ex
-    else:
-        return conf
-
-
-def _get_rest_api_or_error(config: config.Config):
-    ns = netsuite.NetSuite(config)
-
-    try:
-        return ns.rest_api  # Cached property that initializes NetSuiteRestApi
-    except RuntimeError as ex:
-        parser.error(str(ex))
-
-
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument(
     "-l",
@@ -308,127 +300,227 @@ restlet_parser.add_argument("-d", "--deploy", type=int, default=1)
 rest_api_parser = subparsers.add_parser("rest-api", aliases=["r"])
 rest_api_subparser = rest_api_parser.add_subparsers()
 
-rest_api_get_parser = rest_api_subparser.add_parser(
-    "get", description="Make a GET request to NetSuite REST web services"
-)
-rest_api_get_parser.set_defaults(func=rest_api_get)
-rest_api_get_parser.add_argument(
-    "subpath",
-    help="The subpath to GET, e.g. `/record/v1/salesOrder`",
-)
-rest_api_get_parser.add_argument(
-    "-q",
-    "--query",
-    help="Search query used to filter results. See NetSuite help center for syntax information. Only works for list endpoints e.g. /record/v1/customer",
-)
-rest_api_get_parser.add_argument(
-    "-e",
-    "--expandSubResources",
-    action="store_true",
-    help="Automatically expand all sublists, sublist lines and subrecords on this record. Only works for detail endpoints e.g. /record/v1/invoice/123.",
-)
-rest_api_get_parser.add_argument("-l", "--limit", type=int)
-rest_api_get_parser.add_argument("-o", "--offset", type=int)
-rest_api_get_parser.add_argument(
-    "-f",
-    "--fields",
-    metavar="field",
-    nargs="*",
-    help="Only include the given fields in response",
-)
-rest_api_get_parser.add_argument(
-    "-E",
-    "--expand",
-    nargs="*",
-    help="Expand the given sublist lines and subrecords on this record. Only works for detail endpoints e.g. /record/v1/invoice/123.",
-)
 
-rest_api_post_parser = rest_api_subparser.add_parser(
-    "post", description="Make a POST request to NetSuite REST web services"
-)
-rest_api_post_parser.set_defaults(func=rest_api_post)
-rest_api_post_parser.add_argument(
-    "subpath",
-    help="The subpath to POST to, e.g. `/record/v1/salesOrder`",
-)
-rest_api_post_parser.add_argument("payload_file", type=argparse.FileType("r"))
-
-rest_api_put_parser = rest_api_subparser.add_parser(
-    "put", description="Make a PUT request to NetSuite REST web services"
-)
-rest_api_put_parser.set_defaults(func=rest_api_put)
-rest_api_put_parser.add_argument(
-    "subpath",
-    help="The subpath to PUT to, e.g. `/record/v1/salesOrder/eid:abc123`",
-)
-rest_api_put_parser.add_argument("payload_file", type=argparse.FileType("r"))
-
-rest_api_patch_parser = rest_api_subparser.add_parser(
-    "patch", description="Make a PATCH request to NetSuite REST web services"
-)
-rest_api_patch_parser.set_defaults(func=rest_api_patch)
-rest_api_patch_parser.add_argument(
-    "subpath",
-    help="The subpath to PATCH to, e.g. `/record/v1/salesOrder/eid:abc123`",
-)
-rest_api_patch_parser.add_argument("payload_file", type=argparse.FileType("r"))
-
-rest_api_delete_parser = rest_api_subparser.add_parser(
-    "delete", description="Make a delete request to NetSuite REST web services"
-)
-rest_api_delete_parser.set_defaults(func=rest_api_delete)
-rest_api_delete_parser.add_argument(
-    "subpath",
-    help="The subpath for the DELETE request, e.g. `/record/v1/salesOrder/eid:abc123`",
-)
-
-rest_api_suiteql_parser = rest_api_subparser.add_parser(
-    "suiteql", description="Make a SuiteQL request to NetSuite REST web services"
-)
-rest_api_suiteql_parser.set_defaults(func=rest_api_suiteql)
-rest_api_suiteql_parser.add_argument(
-    "q_file", type=argparse.FileType("r"), help="File containing a SuiteQL query"
-)
-rest_api_suiteql_parser.add_argument("-l", "--limit", type=int, default=10)
-rest_api_suiteql_parser.add_argument("-o", "--offset", type=int, default=0)
-
-rest_api_jsonschema_parser = rest_api_subparser.add_parser(
-    "jsonschema", description="Retrieve JSON Schema for the given record type"
-)
-rest_api_jsonschema_parser.set_defaults(func=rest_api_jsonschema)
-rest_api_jsonschema_parser.add_argument(
-    "record_type", help="The record type to get JSONSchema spec for"
-)
-
-rest_api_openapi_parser = rest_api_subparser.add_parser(
-    "openapi",
-    aliases=["oas"],
-    description="Retrieve OpenAPI spec for the given record types",
-)
-rest_api_openapi_parser.set_defaults(func=rest_api_openapi)
-rest_api_openapi_parser.add_argument(
-    "record_types",
-    metavar="record_type",
-    nargs="+",
-    help="The record type(s) to get OpenAPI spec for",
-)
+def _add_rest_api_parsers():
+    _add_rest_api_get_parser()
+    _add_rest_api_post_parser()
+    _add_rest_api_put_parser()
+    _add_rest_api_patch_parser()
+    _add_rest_api_delete_parser()
+    _add_rest_api_suiteql_parser()
+    _add_rest_api_jsonschema_parser()
+    _add_rest_api_openapi_parser()
+    _add_rest_api_openapi_serve_parser()
 
 
-rest_api_openapi_parser = rest_api_subparser.add_parser(
-    "openapi-serve",
-    aliases=["oas-serve"],
-    description="Start a HTTP server on localhost serving the OpenAPI spec via Swagger UI",
-)
-rest_api_openapi_parser.set_defaults(func=rest_api_openapi_serve)
-rest_api_openapi_parser.add_argument(
-    "record_types",
-    metavar="record_type",
-    nargs="*",
-    help="The record type(s) to get OpenAPI spec for. If not provided the OpenAPI spec for all known record types will be retrieved.",
-)
-rest_api_openapi_parser.add_argument(
-    "-p", "--port", default=8000, type=int, help="The port to listen to"
-)
-rest_api_openapi_parser.add_argument(
-    "-b", "--bind", default="127.0.0.1", help="The host to bind to"
-)
+def _add_rest_api_get_parser():
+    p = rest_api_subparser.add_parser(
+        "get", description="Make a GET request to NetSuite REST web services"
+    )
+    p.set_defaults(func=rest_api_get)
+    p.add_argument(
+        "subpath",
+        help="The subpath to GET, e.g. `/record/v1/salesOrder`",
+    )
+    p.add_argument(
+        "-q",
+        "--query",
+        help="Search query used to filter results. See NetSuite help center for syntax information. Only works for list endpoints e.g. /record/v1/customer",
+    )
+    p.add_argument(
+        "-e",
+        "--expandSubResources",
+        action="store_true",
+        help="Automatically expand all sublists, sublist lines and subrecords on this record. Only works for detail endpoints e.g. /record/v1/invoice/123.",
+    )
+    p.add_argument("-l", "--limit", type=int)
+    p.add_argument("-o", "--offset", type=int)
+    p.add_argument(
+        "-f",
+        "--fields",
+        metavar="field",
+        nargs="*",
+        help="Only include the given fields in response",
+    )
+    p.add_argument(
+        "-E",
+        "--expand",
+        nargs="*",
+        help="Expand the given sublist lines and subrecords on this record. Only works for detail endpoints e.g. /record/v1/invoice/123.",
+    )
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_post_parser():
+    p = rest_api_subparser.add_parser(
+        "post", description="Make a POST request to NetSuite REST web services"
+    )
+    p.set_defaults(func=rest_api_post)
+    p.add_argument(
+        "subpath",
+        help="The subpath to POST to, e.g. `/record/v1/salesOrder`",
+    )
+    p.add_argument("payload_file", type=argparse.FileType("r"))
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_put_parser():
+    p = rest_api_subparser.add_parser(
+        "put", description="Make a PUT request to NetSuite REST web services"
+    )
+    p.set_defaults(func=rest_api_put)
+    p.add_argument(
+        "subpath",
+        help="The subpath to PUT to, e.g. `/record/v1/salesOrder/eid:abc123`",
+    )
+    p.add_argument("payload_file", type=argparse.FileType("r"))
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_patch_parser():
+    p = rest_api_subparser.add_parser(
+        "patch", description="Make a PATCH request to NetSuite REST web services"
+    )
+    p.set_defaults(func=rest_api_patch)
+    p.add_argument(
+        "subpath",
+        help="The subpath to PATCH to, e.g. `/record/v1/salesOrder/eid:abc123`",
+    )
+    p.add_argument("payload_file", type=argparse.FileType("r"))
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_delete_parser():
+    p = rest_api_subparser.add_parser(
+        "delete", description="Make a delete request to NetSuite REST web services"
+    )
+    p.set_defaults(func=rest_api_delete)
+    p.add_argument(
+        "subpath",
+        help="The subpath for the DELETE request, e.g. `/record/v1/salesOrder/eid:abc123`",
+    )
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_suiteql_parser():
+    p = rest_api_subparser.add_parser(
+        "suiteql", description="Make a SuiteQL request to NetSuite REST web services"
+    )
+    p.set_defaults(func=rest_api_suiteql)
+    p.add_argument(
+        "q_file", type=argparse.FileType("r"), help="File containing a SuiteQL query"
+    )
+    p.add_argument("-l", "--limit", type=int, default=10)
+    p.add_argument("-o", "--offset", type=int, default=0)
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_jsonschema_parser():
+    p = rest_api_subparser.add_parser(
+        "jsonschema", description="Retrieve JSON Schema for the given record type"
+    )
+    p.set_defaults(func=rest_api_jsonschema)
+    p.add_argument("record_type", help="The record type to get JSONSchema spec for")
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_openapi_parser():
+    p = rest_api_subparser.add_parser(
+        "openapi",
+        aliases=["oas"],
+        description="Retrieve OpenAPI spec for the given record types",
+    )
+    p.set_defaults(func=rest_api_openapi)
+    p.add_argument(
+        "record_types",
+        metavar="record_type",
+        nargs="+",
+        help="The record type(s) to get OpenAPI spec for",
+    )
+    _add_rest_api_headers_arg(p)
+
+
+def _add_rest_api_openapi_serve_parser():
+    p = rest_api_subparser.add_parser(
+        "openapi-serve",
+        aliases=["oas-serve"],
+        description="Start a HTTP server on localhost serving the OpenAPI spec via Swagger UI",
+    )
+    p.set_defaults(func=rest_api_openapi_serve)
+    p.add_argument(
+        "record_types",
+        metavar="record_type",
+        nargs="*",
+        help="The record type(s) to get OpenAPI spec for. If not provided the OpenAPI spec for all known record types will be retrieved.",
+    )
+    p.add_argument("-p", "--port", default=8000, type=int, help="The port to listen to")
+    p.add_argument("-b", "--bind", default="127.0.0.1", help="The host to bind to")
+
+
+def _load_config_or_error(path: str, section: str) -> config.Config:  # type: ignore[return]
+    try:
+        conf = config.from_ini(path=path, section=section)
+    except FileNotFoundError:
+        parser.error(f"Config file {path} not found")
+    except KeyError as ex:
+        if ex.args == (section,):
+            parser.error(f"No config section `{section}` in file {path}")
+        else:
+            raise ex
+    else:
+        return conf
+
+
+def _get_rest_api_or_error(config: config.Config):
+    ns = netsuite.NetSuite(config)
+
+    try:
+        return ns.rest_api  # Cached property that initializes NetSuiteRestApi
+    except RuntimeError as ex:
+        parser.error(str(ex))
+
+
+def _parse_headers_arg(
+    headers: Optional[List[str]],
+) -> ParsedHeaders:
+    out: ParsedHeaders = {}
+
+    if headers is None:
+        headers = []
+
+    for raw_header in headers:
+        err = False
+        try:
+            k, v = raw_header.split(":", maxsplit=1)
+        except ValueError:
+            err = True
+        else:
+            k, v = (k.strip(), v.strip())
+            if not k or not v:
+                err = True
+        if err:
+            parser.error(
+                f"Invalid header: `{raw_header}``. Should have format: `NAME: VALUE`"
+            )
+        else:
+            existing = out.get(k)
+            if existing:
+                if isinstance(existing, list):
+                    existing.append(v)
+                else:
+                    out[k] = [existing, v]
+            else:
+                out[k] = v
+    return out
+
+
+def _add_rest_api_headers_arg(parser_: argparse.ArgumentParser):
+    parser_.add_argument(
+        "-H",
+        "--header",
+        action="append",
+        help="Headers to append. Can be specified multiple time and the format for each is `KEY: VALUE`",
+    )
+
+
+_add_rest_api_parsers()

@@ -94,19 +94,20 @@ class NetSuiteRestApi:
     async def delete(self, subpath: str, **request_kw):
         return await self.request("DELETE", subpath, **request_kw)
 
-    async def suiteql(self, q: str, limit: int = 10, offset: int = 0):
+    async def suiteql(self, q: str, limit: int = 10, offset: int = 0, **request_kw):
         return await self.request(
             "POST",
             "/query/v1/suiteql",
-            headers={"Prefer": "transient"},
-            json={"q": q},
-            params={"limit": limit, "offset": offset},
+            headers={"Prefer": "transient", **request_kw.pop("headers", {})},
+            json={"q": q, **request_kw.pop("json", {})},
+            params={"limit": limit, "offset": offset, **request_kw.pop("params", {})},
+            **request_kw,
         )
 
     async def jsonschema(self, record_type: str, **request_kw):
         headers = {
-            **request_kw.pop("headers", {}),
             "Accept": "application/schema+json",
+            **request_kw.pop("headers", {}),
         }
         return await self.request(
             "GET",
@@ -117,8 +118,8 @@ class NetSuiteRestApi:
 
     async def openapi(self, record_types: Sequence[str] = (), **request_kw):
         headers = {
-            **request_kw.pop("headers", {}),
             "Accept": "application/swagger+json",
+            **request_kw.pop("headers", {}),
         }
         params = request_kw.pop("params", {})
 
