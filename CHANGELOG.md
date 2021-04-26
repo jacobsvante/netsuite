@@ -32,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Documentation site
 
+### Removed
+- Python 3.6 support
+
 ### Changed
 - Upgrade to httpx ~0.17
 - Use poetry for package management
