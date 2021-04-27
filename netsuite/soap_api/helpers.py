@@ -1,4 +1,4 @@
-import zeep.helpers
+from . import zeep
 
 
 def to_builtin(obj, *, target_cls=dict):

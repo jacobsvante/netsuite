@@ -8,6 +8,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing
 
+## [0.7.0](https://github.com/jmagnusson/netsuite/compare/v0.6.3...v0.7.0) - 2021-04-26
+
+This release breaks a lot of things. Please read carefully.
+
+### Changed
+- The SOAP API has been changed to use async
+- Move NetSuite version to 2021.1
+- The `netsuite.restlet.NetsuiteRestlet` interface is now asynchronous
+- SOAP Web Services support is no longer included in the default install, please use `netsuite[soap_api]` (unfortunately `zeep` pulls in a lot of other dependencies)
+- REST API and Restlet are now supported with the default install
+- The `netsuite.client.NetSuite` class is now just a thin layer around each of the different API types (SOAP, REST, Restlets)
+- `netsuite.restlet.NetsuiteRestlet` has been renamed to `netsuite.restlet.NetSuiteRestlet`
+
+### Added
+- `netsuite.restlet.NetSuiteRestlet` now support all four HTTP verbs GET, POST, PUT & DELETE via dedicated functions `.get`, `.post`, `.put` & `.delete`
+- Dependency [pydantic](https://pydantic-docs.helpmanual.io/) has been added to help with config validation
+
+### Removed
+- Authentication via User credentials (will no longer work from NetSuite 2021.2 release)
+- `netsuite.restlet.NetSuiteRestApi.request` and `netsuite.restlet.NetSuiteRestlet.request` no longer exists - use each dedicated "verb method" instead
+- Dead code for setting SOAP preferences
+- CLI sub-command aliases `i` (interact) and `r` (rest-api) have been removed to avoid confusion
+
 ## [0.6.3](https://github.com/jmagnusson/netsuite/compare/v0.6.2...v0.6.3) - 2021-04-26
 
 ### Added

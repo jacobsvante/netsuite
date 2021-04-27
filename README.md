@@ -8,25 +8,29 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
 [![PyPI status (alpha/beta/stable)](https://img.shields.io/pypi/status/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 
-Make requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
+Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
 
 ## Beta quality disclaimer
 
-The project's API is still very much in fluctuation. Please consider pinning your dependency to this package to a minor version (e.g. `poetry add netsuite~0.6` or `pipenv install netsuite~=0.6.0`), which is guaranteed to have no breaking changes. From 1.0 and forward we will keep a stable API.
+The project's API is still very much in fluctuation. Please consider pinning your dependency to this package to a minor version (e.g. `poetry add netsuite~0.7` or `pipenv install netsuite~=0.7.0`), which is guaranteed to have no breaking changes. From 1.0 and forward we will keep a stable API.
 
 ## Installation
 
-Programmatic use only:
+With default features (REST API + Restlet support):
 
     pip install netsuite
 
-With NetSuite SuiteTalk REST Web Services API support:
+With Web Services SOAP API support:
 
-    pip install netsuite[rest_api]
+    pip install netsuite[soap_api]
 
 With CLI support:
 
     pip install netsuite[cli]
+
+With `orjson` package (faster JSON handling):
+
+    pip install netsuite[orjson]
 
 With all features:
 

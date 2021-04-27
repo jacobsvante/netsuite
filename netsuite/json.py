@@ -5,20 +5,27 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Type, Union
 from uuid import UUID
 
-import orjson as _orjson
-
 __all__ = ("dumps", "loads")
 
-loads = _orjson.loads
+try:
+    import orjson as _json
+except ImportError:
+    import json as _json  # type: ignore[no-redef]
+
+    HAS_ORJSON = False
+else:
+    HAS_ORJSON = True
 
 
-def dumps(obj: Any, *args, **kw) -> bytes:
-    kw["default"] = _orjson_default
-    return _orjson.dumps(obj, *args, **kw)
+loads = _json.loads
 
 
-def dumps_str(obj: Any, *args, **kw) -> str:
-    return dumps(obj, *args, **kw).decode("utf-8")
+def dumps(obj: Any, *args, **kw) -> str:
+    if HAS_ORJSON:
+        kw["default"] = _orjson_default
+        return _json.dumps(obj, *args, **kw).decode("utf-8")
+    else:
+        return _json.dumps(obj, *args, **kw)  # type: ignore[return-value]
 
 
 def _orjson_default(obj: Any) -> Any:

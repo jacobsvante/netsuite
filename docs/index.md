@@ -1,24 +1,57 @@
 # netsuite
 
-Make requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
+Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
 
 ## Installation
 
-Programmatic use only:
+With default features (REST API + Restlet support):
 
     pip install netsuite
 
-With NetSuite SuiteTalk REST Web Services API support:
+With Web Services SOAP API support:
 
-    pip install netsuite[rest_api]
+    pip install netsuite[soap_api]
 
 With CLI support:
 
     pip install netsuite[cli]
 
+With `orjson` package (faster JSON handling):
+
+    pip install netsuite[orjson]
+
 With all features:
 
     pip install netsuite[all]
+
+
+## Programmatic use
+
+```python
+import asyncio
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+ns = NetSuite(config)
+
+
+async def async_main():
+    # NOTE: SOAP needs `pip install netsuite[soap_api]`
+    soap_api_results = await ns.soap_api.getList('customer', internalIds=[1337])
+
+    rest_api_results = await ns.rest_api.get("/record/v1/salesOrder")
+
+    restlet_results = await ns.restlet.get(987, deploy=2)
+
+if __name__ == "__main__":
+    asyncio.run(async_main())
+
+```
 
 ## CLI
 
@@ -148,9 +181,9 @@ Available vars:
     `ns` - NetSuite client
 
 Example usage:
-    ws_results = ns.getList('customer', internalIds=[1337])
-    restlet_results = ns.restlet.request(987)
+    soap_api_results = ns.soap_api.getList('customer', internalIds=[1337])
     rest_api_results = await ns.rest_api.get("/record/v1/salesOrder")
+    restlet_results = await ns.restlet.get(987, deploy=2)
 
 In [1]: rest_api_results = await ns.rest_api.get("
 ```

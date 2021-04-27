@@ -1,3 +1,6 @@
 {
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "files.exclude": {
+        "poetry.lock": true
+    }
 }

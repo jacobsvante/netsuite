@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 from typing import Dict, TypeVar
 
-from .config import Config
+from ..config import Config, TokenAuth
 
 NetSuite = TypeVar("NetSuite")
 
@@ -12,23 +12,6 @@ NetSuite = TypeVar("NetSuite")
 class Passport:
     def get_element(self) -> str:
         raise NotImplementedError
-
-
-class UserCredentialsPassport(Passport):
-    def __init__(
-        self, ns: NetSuite, *, account: str, email: str, password: str
-    ) -> None:
-        self.ns = ns
-        self.account = account
-        self.email = email
-        self.password = password
-
-    def get_element(self):
-        return self.ns.Core.Passport(
-            account=self.account,
-            email=self.email,
-            password=self.password,
-        )
 
 
 class TokenPassport(Passport):
@@ -104,36 +87,16 @@ class TokenPassport(Passport):
 
 
 def make(ns: NetSuite, config: Config) -> Dict:
-    if config.auth_type == "token":
-        assert isinstance(config.account, str)
-        assert isinstance(config.consumer_key, str)
-        assert isinstance(config.consumer_secret, str)
-        assert isinstance(config.token_id, str)
-        assert isinstance(config.token_secret, str)
+    auth = config.auth
+    if isinstance(auth, TokenAuth):
         token_passport = TokenPassport(
             ns,
             account=config.account,
-            consumer_key=config.consumer_key,
-            consumer_secret=config.consumer_secret,
-            token_id=config.token_id,
-            token_secret=config.token_secret,
+            consumer_key=auth.consumer_key,
+            consumer_secret=auth.consumer_secret,
+            token_id=auth.token_id,
+            token_secret=auth.token_secret,
         )
         return {"tokenPassport": token_passport.get_element()}
-    elif config.auth_type == "credentials":
-        assert isinstance(config.account, str)
-        assert isinstance(config.email, str)
-        assert isinstance(config.password, str)
-        passport = UserCredentialsPassport(
-            ns,
-            account=config.account,
-            email=config.email,
-            password=config.password,
-        )
-        return {
-            "applicationInfo": {
-                "applicationId": config.application_id,
-            },
-            "passport": passport.get_element(),
-        }
     else:
-        raise NotImplementedError(f"config.auth_type={config.auth_type}")
+        raise NotImplementedError(auth.__class__)
