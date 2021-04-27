@@ -209,6 +209,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#programmatic-use" class="md-nav__link">
+    Programmatic use
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     CLI
   </a>
@@ -359,6 +366,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#programmatic-use" class="md-nav__link">
+    Programmatic use
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     CLI
   </a>
@@ -482,19 +496,47 @@
                 
                 
                 <h1 id="netsuite">netsuite</h1>
-<p>Make requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets</p>
+<p>Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets</p>
 <h2 id="installation">Installation</h2>
-<p>Programmatic use only:</p>
+<p>With default features (REST API + Restlet support):</p>
 <pre><code>pip install netsuite
 </code></pre>
-<p>With NetSuite SuiteTalk REST Web Services API support:</p>
-<pre><code>pip install netsuite[rest_api]
+<p>With Web Services SOAP API support:</p>
+<pre><code>pip install netsuite[soap_api]
 </code></pre>
 <p>With CLI support:</p>
 <pre><code>pip install netsuite[cli]
 </code></pre>
+<p>With <code>orjson</code> package (faster JSON handling):</p>
+<pre><code>pip install netsuite[orjson]
+</code></pre>
 <p>With all features:</p>
 <pre><code>pip install netsuite[all]
+</code></pre>
+<h2 id="programmatic-use">Programmatic use</h2>
+<pre><code class="language-python">import asyncio
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account=&quot;12345&quot;,
+    auth=TokenAuth(consumer_key=&quot;abc&quot;, consumer_secret=&quot;123&quot;, token_id=&quot;xyz&quot;, token_secret=&quot;456&quot;),
+)
+
+ns = NetSuite(config)
+
+
+async def async_main():
+    # NOTE: SOAP needs `pip install netsuite[soap_api]`
+    soap_api_results = await ns.soap_api.getList('customer', internalIds=[1337])
+
+    rest_api_results = await ns.rest_api.get(&quot;/record/v1/salesOrder&quot;)
+
+    restlet_results = await ns.restlet.get(987, deploy=2)
+
+if __name__ == &quot;__main__&quot;:
+    asyncio.run(async_main())
+
 </code></pre>
 <h2 id="cli">CLI</h2>
 <h3 id="configuration">Configuration</h3>
@@ -571,9 +613,9 @@ Available vars:
     `ns` - NetSuite client
 
 Example usage:
-    ws_results = ns.getList('customer', internalIds=[1337])
-    restlet_results = ns.restlet.request(987)
+    soap_api_results = ns.soap_api.getList('customer', internalIds=[1337])
     rest_api_results = await ns.rest_api.get(&quot;/record/v1/salesOrder&quot;)
+    restlet_results = await ns.restlet.get(987, deploy=2)
 
 In [1]: rest_api_results = await ns.rest_api.get(&quot;
 </code></pre>
