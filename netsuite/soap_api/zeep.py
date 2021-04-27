@@ -7,6 +7,7 @@ else:
     ZEEP_INSTALLED = True
 
 if ZEEP_INSTALLED:
+    import requests
     from zeep import *  # noqa
     from zeep import cache, client, helpers, transports, xsd
 else:
@@ -55,3 +56,6 @@ else:
 
     class helpers:  # type: ignore[no-redef]
         serialize_object = None
+
+    class requests:  # type: ignore[no-redef]
+        Session = None

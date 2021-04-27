@@ -4,8 +4,6 @@ from contextlib import contextmanager
 from datetime import datetime
 from typing import Dict, List, Optional, Sequence
 
-import requests
-
 from ..config import Config
 from ..util import cached_property
 from . import helpers, passport, zeep
@@ -46,7 +44,7 @@ class NetSuiteSoapApi:
         version: str = None,
         wsdl_url: str = None,
         cache: zeep.cache.Base = None,
-        session: requests.Session = None,
+        session: zeep.requests.Session = None,
     ) -> None:
         self._ensure_required_dependencies()
         if version is not None:
@@ -78,7 +76,7 @@ class NetSuiteSoapApi:
         return self.__cache or self._generate_cache()
 
     @cached_property
-    def session(self) -> requests.Session:
+    def session(self) -> zeep.requests.Session:
         return self.__session or self._generate_session()
 
     @cached_property
@@ -114,8 +112,8 @@ class NetSuiteSoapApi:
     def _generate_cache(self) -> zeep.cache.Base:
         return zeep.cache.SqliteCache(timeout=60 * 60 * 24 * 365)
 
-    def _generate_session(self) -> requests.Session:
-        return requests.Session()
+    def _generate_session(self) -> zeep.requests.Session:
+        return zeep.requests.Session()
 
     def _generate_transport(self) -> zeep.transports.AsyncTransport:
         return AsyncNetSuiteTransport(
