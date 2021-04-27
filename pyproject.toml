@@ -28,7 +28,7 @@ httpx = "~0.17"
 pydantic = "^1.8"
 orjson = {version = "^3", optional = true}
 ipython = {version = "^7", optional = true}
-zeep = {version = "^4.0.0", extras = ["async"]}
+zeep = {version = "^4.0.0", optional = true, extras = ["async"]}
 
 [tool.poetry.extras]
 soap_api = ["zeep"]
