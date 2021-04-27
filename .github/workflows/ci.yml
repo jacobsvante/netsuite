@@ -2,6 +2,8 @@ name: ci
 
 on:
   push:
+    tags-ignore:
+      - ^v*.*  # Ignore version tags from triggering CI run
   pull_request:
 
 jobs:
