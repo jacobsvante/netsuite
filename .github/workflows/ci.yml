@@ -17,7 +17,9 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: abatilo/actions-poetry@v2.1.0
+    - uses: abatilo/actions-poetry@v2.1.2
+      with:
+        poetry-version: 1.1.6
     - run: poetry install --extras ${{ matrix.extras }}
     - run: poetry run pytest -v
   linting:
@@ -32,7 +34,9 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: abatilo/actions-poetry@v2.1.0
+    - uses: abatilo/actions-poetry@v2.1.2
+      with:
+        poetry-version: 1.1.6
     - run: poetry install --extras ${{ matrix.extras }}
     - run: poetry run flake8
     - run: poetry run mypy --ignore-missing-imports .
