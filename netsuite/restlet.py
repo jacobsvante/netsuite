@@ -2,6 +2,7 @@ import logging
 
 from .config import Config
 from .rest_api_base import RestApiBase
+from .util import cached_property
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +18,12 @@ class NetSuiteRestlet(RestApiBase):
         concurrent_requests: int = 10,
     ):
         self._config = config
-        self._hostname = self._make_hostname()
         self._default_timeout = default_timeout
         self._concurrent_requests = concurrent_requests
+
+    @cached_property
+    def hostname(self) -> str:
+        return self._make_hostname()
 
     async def get(self, script_id: int, *, deploy: int = 1, **request_kw):
         subpath = self._make_restlet_params(script_id, deploy)
@@ -44,4 +48,4 @@ class NetSuiteRestlet(RestApiBase):
         return f"{self._config.account_slugified}.restlets.api.netsuite.com"
 
     def _make_url(self, subpath: str) -> str:
-        return f"https://{self._hostname}/app/site/hosting/restlet.nl{subpath}"
+        return f"https://{self.hostname}/app/site/hosting/restlet.nl{subpath}"

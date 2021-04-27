@@ -3,6 +3,7 @@ from typing import Sequence
 
 from .config import Config
 from .rest_api_base import RestApiBase
+from .util import cached_property
 
 logger = logging.getLogger(__name__)
 
@@ -18,9 +19,12 @@ class NetSuiteRestApi(RestApiBase):
         concurrent_requests: int = 10,
     ):
         self._config = config
-        self._hostname = self._make_hostname()
         self._default_timeout = default_timeout
         self._concurrent_requests = concurrent_requests
+
+    @cached_property
+    def hostname(self) -> str:
+        return self._make_hostname()
 
     async def get(self, subpath: str, **request_kw):
         return await self._request("GET", subpath, **request_kw)
@@ -85,7 +89,7 @@ class NetSuiteRestApi(RestApiBase):
         return f"{self._config.account_slugified}.suitetalk.api.netsuite.com"
 
     def _make_url(self, subpath: str):
-        return f"https://{self._hostname}/services/rest{subpath}"
+        return f"https://{self.hostname}/services/rest{subpath}"
 
     def _make_default_headers(self):
         return {
