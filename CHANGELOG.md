@@ -13,23 +13,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 This release breaks a lot of things. Please read carefully.
 
 ### Changed
-- The SOAP API has been changed to use async
-- Move NetSuite version to 2021.1
-- The `netsuite.restlet.NetsuiteRestlet` interface is now asynchronous
-- SOAP Web Services support is no longer included in the default install, please use `netsuite[soap_api]` (unfortunately `zeep` pulls in a lot of other dependencies)
-- REST API and Restlet are now supported with the default install
+- SOAP and Restlet APIs are now async (i.e. this library is no longer useable in a non-async environment)
 - The `netsuite.client.NetSuite` class is now just a thin layer around each of the different API types (SOAP, REST, Restlets)
+- SOAP Web Services support is no longer included in the default install, please use `netsuite[soap_api]` (unfortunately `zeep` pulls in a lot of other dependencies, so I decided to remove it by default)
 - `netsuite.restlet.NetsuiteRestlet` has been renamed to `netsuite.restlet.NetSuiteRestlet`
+- Move NetSuite version to 2021.1
 - Upgrade to httpx ~0.18
 
 ### Added
 - `netsuite.restlet.NetSuiteRestlet` now support all four HTTP verbs GET, POST, PUT & DELETE via dedicated functions `.get`, `.post`, `.put` & `.delete`
+- REST API and Restlet are now supported with the default install
+- CLI now has a new sub-command `soap-api`, which currently only support `get` and `getList`
 - Dependency [pydantic](https://pydantic-docs.helpmanual.io/) has been added to help with config validation
 
 ### Removed
-- Authentication via User credentials (will no longer work from NetSuite 2021.2 release)
+- Authentication via User credentials has been removed (will no longer work from NetSuite 2021.2 release anyway)
 - `netsuite.restlet.NetSuiteRestApi.request` and `netsuite.restlet.NetSuiteRestlet.request` no longer exists - use each dedicated "verb method" instead
-- Dead code for setting SOAP preferences
+- Removed dead code for setting SOAP preferences
 - CLI sub-command aliases `i` (interact) and `r` (rest-api) have been removed to avoid confusion
 
 ## [0.6.3](https://github.com/jmagnusson/netsuite/compare/v0.6.2...v0.6.3) - 2021-04-26
