@@ -20,6 +20,7 @@ This release breaks a lot of things. Please read carefully.
 - REST API and Restlet are now supported with the default install
 - The `netsuite.client.NetSuite` class is now just a thin layer around each of the different API types (SOAP, REST, Restlets)
 - `netsuite.restlet.NetsuiteRestlet` has been renamed to `netsuite.restlet.NetSuiteRestlet`
+- Upgrade to httpx ~0.18
 
 ### Added
 - `netsuite.restlet.NetSuiteRestlet` now support all four HTTP verbs GET, POST, PUT & DELETE via dedicated functions `.get`, `.post`, `.put` & `.delete`
