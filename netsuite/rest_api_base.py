@@ -1,31 +1,36 @@
 import asyncio
 import logging
 
+import httpx
+from authlib.integrations.httpx_client import OAuth1Auth
+from authlib.oauth1.rfc5849.client_auth import ClientAuth
+from authlib.oauth1.rfc5849.signature import generate_signature_base_string
+from oauthlib.oauth1.rfc5849.signature import sign_hmac_sha256
+
 from . import json
 from .exceptions import NetsuiteAPIRequestError, NetsuiteAPIResponseParsingError
 from .util import cached_property
 
-try:
-    import httpx
-except ImportError:
-
-    class httpx:  # type: ignore[no-redef]
-        Response = None
-
-
-try:
-    from authlib.integrations.httpx_client import OAuth1Auth
-except ImportError:
-    OAuth1Auth = None
-
 __all__ = ("RestApiBase",)
 
+DEFAULT_SIGNATURE_METHOD = "HMAC-SHA256"
+
 logger = logging.getLogger(__name__)
+
+
+def authlib_hmac_sha256_sign_method(client, request):
+    """Sign a HMAC-SHA256 signature."""
+    base_string = generate_signature_base_string(request)
+    return sign_hmac_sha256(base_string, client.client_secret, client.token_secret)
+
+
+ClientAuth.register_signature_method("HMAC-SHA256", authlib_hmac_sha256_sign_method)
 
 
 class RestApiBase:
     _concurrent_requests: int = 10
     _default_timeout: int = 10
+    _signature_method: str = DEFAULT_SIGNATURE_METHOD
 
     @cached_property
     def _request_semaphore(self) -> asyncio.Semaphore:
@@ -93,6 +98,7 @@ class RestApiBase:
             token_secret=auth.token_secret,
             realm=self._config.account,
             force_include_body=True,
+            signature_method=self._signature_method,
         )
 
     def _make_default_headers(self):

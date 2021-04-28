@@ -8,7 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing
 
-## [0.7.0](https://github.com/jmagnusson/netsuite/compare/v0.6.3...v0.7.0) - 2021-04-26
+## [0.8.0](https://github.com/jmagnusson/netsuite/compare/v0.7.0...v0.8.0) - 2021-04-28
+
+### Changed
+- Default signing method is now HMAC-SHA256 for REST API and Restlet. The old default of HMAC-SHA1 can be set via the `signature_method` keyword argument. (Thanks to @zerodarkzone, issue #27)
+
+### Added
+- HMAC-SHA256 signing method when making requests to REST API and Restlets
+- Dependency `oauthlib`
+
+## [0.7.0](https://github.com/jmagnusson/netsuite/compare/v0.6.3...v0.7.0) - 2021-04-27
 
 This release breaks a lot of things. Please read carefully.
 

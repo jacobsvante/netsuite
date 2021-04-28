@@ -534,6 +534,19 @@ tgrep = ["pyparsing"]
 twitter = ["twython"]
 
 [[package]]
+name = "oauthlib"
+version = "3.1.0"
+description = "A generic, spec-compliant, thorough implementation of the OAuth request-signing logic"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.extras]
+rsa = ["cryptography"]
+signals = ["blinker"]
+signedtoken = ["cryptography", "pyjwt (>=1.0.0)"]
+
+[[package]]
 name = "orjson"
 version = "3.5.2"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
@@ -958,7 +971,7 @@ soap_api = ["zeep"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "2a6403a21b74d0c78e97bc92027e378f10c6de842cb58e2108b487ffbd9795f6"
+content-hash = "676885e746bce362c87d710492c8fefd1e7852e67a87c31bdd3bb710e962bce5"
 
 [metadata.files]
 appdirs = [
@@ -1332,6 +1345,10 @@ mypy-extensions = [
 nltk = [
     {file = "nltk-3.6.2-py3-none-any.whl", hash = "sha256:240e23ab1ab159ef9940777d30c7c72d7e76d91877099218a7585370c11f6b9e"},
     {file = "nltk-3.6.2.zip", hash = "sha256:57d556abed621ab9be225cc6d2df1edce17572efb67a3d754630c9f8381503eb"},
+]
+oauthlib = [
+    {file = "oauthlib-3.1.0-py2.py3-none-any.whl", hash = "sha256:df884cd6cbe20e32633f1db1072e9356f53638e4361bef4e8b03c9127c9328ea"},
+    {file = "oauthlib-3.1.0.tar.gz", hash = "sha256:bee41cc35fcca6e988463cacc3bcb8a96224f470ca547e697b604cc697b2f889"},
 ]
 orjson = [
     {file = "orjson-3.5.2-cp310-cp310-manylinux2014_aarch64.whl", hash = "sha256:2ba4165883fbef0985bce60bddbf91bc5cea77cc22b1c12fe7a716c6323ab1e7"},

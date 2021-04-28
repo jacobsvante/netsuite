@@ -1,8 +1,8 @@
 import logging
 from typing import Sequence
 
+from . import rest_api_base
 from .config import Config
-from .rest_api_base import RestApiBase
 from .util import cached_property
 
 logger = logging.getLogger(__name__)
@@ -10,17 +10,19 @@ logger = logging.getLogger(__name__)
 __all__ = ("NetSuiteRestApi",)
 
 
-class NetSuiteRestApi(RestApiBase):
+class NetSuiteRestApi(rest_api_base.RestApiBase):
     def __init__(
         self,
         config: Config,
         *,
         default_timeout: int = 60,
         concurrent_requests: int = 10,
+        signature_method: str = rest_api_base.DEFAULT_SIGNATURE_METHOD,
     ):
         self._config = config
         self._default_timeout = default_timeout
         self._concurrent_requests = concurrent_requests
+        self._signature_method = signature_method
 
     @cached_property
     def hostname(self) -> str:
