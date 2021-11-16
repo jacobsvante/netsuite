@@ -5,9 +5,9 @@ description = "Make async requests to NetSuite SuiteTalk SOAP/REST Web Services 
 authors = ["Jacob Magnusson <m@jacobian.se>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://jmagnusson.github.io/netsuite/"
-repository = "https://github.com/jmagnusson/netsuite"
-documentation = "https://jmagnusson.github.io/netsuite/"
+homepage = "https://jacobsvante.github.io/netsuite/"
+repository = "https://github.com/jacobsvante/netsuite"
+documentation = "https://jacobsvante.github.io/netsuite/"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Web Environment",

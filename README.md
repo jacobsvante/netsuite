@@ -1,8 +1,8 @@
 # netsuite
 
-[![Continuous Integration Status](https://github.com/jmagnusson/netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/jmagnusson/netsuite/actions/workflows/ci.yml)
-[![Continuous Delivery Status](https://github.com/jmagnusson/netsuite/actions/workflows/cd.yml/badge.svg)](https://github.com/jmagnusson/netsuite/actions/workflows/cd.yml)
-[![Code Coverage](https://img.shields.io/codecov/c/github/jmagnusson/netsuite?color=%2334D058)](https://codecov.io/gh/jmagnusson/netsuite)
+[![Continuous Integration Status](https://github.com/jacobsvante/netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/jacobsvante/netsuite/actions/workflows/ci.yml)
+[![Continuous Delivery Status](https://github.com/jacobsvante/netsuite/actions/workflows/cd.yml/badge.svg)](https://github.com/jacobsvante/netsuite/actions/workflows/cd.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/jacobsvante/netsuite?color=%2334D058)](https://codecov.io/gh/jacobsvante/netsuite)
 [![PyPI version](https://img.shields.io/pypi/v/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 [![License](https://img.shields.io/pypi/l/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
@@ -38,4 +38,4 @@ With all features:
 
 ## Documentation
 
-Is found here: https://jmagnusson.github.io/netsuite/
+Is found here: https://jacobsvante.github.io/netsuite/

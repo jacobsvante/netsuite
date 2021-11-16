@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Nothing
 
-## [0.8.0](https://github.com/jmagnusson/netsuite/compare/v0.7.0...v0.8.0) - 2021-04-28
+## [0.8.0](https://github.com/jacobsvante/netsuite/compare/v0.7.0...v0.8.0) - 2021-04-28
 
 ### Changed
 - Default signing method is now HMAC-SHA256 for REST API and Restlet. The old default of HMAC-SHA1 can be set via the `signature_method` keyword argument. (Thanks to @zerodarkzone, issue #27)
@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - HMAC-SHA256 signing method when making requests to REST API and Restlets
 - Dependency `oauthlib`
 
-## [0.7.0](https://github.com/jmagnusson/netsuite/compare/v0.6.3...v0.7.0) - 2021-04-27
+## [0.7.0](https://github.com/jacobsvante/netsuite/compare/v0.6.3...v0.7.0) - 2021-04-27
 
 This release breaks a lot of things. Please read carefully.
 
@@ -41,18 +41,18 @@ This release breaks a lot of things. Please read carefully.
 - Removed dead code for setting SOAP preferences
 - CLI sub-command aliases `i` (interact) and `r` (rest-api) have been removed to avoid confusion
 
-## [0.6.3](https://github.com/jmagnusson/netsuite/compare/v0.6.2...v0.6.3) - 2021-04-26
+## [0.6.3](https://github.com/jacobsvante/netsuite/compare/v0.6.2...v0.6.3) - 2021-04-26
 
 ### Added
 - Ability to supply custom headers to REST API requests made from CLI via "-H/--header" flag
 - Support custom payload, headers and params in suiteql REST API method
 
-## [0.6.2](https://github.com/jmagnusson/netsuite/compare/v0.6.1...v0.6.2) - 2021-04-25
+## [0.6.2](https://github.com/jacobsvante/netsuite/compare/v0.6.1...v0.6.2) - 2021-04-25
 
 ### Fixed
 - `NetSuiteRestApi` no longer requires a running asyncio loop to be instantiated
 
-## [0.6.1](https://github.com/jmagnusson/netsuite/compare/v0.6.0...v0.6.1) - 2021-04-25
+## [0.6.1](https://github.com/jacobsvante/netsuite/compare/v0.6.0...v0.6.1) - 2021-04-25
 
 ### Fixed
 - Fix "local variable 'record_ref' referenced before assignment" error in `NetSuite.get` method - Thanks @VeNoMouS! (#25)
