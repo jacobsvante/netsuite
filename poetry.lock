@@ -979,7 +979,7 @@ soap_api = ["zeep"]
 
 [metadata]
 lock-version = "1.1"
-python-versions = "^3.7"
+python-versions = ">= 3.6.12"
 content-hash = "ab34c13feff970232114042008a9fe490d7b63d4ab1e00d817f885e738c47b84"
 
 [metadata.files]
