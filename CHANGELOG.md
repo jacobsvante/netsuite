@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.9.0](https://github.com/jacobsvante/netsuite/compare/v0.8.0...v0.9.0) (2022-06-02)
+
+
+### Bug Fixes
+
+* Async connections sessions were being closed ([28e2b8e](https://github.com/jacobsvante/netsuite/commit/28e2b8e387ae4d30d65540901714f69a0b6248ab))
+* Don't require existing config to check version ([b9982bf](https://github.com/jacobsvante/netsuite/commit/b9982bf23ebf051ba994c0c1f8b0ba3f88b31cbc))
+* Regression in `openapi serve` CLI command ([c0074a0](https://github.com/jacobsvante/netsuite/commit/c0074a08edbef352b8b707ae1a6a7a21a25ce3d1))
+* Update dependencies ([1956b4d](https://github.com/jacobsvante/netsuite/commit/1956b4db748dd321fe310c3542f3e29c0f2161eb)), closes [#39](https://github.com/jacobsvante/netsuite/issues/39) [#40](https://github.com/jacobsvante/netsuite/issues/40)
+
+
+### Documentation
+
+* Add example project for soap requests ([352bdd6](https://github.com/jacobsvante/netsuite/commit/352bdd6c9c63d1d2f9b0107921d35ca690dad82d))
+
+
+### Continuous Integration
+
+* Fix yaml miss ([9180897](https://github.com/jacobsvante/netsuite/commit/91808971e3ab737ab0cd5bde8eda6a5b04bdd2e3))
+
 ## [0.8.0](https://github.com/jacobsvante/netsuite/compare/v0.7.0...v0.8.0) - 2021-04-28
 
 ### Changed
