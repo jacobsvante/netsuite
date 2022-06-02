@@ -15,24 +15,6 @@ logger = logging.getLogger(__name__)
 __all__ = ("NetSuiteSoapApi",)
 
 
-# TODO: Submit PR for the following changes (1170 uses a different method)
-#       This avoids the following warning on asyncio loop shutdown:
-#
-#           UserWarning: Unclosed <httpx.AsyncClient object at 0x10e431be0>.
-#           See https://www.python-httpx.org/async/#opening-and-closing-clients
-#           for details.
-#
-class _AsyncClient(zeep.client.AsyncClient):
-    async def __aenter__(self):
-        await self.transport.client.__aenter__()
-        return self
-
-    async def __aexit__(self, exc_type=None, exc_value=None, traceback=None) -> None:
-        await self.transport.client.__aexit__(
-            exc_type=exc_type, exc_value=exc_value, traceback=traceback
-        )
-
-
 class NetSuiteSoapApi:
     version = "2021.1.0"
     wsdl_url_tmpl = "https://{account_slug}.suitetalk.api.netsuite.com/wsdl/v{underscored_version}/netsuite.wsdl"
@@ -44,16 +26,15 @@ class NetSuiteSoapApi:
         version: str = None,
         wsdl_url: str = None,
         cache: zeep.cache.Base = None,
-        session: zeep.requests.Session = None,
     ) -> None:
         self._ensure_required_dependencies()
         if version is not None:
             assert re.match(r"\d+\.\d+\.\d+", version)
             self.version = version
-        self.config = config
-        self.__wsdl_url = wsdl_url
-        self.__cache = cache
-        self.__session = session
+        self.config: Config = config
+        self._wsdl_url: Optional[str] = wsdl_url
+        self._cache: Optional[zeep.cache.Base] = cache
+        self._client: Optional[zeep.client.AsyncClient] = None
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.hostname}({self.version})>"
@@ -66,26 +47,30 @@ class NetSuiteSoapApi:
         await self.client.__aexit__(
             exc_type=exc_type, exc_value=exc_value, traceback=traceback
         )
+        # Connection is now closed by zeep. Generate a new one
+        self._client = self._generate_client()
 
-    @cached_property
+    @property
     def wsdl_url(self) -> str:
-        return self.__wsdl_url or self._generate_wsdl_url()
+        if self._wsdl_url is None:
+            self._wsdl_url = self._generate_wsdl_url()
+        return self._wsdl_url
 
-    @cached_property
+    @property
     def cache(self) -> zeep.cache.Base:
-        return self.__cache or self._generate_cache()
+        if self._cache is None:
+            self._cache = self._generate_cache()
+        return self._cache
 
-    @cached_property
-    def session(self) -> zeep.requests.Session:
-        return self.__session or self._generate_session()
+    @property
+    def client(self) -> zeep.client.AsyncClient:
+        if self._client is None:
+            self._client = self._generate_client()
+        return self._client
 
-    @cached_property
-    def client(self) -> _AsyncClient:
-        return self._generate_client()
-
-    @cached_property
+    @property
     def transport(self):
-        return self._generate_transport()
+        return self.client.transport
 
     @cached_property
     def hostname(self) -> str:
@@ -117,8 +102,8 @@ class NetSuiteSoapApi:
 
     def _generate_transport(self) -> zeep.transports.AsyncTransport:
         return AsyncNetSuiteTransport(
-            self._generate_wsdl_url(),
-            session=self.session,
+            self.wsdl_url,
+            session=self._generate_session(),
             cache=self.cache,
         )
 
@@ -135,10 +120,10 @@ class NetSuiteSoapApi:
         with self.transport.settings(timeout=timeout):
             yield
 
-    def _generate_client(self) -> _AsyncClient:
-        return _AsyncClient(
+    def _generate_client(self) -> zeep.client.AsyncClient:
+        return zeep.client.AsyncClient(
             self.wsdl_url,
-            transport=self.transport,
+            transport=self._generate_transport(),
         )
 
     def _get_namespace(self, name: str, sub_namespace: str) -> str:
@@ -358,15 +343,7 @@ class NetSuiteSoapApi:
             The response from NetSuite
         """
         svc = getattr(self.service, service_name)
-        # NOTE: Using httpx context manager here
-        #       This avoids the following error on asyncio close:
-        #
-        #           UserWarning: Unclosed <httpx.AsyncClient object at 0x10e431be0>.
-        #           See https://www.python-httpx.org/async/#opening-and-closing-clients
-        #           for details.
-        #
-        async with self:
-            return await svc(*args, _soapheaders=self.generate_passport(), **kw)
+        return await svc(*args, _soapheaders=self.generate_passport(), **kw)
 
     @WebServiceCall(
         "body.readResponseList.readResponse",

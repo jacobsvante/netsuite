@@ -41,12 +41,17 @@ ns = NetSuite(config)
 
 
 async def async_main():
-    # NOTE: SOAP needs `pip install netsuite[soap_api]`
-    soap_api_results = await ns.soap_api.getList('customer', internalIds=[1337])
-
     rest_api_results = await ns.rest_api.get("/record/v1/salesOrder")
 
     restlet_results = await ns.restlet.get(987, deploy=2)
+
+    # NOTE: SOAP needs `pip install netsuite[soap_api]`
+    soap_api_results = await ns.soap_api.getList('customer', internalIds=[1337])
+
+    # Multiple requests, using the same underlying connection
+    async with ns.soap_api:
+        customers = await ns.soap_api.getList('customer', internalIds=[1, 2, 3])
+        sales_orders = await ns.soap_api.getList('salesOrder', internalIds=[1, 2])
 
 if __name__ == "__main__":
     asyncio.run(async_main())
