@@ -9,5 +9,5 @@ def add_parser(parser, subparser):
     return (version_parser, None)
 
 
-def version(config, args) -> str:
+def version() -> str:
     return pkg_resources.get_distribution("netsuite").version

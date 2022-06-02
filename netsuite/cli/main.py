@@ -51,6 +51,11 @@ def main():
 
     subparser_name = sys.argv[-1]
 
+    # Call version directly to avoid loading of config
+    if subparser_name == "version":
+        print(args.func())
+        return
+
     # Show help section instead of an error when no arguments were passed...
     if subparser_name == "rest-api":
         rest_api_parser.print_help()
