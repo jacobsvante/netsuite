@@ -2,7 +2,6 @@ name: ci
 
 on:
   push:
-    branches-ignore: []
     tags-ignore: ['v*.*']  # Ignore version tags from triggering CI run
   pull_request:
 
@@ -11,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, 3.8, 3.7]
+        python-version: [3.10, 3.9, 3.8, 3.7]
         extras: [all, soap_api, orjson, cli]
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
@@ -28,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9]
+        python-version: [3.10]
         extras: [all]
         os: [ubuntu-latest]
     steps:
