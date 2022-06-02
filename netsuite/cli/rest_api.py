@@ -264,7 +264,7 @@ def _add_rest_api_openapi_serve_parser(parser, subparser):
         tempdir = pathlib.Path(tempfile.mkdtemp())
         openapi_file = tempdir / "openapi.json"
         html_file = tempdir / "index.html"
-        openapi_file.write_bytes(json.dumps(spec))
+        openapi_file.write_bytes(json.dumps(spec).encode("utf-8"))
         html = """<!DOCTYPE html>
     <html>
         <head>
