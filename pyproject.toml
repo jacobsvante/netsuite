@@ -1,0 +1,70 @@
+[tool.poetry]
+name = "netsuite"
+version = "0.9.0"
+description = "Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets"
+authors = ["Jacob Magnusson <m@jacobian.se>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://jacobsvante.github.io/netsuite/"
+repository = "https://github.com/jacobsvante/netsuite"
+documentation = "https://jacobsvante.github.io/netsuite/"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+authlib = "~1"
+# As per httpx recommendation we will lock to a fixed minor version until 1.0 is released
+httpx = "~0.23"
+pydantic = "~1"
+orjson = {version = "~3", optional = true}
+ipython = {version = "~8", optional = true, python = "^3.8"}
+zeep = {version = "~4", optional = true, extras = ["async"]}
+oauthlib = "~3"
+
+[tool.poetry.extras]
+soap_api = ["zeep"]
+cli = ["ipython"]
+orjson = ["orjson"]
+all = ["zeep", "ipython", "orjson"]
+
+[tool.poetry.dev-dependencies]
+black = "~22"
+flake8 = "~4"
+isort = "~5"
+mkdocs-material = "~8"
+mypy = "~0"
+pytest = "~7"
+pytest-cov = "~3"
+types-setuptools = "^57.4.17"
+types-requests = "^2.27.30"
+
+[tool.poetry.scripts]
+netsuite = 'netsuite.cli:main'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ["py37", "py38", "py39", "py310"]
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]

@@ -1,64 +1,41 @@
 # netsuite
 
-[![Travis CI build status (Linux)](https://travis-ci.org/jmagnusson/netsuite.svg?branch=master)](https://travis-ci.org/jmagnusson/netsuite)
+[![Continuous Integration Status](https://github.com/jacobsvante/netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/jacobsvante/netsuite/actions/workflows/ci.yml)
+[![Continuous Delivery Status](https://github.com/jacobsvante/netsuite/actions/workflows/cd.yml/badge.svg)](https://github.com/jacobsvante/netsuite/actions/workflows/cd.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/jacobsvante/netsuite?color=%2334D058)](https://codecov.io/gh/jacobsvante/netsuite)
 [![PyPI version](https://img.shields.io/pypi/v/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 [![License](https://img.shields.io/pypi/l/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
-[![Available as wheel](https://img.shields.io/pypi/wheel/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
-[![Supported Python versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
 [![PyPI status (alpha/beta/stable)](https://img.shields.io/pypi/status/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 
-Make requests to NetSuite Web Services and Restlets
+Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
+
+## Beta quality disclaimer
+
+The project's API is still very much in fluctuation. Please consider pinning your dependency to this package to a minor version (e.g. `poetry add netsuite~0.9` or `pipenv install netsuite~=0.9.0`), which is guaranteed to have no breaking changes. From 1.0 and forward we will keep a stable API.
 
 ## Installation
 
-Programmatic use only:
+With default features (REST API + Restlet support):
 
     pip install netsuite
+
+With Web Services SOAP API support:
+
+    pip install netsuite[soap_api]
 
 With CLI support:
 
     pip install netsuite[cli]
 
+With `orjson` package (faster JSON handling):
 
-## CLI
+    pip install netsuite[orjson]
 
-### Configuration
+With all features:
 
-To use the command line utilities you must add a config file with a section in this format:
+    pip install netsuite[all]
 
-```ini
-[netsuite]
-auth_type = token
-account = 123456
-consumer_key = 789123
-consumer_secret = 456789
-token_id = 012345
-token_secret = 678901
-```
+## Documentation
 
-You can add multiple sections like this. The `netsuite` section will be read by default, but can be overridden using the `-c` flag.
-
-The default location that will be read is `~/.config/netsuite.ini`. This can overriden with the `-p` flag.
-
-Append `--help` to the commands to see full documentation.
-
-### `restlet` - Make requests to restlets
-
-```
-$ echo '{"savedSearchId": 987}' | netsuite restlet 123 -
-```
-
-
-### `interact` - Interact with web services and/or restlets
-
-```
-$ netsuite interact
-Welcome to Netsuite WS client interactive mode
-Available vars:
-    `ns` - NetSuite client
-
-Example usage:
-    results = ns.getList('customer', internalIds=[1337])
-
-In [1]:
-```
+Is found here: https://jacobsvante.github.io/netsuite/

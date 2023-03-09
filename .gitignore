@@ -11,3 +11,5 @@
 /Pipfile.lock
 /.mypy*
 /.pytest_cache
+/poetry.lock
+.DS_Store
