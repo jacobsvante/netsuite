@@ -17,3 +17,7 @@ def test_netsuite_wsdl_url(dummy_config):
         soap_api.wsdl_url
         == "https://123456-sb1.suitetalk.api.netsuite.com/wsdl/v2021_1_0/netsuite.wsdl"
     )
+
+def test_netsuite_transport_initialization(dummy_config):
+    soap_api = NetSuiteSoapApi(dummy_config)
+    soap_api._generate_transport()
