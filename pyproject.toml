@@ -29,7 +29,7 @@ httpx = "~0.23"
 pydantic = "~1"
 orjson = {version = "~3", optional = true}
 ipython = {version = "~8", optional = true, python = "^3.8"}
-zeep = {version = "4.2.1", optional = true, extras = ["async"]}
+zeep = {version = "^4.2.1", optional = true, extras = ["async"]}
 oauthlib = "~3"
 
 [tool.poetry.extras]
