@@ -12,7 +12,7 @@ jobs:
         with:
           python-version: "3.9"
           architecture: x64
-      - uses: abatilo/actions-poetry@v2.1.4
+      - uses: abatilo/actions-poetry@v2.3.0
         with:
           poetry-version: "1.1.13"
       - run: poetry install --extras all
