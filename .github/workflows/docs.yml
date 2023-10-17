@@ -17,7 +17,7 @@ jobs:
           poetry-version: "1.1.13"
       - run: poetry install --extras all
       - run: poetry run mkdocs build
-      - uses: peaceiris/actions-gh-pages@v3.7.3
+      - uses: peaceiris/actions-gh-pages@v3.9.3
         with:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
           publish_dir: ./site
