@@ -25,7 +25,7 @@ classifiers = [
 python = "^3.7"
 authlib = "~1"
 # As per httpx recommendation we will lock to a fixed minor version until 1.0 is released
-httpx = "~0.23"
+httpx = ">=0.23,<0.25"
 pydantic = "~1"
 orjson = {version = "~3", optional = true}
 ipython = {version = "~8", optional = true, python = "^3.8"}
