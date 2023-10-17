@@ -14,7 +14,7 @@ jobs:
         extras: ['', all, soap_api, orjson, cli]
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v3
       with:
         python-version: '${{ matrix.python-version }}'
@@ -35,7 +35,7 @@ jobs:
         python-version: ['3.10']
         extras: [all]
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v3
       with:
         python-version: '${{ matrix.python-version }}'
