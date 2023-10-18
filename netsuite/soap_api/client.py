@@ -394,7 +394,11 @@ class NetSuiteSoapApi:
         extract=lambda resp: resp["record"],
     )
     async def get(
-        self, recordType: str, *, internalId: Optional[int] = None, externalId: Optional[str] = None
+        self,
+        recordType: str,
+        *,
+        internalId: Optional[int] = None,
+        externalId: Optional[str] = None,
     ) -> zeep.xsd.CompoundValue:
         """Get a single record"""
         if len([v for v in (internalId, externalId) if v is not None]) != 1:
