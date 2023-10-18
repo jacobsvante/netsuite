@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Optional, Any, Callable
+from typing import Any, Callable, Optional
 
 from .. import constants
 from . import zeep
