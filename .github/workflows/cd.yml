@@ -21,13 +21,16 @@ jobs:
     if: needs.release-please.outputs.release_created
     steps:
       - uses: actions/checkout@v4
+      - name: ASDF Parse
+        uses: kota65535/github-asdf-parse-action@v1.1.0
+        id: versions
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "${{ steps.versions.outputs.python }}"
           architecture: x64
       - uses: abatilo/actions-poetry@v2.3.0
         with:
-          poetry-version: "1.1.13"
+          poetry-version: "${{ steps.versions.outputs.poetry }}"
       - run: poetry build
       - run: poetry publish
         env:
