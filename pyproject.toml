@@ -22,14 +22,14 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = ">=3.8"
 authlib = "~1"
 # As per httpx recommendation we will lock to a fixed minor version until 1.0 is released
-httpx = "~0.23"
+httpx = "~0.25"
 pydantic = "~1"
-orjson = {version = "~3", optional = true}
-ipython = {version = "~8", optional = true, python = "^3.8"}
-zeep = {version = "~4", optional = true, extras = ["async"]}
+orjson = { version = "~3", optional = true }
+ipython = { version = "~8", optional = true, python = "^3.8" }
+zeep = { version = "~4", optional = true, extras = ["async"] }
 oauthlib = "~3"
 
 [tool.poetry.extras]
@@ -65,6 +65,4 @@ profile = "black"
 multi_line_output = 3
 
 [tool.pytest.ini_options]
-markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
-]
+markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
