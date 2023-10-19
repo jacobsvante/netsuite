@@ -8,7 +8,7 @@
 [![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
 [![PyPI status (alpha/beta/stable)](https://img.shields.io/pypi/status/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 
-Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
+Make async requests to NetSuite SuiteTalk SOAP, REST Web Services, and Restlets. [Detailed documentation available here.](https://jacobsvante.github.io/netsuite/)
 
 ## Beta quality disclaimer
 

@@ -23,9 +23,9 @@ class NetSuiteSoapApi:
         self,
         config: Config,
         *,
-        version: str = None,
-        wsdl_url: str = None,
-        cache: zeep.cache.Base = None,
+        version: Optional[str] = None,
+        wsdl_url: Optional[str] = None,
+        cache: Optional[zeep.cache.Base] = None,
     ) -> None:
         self._ensure_required_dependencies()
         if version is not None:
@@ -390,7 +390,11 @@ class NetSuiteSoapApi:
         extract=lambda resp: resp["record"],
     )
     async def get(
-        self, recordType: str, *, internalId: int = None, externalId: str = None
+        self,
+        recordType: str,
+        *,
+        internalId: Optional[int] = None,
+        externalId: Optional[str] = None,
     ) -> zeep.xsd.CompoundValue:
         """Get a single record"""
         if len([v for v in (internalId, externalId) if v is not None]) != 1:
@@ -476,7 +480,7 @@ class NetSuiteSoapApi:
         *,
         internalIds: Optional[Sequence[int]] = None,
         externalIds: Optional[Sequence[str]] = None,
-        lastQtyAvailableChange: datetime = None,
+        lastQtyAvailableChange: Optional[datetime] = None,
     ) -> List[Dict]:
         if internalIds is None:
             internalIds = []

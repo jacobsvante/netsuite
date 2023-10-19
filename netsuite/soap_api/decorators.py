@@ -1,5 +1,5 @@
 from functools import wraps
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 from .. import constants
 from . import zeep
@@ -9,8 +9,8 @@ __all__ = ("WebServiceCall",)
 
 
 def WebServiceCall(
-    path: str = None,
-    extract: Callable = None,
+    path: Optional[str] = None,
+    extract: Optional[Callable] = None,
     *,
     default: Any = constants.NOT_SET,
 ) -> Callable:

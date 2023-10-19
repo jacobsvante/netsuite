@@ -47,4 +47,4 @@ class Config(BaseModel):
             else:
                 d[key] = val
 
-        return cls(**d)
+        return cls(**d)  # type: ignore

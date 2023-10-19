@@ -268,21 +268,21 @@ def _add_rest_api_openapi_serve_parser(parser, subparser):
         html = """<!DOCTYPE html>
     <html>
         <head>
-        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui.css">
+        <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
         <title>NetSuite REST Record API</title>
         </head>
         <body>
         <div id="swagger-ui">
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
         <!-- `SwaggerUIBundle` is now available on the page -->
         <script>
         const ui = SwaggerUIBundle({
             url: '/openapi.json',
             dom_id: '#swagger-ui',
             presets: [
-            SwaggerUIBundle.presets.apis,
-            SwaggerUIBundle.SwaggerUIStandalonePreset
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.SwaggerUIStandalonePreset
             ],
             layout: "BaseLayout",
             deepLinking: true
