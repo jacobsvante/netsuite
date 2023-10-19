@@ -9,7 +9,7 @@ from oauthlib.oauth1.rfc5849.signature import sign_hmac_sha256
 
 from . import json
 from .exceptions import NetsuiteAPIRequestError, NetsuiteAPIResponseParsingError
-from .util import cached_property
+from functools import cached_property
 
 __all__ = ("RestApiBase",)
 

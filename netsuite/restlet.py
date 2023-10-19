@@ -2,7 +2,7 @@ import logging
 
 from . import rest_api_base
 from .config import Config
-from .util import cached_property
+from functools import cached_property
 
 logger = logging.getLogger(__name__)
 
