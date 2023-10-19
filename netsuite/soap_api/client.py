@@ -97,13 +97,9 @@ class NetSuiteSoapApi:
     def _generate_cache(self) -> zeep.cache.Base:
         return zeep.cache.SqliteCache(timeout=60 * 60 * 24 * 365)
 
-    def _generate_session(self) -> zeep.requests.Session:
-        return zeep.requests.Session()
-
     def _generate_transport(self) -> zeep.transports.AsyncTransport:
         return AsyncNetSuiteTransport(
             self.wsdl_url,
-            session=self._generate_session(),
             cache=self.cache,
         )
 
