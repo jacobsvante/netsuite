@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict, List, Optional, Sequence
 
 from ..config import Config
-from ..util import cached_property
+from functools import cached_property
 from . import helpers, passport, zeep
 from .decorators import WebServiceCall
 from .transports import AsyncNetSuiteTransport
