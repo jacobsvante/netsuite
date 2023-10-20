@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from functools import cached_property
 
 import httpx
 from authlib.integrations.httpx_client import OAuth1Auth
@@ -9,7 +10,6 @@ from oauthlib.oauth1.rfc5849.signature import sign_hmac_sha256
 
 from . import json
 from .exceptions import NetsuiteAPIRequestError, NetsuiteAPIResponseParsingError
-from functools import cached_property
 
 __all__ = ("RestApiBase",)
 

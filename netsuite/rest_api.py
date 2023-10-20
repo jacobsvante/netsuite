@@ -1,9 +1,9 @@
 import logging
+from functools import cached_property
 from typing import Sequence
 
 from . import rest_api_base
 from .config import Config
-from functools import cached_property
 
 logger = logging.getLogger(__name__)
 
