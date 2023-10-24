@@ -1,3 +1,4 @@
 site_name: netsuite
 theme:
   name: material
+  github_url: "https://github.com/jacobsvante/netsuite"
