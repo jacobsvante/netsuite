@@ -30,11 +30,11 @@ class Config(BaseModel):
         return self.account.lower().replace("_", "-")
 
     @staticmethod
-    def _reorganize_auth_keys(raw: dict[str, t.Any]) -> dict[str, t.Any]:
+    def _reorganize_auth_keys(raw: t.Dict[str, t.Any]) -> t.Dict[str, t.Any]:
         # we intentionally do not type `reorganized` here, mypy does not like union types with dict key assignment
         # https://stackoverflow.com/questions/69824126/mypy-invalid-index-type-str-for-unionstr-dictstr-str-expected-type-u
 
-        reorganized: dict[t.Any, t.Any] = {"auth": {}}
+        reorganized: t.Dict[t.Any, t.Any] = {"auth": {}}
 
         for key, val in raw.items():
             if key in TokenAuth.model_fields:
