@@ -1,7 +1,7 @@
 import configparser
 import os
 import typing as t
-from typing import Dict, Union
+from typing import Dict
 
 from pydantic import BaseModel
 
@@ -20,7 +20,8 @@ class TokenAuth(BaseModel):
 class Config(BaseModel):
     account: str
     auth: TokenAuth
-    log_level: str
+    log_level: t.Optional[str]
+
     # TODO: Support OAuth2
     # auth: Union[OAuth2, TokenAuth]
 
@@ -31,7 +32,7 @@ class Config(BaseModel):
 
     @staticmethod
     def _reorganize_auth_keys(raw: Dict[str, t.Any]) -> Dict[str, t.Any]:
-        reorganized: Dict[str, Union[str, Dict[str, str]]] = {"auth": {}}
+        reorganized: Dict[str, t.Union[str, Dict[str, str]]] = {"auth": {}}
 
         for key, val in raw.items():
             if key in TokenAuth.__fields__:
