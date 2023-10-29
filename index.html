@@ -61,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#netsuite" class="md-skip">
+        <a href="#netsuite-python-library" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              netsuite
+              netsuite python library
             
           </span>
         </div>
@@ -160,7 +160,9 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -199,7 +201,7 @@
           
   
   <span class="md-ellipsis">
-    netsuite
+    netsuite python library
   </span>
   
 
@@ -210,7 +212,7 @@
         
   
   <span class="md-ellipsis">
-    netsuite
+    netsuite python library
   </span>
   
 
@@ -371,6 +373,8 @@
             
             
               
+                
+              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -528,7 +532,7 @@
                   
 
 
-<h1 id="netsuite">netsuite</h1>
+<h1 id="netsuite-python-library">netsuite python library</h1>
 <p>Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets</p>
 <h2 id="installation">Installation</h2>
 <p>With default features (REST API + Restlet support):</p>
@@ -589,6 +593,14 @@ token_secret = 678901
 </code></pre>
 <p>You can add multiple sections like this. The <code>netsuite</code> section will be read by default, but can be overridden using the <code>-c</code> flag.</p>
 <p>The default location that will be read is <code>~/.config/netsuite.ini</code>. This can overriden with the <code>-p</code> flag.</p>
+<p>Alternatively, you can source configuration from your environment variables instead (pairs well with <a href="https://direnv.net">direnv</a>):</p>
+<pre><code class="language-shell">export NETSUITE_ACCOUNT=DIGITS_SB1
+export NETSUITE_CONSUMER_KEY=LONGALPHANUMERIC
+export NETSUITE_CONSUMER_SECRET=LONGALPHANUMERIC
+export NETSUITE_TOKEN_ID=LONGALPHANUMERIC
+export NETSUITE_TOKEN_SECRET=LONGALPHANUMERIC
+</code></pre>
+<p>And using the <code>--config-environment</code> flag when loading the CLI.</p>
 <p>Append <code>--help</code> to the commands to see full documentation.</p>
 <h3 id="rest-api-make-requests-to-netsuite-rest-api"><code>rest-api</code> - Make requests to NetSuite REST API</h3>
 <p>See the NetSuite help center for info on how to use the REST API. The <code>netsuite rest-api openapi-serve</code> command is also a big help.</p>
@@ -675,6 +687,8 @@ In [1]: rest_api_results = await ns.rest_api.get(&quot;
 <p><a href="https://pre-commit.com/">pre-commit</a> will ensure that all code is formatted per our conventions. Failing to run this will probably make the CI tests fail in the PR instead.</p>
 
 
+
+  
 
 
 
