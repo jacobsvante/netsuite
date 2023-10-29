@@ -1,4 +1,9 @@
-# netsuite
+---
+hide:
+- navigation
+---
+
+# netsuite python library
 
 Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
 
@@ -77,6 +82,18 @@ token_secret = 678901
 You can add multiple sections like this. The `netsuite` section will be read by default, but can be overridden using the `-c` flag.
 
 The default location that will be read is `~/.config/netsuite.ini`. This can overriden with the `-p` flag.
+
+Alternatively, you can source configuration from your environment variables instead (pairs well with [direnv](https://direnv.net)):
+
+```shell
+export NETSUITE_ACCOUNT=DIGITS_SB1
+export NETSUITE_CONSUMER_KEY=LONGALPHANUMERIC
+export NETSUITE_CONSUMER_SECRET=LONGALPHANUMERIC
+export NETSUITE_TOKEN_ID=LONGALPHANUMERIC
+export NETSUITE_TOKEN_SECRET=LONGALPHANUMERIC
+```
+
+And using the `--config-environment` flag when loading the CLI.
 
 Append `--help` to the commands to see full documentation.
 
