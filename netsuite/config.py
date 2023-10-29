@@ -1,7 +1,6 @@
 import configparser
 import os
 import typing as t
-from typing import Dict
 
 from pydantic import BaseModel
 
@@ -31,11 +30,14 @@ class Config(BaseModel):
         return self.account.lower().replace("_", "-")
 
     @staticmethod
-    def _reorganize_auth_keys(raw: Dict[str, t.Any]) -> Dict[str, t.Any]:
-        reorganized: Dict[str, t.Union[str, Dict[str, str]]] = {"auth": {}}
+    def _reorganize_auth_keys(raw: dict[str, t.Any]) -> dict[str, t.Any]:
+        # we intentionally do not type `reorganized` here, mypy does not like union types with dict key assignment
+        # https://stackoverflow.com/questions/69824126/mypy-invalid-index-type-str-for-unionstr-dictstr-str-expected-type-u
+
+        reorganized: dict[t.Any, t.Any] = {"auth": {}}
 
         for key, val in raw.items():
-            if key in TokenAuth.__fields__:
+            if key in TokenAuth.model_fields:
                 reorganized["auth"][key] = val
             else:
                 reorganized[key] = val
