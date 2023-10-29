@@ -2,7 +2,7 @@
 name = "netsuite"
 version = "0.9.0"
 description = "Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets"
-authors = ["Jacob Magnusson <m@jacobian.se>"]
+authors = ["Jacob Magnusson <m@jacobian.se>", "Mike Bianco <mike@mikebian.co>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://jacobsvante.github.io/netsuite/"
@@ -30,13 +30,15 @@ pydantic = ">=1,<3"
 orjson = { version = "~3", optional = true }
 ipython = { version = "~8", optional = true, python = "^3.8" }
 zeep = { version = "~4", optional = true, extras = ["async"] }
+pyodbc = { version = "^5.0.1", optional = true }
 oauthlib = "~3"
 
 [tool.poetry.extras]
+odbc = ["pyodbc"]
 soap_api = ["zeep"]
 cli = ["ipython"]
 orjson = ["orjson"]
-all = ["zeep", "ipython", "orjson"]
+all = ["zeep", "ipython", "orjson", "odbc"]
 
 [tool.poetry.dev-dependencies]
 black = "~23"
