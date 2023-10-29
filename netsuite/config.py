@@ -20,7 +20,7 @@ class TokenAuth(BaseModel):
 class Config(BaseModel):
     account: str
     auth: TokenAuth
-    log_level: t.Optional[str]
+    log_level: t.Optional[str] = None
 
     # TODO: Support OAuth2
     # auth: Union[OAuth2, TokenAuth]
