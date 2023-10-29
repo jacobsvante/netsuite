@@ -7,6 +7,14 @@ import sys
 from ..constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION
 from . import helpers, interact, misc, rest_api, restlet, soap_api
 
+# include pretty_traceback if it exists for better dev tracebacks in CLI
+try:
+    import pretty_traceback
+
+    pretty_traceback.install()
+except ImportError:
+    pass
+
 __all__ = ("main",)
 
 
