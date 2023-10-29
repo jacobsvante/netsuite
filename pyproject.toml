@@ -23,10 +23,10 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.8"
-authlib = "~1"
+authlib = ">=1,<3"
 # As per httpx recommendation we will lock to a fixed minor version until 1.0 is released
 httpx = "~0.25"
-pydantic = "~1"
+pydantic = ">=1,<3"
 orjson = { version = "~3", optional = true }
 ipython = { version = "~8", optional = true, python = "^3.8" }
 zeep = { version = "~4", optional = true, extras = ["async"] }
@@ -43,7 +43,7 @@ black = "~23"
 flake8 = "~5"
 isort = "~5"
 mkdocs-material = "~9"
-mypy = "~1"
+mypy = ">=1,<3"
 pytest = "~7"
 pytest-cov = "~4"
 types-setuptools = "^68.2.0"
