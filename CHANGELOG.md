@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.10.0](https://github.com/jacobsvante/netsuite/compare/v0.9.0...v0.10.0) (2023-10-29)
+
+
+### Features
+
+* import pretty_traceback if it exists ([93e6246](https://github.com/jacobsvante/netsuite/commit/93e6246dbc44a51017143fa985dec3c65c6e8f4a))
+* support ENV-based configuration ([3ba4150](https://github.com/jacobsvante/netsuite/commit/3ba4150df29b8a2942604fd77b4f772185e8653a))
+* upgrade swagger openai viewer 3 =&gt; 5 ([bc52155](https://github.com/jacobsvante/netsuite/commit/bc52155989fc0d5256eaa106f97e7e32bbecccbd))
+
+
+### Bug Fixes
+
+* make log level optional ([5110138](https://github.com/jacobsvante/netsuite/commit/51101387a621c8cfd8ccdbfa7fa8e2b3ab0eaa10))
+* missing cached_property usage ([b6eef1a](https://github.com/jacobsvante/netsuite/commit/b6eef1aeb3bdffdf37581a1944d6b7249954fcb1))
+* mypy 1.x ignore ([c80b03f](https://github.com/jacobsvante/netsuite/commit/c80b03f7694a7e44adace97e4a295ce2216f094d))
+* mypy dict typing error ([890c3a5](https://github.com/jacobsvante/netsuite/commit/890c3a53e0240d64436d8409671defa9d6c9a63d))
+* mypy fixes ([33314b4](https://github.com/jacobsvante/netsuite/commit/33314b45218faefe6a38f9fcffd24aa3fb1aa057))
+* optional log_level for real ([f4b9a92](https://github.com/jacobsvante/netsuite/commit/f4b9a92fd9a4f283ad918bf8c4013a1411592451))
+* use old-school dict typing assignment for py 8 ([8168726](https://github.com/jacobsvante/netsuite/commit/8168726c597c10b7b878a7e39d625a8cf12db90d))
+
+
+### Documentation
+
+* add config-environment note ([378f8e5](https://github.com/jacobsvante/netsuite/commit/378f8e54524b90b9c482a99936026211afa0004b))
+* add docs link to headline ([3fa13ad](https://github.com/jacobsvante/netsuite/commit/3fa13adb6c180ee3edfc2fec2be7e97c2f137fe7))
+* add gh link ([4368c65](https://github.com/jacobsvante/netsuite/commit/4368c659ba7378168c882a1ec58eb728f32498dd))
+* add myself to authors ([6095fb3](https://github.com/jacobsvante/netsuite/commit/6095fb32b08ec73a970a8d780d377973f4b3f5c3))
+* add repo url ([69b0e79](https://github.com/jacobsvante/netsuite/commit/69b0e799cbc0ee5c8149441e6cdec39c2c12588c))
+
 ## [0.9.0](https://github.com/jacobsvante/netsuite/compare/v0.8.0...v0.9.0) (2022-06-02)
 
 
