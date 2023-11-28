@@ -30,7 +30,7 @@ With all features:
     pip install netsuite[all]
 
 
-## Programmatic use
+## Programmatic use - Basic Example
 
 ```python
 import asyncio
@@ -61,6 +61,42 @@ async def async_main():
 if __name__ == "__main__":
     asyncio.run(async_main())
 
+```
+
+## Programmatic use - Search Object by Custom Field Value
+
+```python
+import asyncio
+import zeep.helpers
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+ns = NetSuite(config)
+
+
+async def async_main() -> dict:
+    SearchStringCustomField = ns.soap_api.Core.SearchStringCustomField
+    search_string_custom_field = SearchStringCustomField(
+        scriptId='**CUSTOM_FIELD_ID**',  # Replace with a custom field ID
+        operator='is',
+        searchValue='**TEST_VALUE**'  # Replace with any string value
+    )
+    SearchCustomFieldList = ns.soap_api.Core.SearchCustomFieldList
+    search_custom_field_list = SearchCustomFieldList(customField=[search_string_custom_field])
+    SearchBasic = ns.soap_api.Common.TransactionSearchBasic  # Performing a Transaction Object Search
+    Search = ns.soap_api.Sales.TransactionSearch  # Performing a Transaction Object Search
+    search_basic = SearchBasic(customFieldList=search_custom_field_list)
+    record = Search(basic=search_basic)
+    response = await ns.soap_api.search(record=record)
+    return zeep.helpers.serialize_object(response)  # Return the data as a dict
+
+if __name__ == "__main__":
+    asyncio.run(async_main())
 ```
 
 ## CLI
