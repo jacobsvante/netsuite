@@ -93,6 +93,12 @@ async def async_main() -> dict:
     search_basic = SearchBasic(customFieldList=search_custom_field_list)
     record = Search(basic=search_basic)
     response = await ns.soap_api.search(record=record)
+
+    # if results is greater than default 1000 record return,
+    # parse out the searchId and use to paginate the next page of results
+    # response_search_id = response["body"]["searchResult"]["searchId"]
+    # next_page_response = await ns.soap_api.searchMoreWithId(searchId=response_search_id, pageIndex=2)
+
     return zeep.helpers.serialize_object(response)  # Return the data as a dict
 
 if __name__ == "__main__":
