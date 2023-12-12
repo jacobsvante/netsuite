@@ -460,8 +460,7 @@ class NetSuiteSoapApi:
         extract=lambda resp: resp["recordList"]["record"],
     )
     async def search(
-        self, record: zeep.xsd.CompoundValue,
-        additionalHeaders: Optional[dict] = None
+        self, record: zeep.xsd.CompoundValue, additionalHeaders: Optional[dict] = None
     ) -> List[zeep.xsd.CompoundValue]:
         """Search records"""
         return await self.request(
