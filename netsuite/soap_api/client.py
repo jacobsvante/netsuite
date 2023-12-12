@@ -328,7 +328,7 @@ class NetSuiteSoapApi:
     def SupplyChainTypes(self) -> zeep.client.Factory:
         return self._type_factory("types.supplychain", "lists")
 
-    async def request(self, service_name: str, *args, additionalHeaders: dict = None, **kw):
+    async def request(self, service_name: str, *args, additionalHeaders: Optional[dict] = None, **kw):
         """
         Make a web service request to NetSuite
 
@@ -459,7 +459,7 @@ class NetSuiteSoapApi:
     )
     async def search(
         self, record: zeep.xsd.CompoundValue,
-        additionalHeaders: dict = None
+        additionalHeaders: Optional[dict] = None
     ) -> List[zeep.xsd.CompoundValue]:
         """Search records"""
         return await self.request("search", searchRecord=record, additionalHeaders=additionalHeaders)
