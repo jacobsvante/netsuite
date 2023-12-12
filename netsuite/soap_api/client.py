@@ -328,7 +328,7 @@ class NetSuiteSoapApi:
     def SupplyChainTypes(self) -> zeep.client.Factory:
         return self._type_factory("types.supplychain", "lists")
 
-    async def request(self, service_name: str, *args, **kw):
+    async def request(self, service_name: str, *args, additionalHeaders: dict = None, **kw):
         """
         Make a web service request to NetSuite
 
@@ -339,7 +339,10 @@ class NetSuiteSoapApi:
             The response from NetSuite
         """
         svc = getattr(self.service, service_name)
-        return await svc(*args, _soapheaders=self.generate_passport(), **kw)
+        headers = self.generate_passport()
+        if additionalHeaders:
+            headers.update(additionalHeaders)
+        return await svc(*args, _soapheaders=headers, **kw)
 
     @WebServiceCall(
         "body.readResponseList.readResponse",
@@ -455,10 +458,11 @@ class NetSuiteSoapApi:
         extract=lambda resp: resp["recordList"]["record"],
     )
     async def search(
-        self, record: zeep.xsd.CompoundValue
+        self, record: zeep.xsd.CompoundValue,
+        additionalHeaders: dict = None
     ) -> List[zeep.xsd.CompoundValue]:
         """Search records"""
-        return await self.request("search", searchRecord=record)
+        return await self.request("search", searchRecord=record, additionalHeaders=additionalHeaders)
 
     @WebServiceCall(
         "body.writeResponseList",
