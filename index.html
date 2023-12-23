@@ -286,6 +286,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#programmatic-use-search-object-by-custom-field-value-rest-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programmatic use - Search Object by Custom Field Value - REST API
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#cli" class="md-nav__link">
     <span class="md-ellipsis">
       CLI
@@ -481,6 +490,15 @@
   <a href="#programmatic-use-search-object-by-custom-field-value" class="md-nav__link">
     <span class="md-ellipsis">
       Programmatic use - Search Object by Custom Field Value
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programmatic-use-search-object-by-custom-field-value-rest-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programmatic use - Search Object by Custom Field Value - REST API
     </span>
   </a>
   
@@ -722,6 +740,26 @@ async def async_main() -&gt; dict:
 
 if __name__ == &quot;__main__&quot;:
     asyncio.run(async_main())
+</code></pre>
+<h2 id="programmatic-use-search-object-by-custom-field-value-rest-api">Programmatic use - Search Object by Custom Field Value - REST API</h2>
+<pre><code class="language-python">import asyncio
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account=&quot;12345&quot;,
+    auth=TokenAuth(consumer_key=&quot;abc&quot;, consumer_secret=&quot;123&quot;, token_id=&quot;xyz&quot;, token_secret=&quot;456&quot;),
+)
+
+ns = NetSuite(config)
+
+async def async_main() -&gt; dict:
+    customer_keyword = 'Test Customer'
+    query_params = {'q':f'Name CONTAIN &quot;{customer_keyword}&quot;'}
+    rest_api_results = await ns.rest_api.get(&quot;/record/v1/customer&quot;, params=query_params)
+
+    if __name__ == &quot;__main__&quot;:
+        asyncio.run(async_main())
 </code></pre>
 <h2 id="cli">CLI</h2>
 <h3 id="configuration">Configuration</h3>
