@@ -99,6 +99,29 @@ if __name__ == "__main__":
     asyncio.run(async_main())
 ```
 
+## Programmatic use - Search Object by Custom Field Value - REST API
+
+```python
+import asyncio
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+ns = NetSuite(config)
+
+async def async_main() -> dict:
+    customer_keyword = 'Test Customer'
+    query_params = {'q':f'Name CONTAIN "{customer_keyword}"'}
+    rest_api_results = await ns.rest_api.get("/record/v1/customer", params=query_params)
+
+    if __name__ == "__main__":
+        asyncio.run(async_main())
+```
+
 ## CLI
 
 ### Configuration
