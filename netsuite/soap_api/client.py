@@ -475,7 +475,9 @@ class NetSuiteSoapApi:
         self, searchId: str, pageIndex: int
     ) -> List[zeep.xsd.CompoundValue]:
         """Search records with pagination"""
-        return await self.request("searchMoreWithId", searchId=searchId, pageIndex=pageIndex)
+        return await self.request(
+            "searchMoreWithId", searchId=searchId, pageIndex=pageIndex
+        )
 
     @WebServiceCall(
         "body.searchResult",
@@ -485,7 +487,9 @@ class NetSuiteSoapApi:
         self, searchId: str, pageIndex: int
     ) -> List[zeep.xsd.CompoundValue]:
         """Search records with pagination"""
-        return await self.request("searchMoreWithId", searchId=searchId, pageIndex=pageIndex)
+        return await self.request(
+            "searchMoreWithId", searchId=searchId, pageIndex=pageIndex
+        )
 
     @WebServiceCall(
         "body.writeResponseList",
