@@ -468,6 +468,18 @@ class NetSuiteSoapApi:
         )
 
     @WebServiceCall(
+        "body.searchResult",
+        extract=lambda resp: resp["recordList"]["record"],
+    )
+    async def searchMoreWithId(
+        self, searchId: str, pageIndex: int
+    ) -> List[zeep.xsd.CompoundValue]:
+        """Search records with pagination"""
+        return await self.request(
+            "searchMoreWithId", searchId=searchId, pageIndex=pageIndex
+        )
+
+    @WebServiceCall(
         "body.writeResponseList",
         extract=lambda resp: [record["baseRef"] for record in resp],
     )
