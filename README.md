@@ -10,10 +10,6 @@
 
 Make async requests to NetSuite SuiteTalk SOAP, REST Web Services, and Restlets. [Detailed documentation available here.](https://jacobsvante.github.io/netsuite/)
 
-## Beta quality disclaimer
-
-The project's API is still very much in fluctuation. Please consider pinning your dependency to this package to a minor version (e.g. `poetry add netsuite~0.9` or `pipenv install netsuite~=0.9.0`), which is guaranteed to have no breaking changes. From 1.0 and forward we will keep a stable API.
-
 ## Installation
 
 With default features (REST API + Restlet support):
