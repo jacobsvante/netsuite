@@ -48,8 +48,12 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
         return await self._request("DELETE", subpath, **request_kw)
 
     async def suiteql(self, q: str, limit: int = 10, offset: int = 0, **request_kw):
+        """
+        suiteql(q="SELECT * FROM Transaction", limit=10, offset=0)
+        """
         return await self._request(
             "POST",
+            # https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_156257799794.html#Using-SuiteQL
             "/query/v1/suiteql",
             headers={"Prefer": "transient", **request_kw.pop("headers", {})},
             json={"q": q, **request_kw.pop("json", {})},
@@ -70,6 +74,17 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
         )
 
     async def openapi(self, record_types: Sequence[str] = (), **request_kw):
+        """
+        Retrieves the OpenAPI specification (metadata catalog) for the Netsuite REST API.
+
+        Args:
+            record_types (Sequence[str]): Optional. List of record types to include in the OpenAPI specification.
+            **request_kw: Optional keyword arguments to be passed to the underlying request.
+
+        Returns:
+            The OpenAPI specification as a JSON object.
+        """
+
         headers = {
             "Accept": "application/swagger+json",
             **request_kw.pop("headers", {}),
