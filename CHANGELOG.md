@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.1](https://github.com/jacobsvante/netsuite/compare/v0.10.0...v0.10.1) (2024-01-24)
+
+
+### Bug Fixes
+
+* add `query` helper to interact and use a standard ipython shell ([896be6f](https://github.com/jacobsvante/netsuite/commit/896be6fa6d6cfee3474c13d6a01047b1c73f7193))
+
+
+### Documentation
+
+* additional rest api documentation ([81b629c](https://github.com/jacobsvante/netsuite/commit/81b629cb4ffa10823b76764d7780c5b8fae3b2e6))
+* removing beta quality disclaimer ([c09b230](https://github.com/jacobsvante/netsuite/commit/c09b2306ac59193075646e57f0b65a1506f776ab))
+
 ## [0.10.0](https://github.com/jacobsvante/netsuite/compare/v0.9.0...v0.10.0) (2023-10-29)
 
 
