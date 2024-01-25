@@ -1,7 +1,6 @@
 import asyncio
 
 import IPython
-import traitlets
 
 from ..client import NetSuite
 
