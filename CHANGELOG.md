@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/jacobsvante/netsuite/compare/v0.10.1...v0.11.0) (2024-01-25)
+
+
+### Features
+
+* adding token_info restapi command ([dbeaf0a](https://github.com/jacobsvante/netsuite/commit/dbeaf0a34a5c78328a89763ae8cae3853e834f37))
+
 ## [0.10.1](https://github.com/jacobsvante/netsuite/compare/v0.10.0...v0.10.1) (2024-01-24)
 
 
