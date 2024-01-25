@@ -49,7 +49,8 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
 
     async def suiteql(self, q: str, limit: int = 10, offset: int = 0, **request_kw):
         """
-        suiteql(q="SELECT * FROM Transaction", limit=10, offset=0)
+        Example:
+        >>> suiteql(q="SELECT * FROM Transaction", limit=10, offset=0)
         """
         return await self._request(
             "POST",
@@ -73,9 +74,29 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
             **request_kw,
         )
 
+    async def token_info(self, **request_kw):
+        """
+        Retrieves metadata about the current token. Role, company, etc.
+
+        https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/chapter_157017286140.html#Issue-Token-and-Revoke-Token-REST-Services-for-Token-based-Authentication
+        """
+
+        # this overrides the default URL generation: this specific endpoint hits a completely different host
+        request_kw[
+            "url"
+        ] = f"https://{self._config.account_slugified}.restlets.api.netsuite.com/rest/tokeninfo"
+
+        return await self._request(
+            method="GET",
+            # useless, but required by _request
+            subpath="ignored",
+            **request_kw,
+        )
+
     async def openapi(self, record_types: Sequence[str] = (), **request_kw):
         """
-        Retrieves the OpenAPI specification (metadata catalog) for the Netsuite REST API.
+        Retrieves the OpenAPI specification (metadata catalog) for the Netsuite REST API. This is the best way to
+        introspect the NetSuite account and return the record structure.
 
         Args:
             record_types (Sequence[str]): Optional. List of record types to include in the OpenAPI specification.

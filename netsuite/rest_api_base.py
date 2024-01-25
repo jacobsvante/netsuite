@@ -56,7 +56,7 @@ class RestApiBase:
         self, method: str, subpath: str, **request_kw
     ) -> httpx.Response:
         method = method.upper()
-        url = self._make_url(subpath)
+        url = request_kw.pop("url", self._make_url(subpath))
 
         headers = {**self._make_default_headers(), **request_kw.pop("headers", {})}
 
