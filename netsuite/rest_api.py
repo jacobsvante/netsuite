@@ -85,9 +85,9 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
         """
 
         # this overrides the default URL generation: this specific endpoint hits a completely different host
-        request_kw[
-            "url"
-        ] = f"https://{self._config.account_slugified}.restlets.api.netsuite.com/rest/tokeninfo"
+        request_kw["url"] = (
+            f"https://{self._config.account_slugified}.restlets.api.netsuite.com/rest/tokeninfo"
+        )
 
         return await self._request(
             method="GET",
