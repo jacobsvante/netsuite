@@ -28,6 +28,9 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
     def hostname(self) -> str:
         return self._make_hostname()
 
+    async def request(self, method: str, subpath: str, **request_kw):
+        return await self._request_impl(method, subpath, **request_kw)
+
     async def get(self, subpath: str, **request_kw):
         return await self._request("GET", subpath, **request_kw)
 
