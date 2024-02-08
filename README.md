@@ -7,8 +7,15 @@
 [![License](https://img.shields.io/pypi/l/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
 [![PyPI status (alpha/beta/stable)](https://img.shields.io/pypi/status/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
+[![Slack Status](https://netsuite-slackin.fly.dev/badge.svg)](https://netsuite-slackin.fly.dev)
 
 Make async requests to NetSuite SuiteTalk SOAP, REST Web Services, and Restlets. [Detailed documentation available here.](https://jacobsvante.github.io/netsuite/)
+
+# Help & Support
+
+Join the [Slack channel](https://netsuite-slackin.fly.dev) for help with NetSuite issues. Please do not post usage questions as issues in GitHub.
+
+There are some additional helpful resources for NetSuite development [listed here](https://dashboard.suitesync.io/docs/resources#netsuite).
 
 ## Installation
 
