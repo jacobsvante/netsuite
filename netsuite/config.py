@@ -19,7 +19,11 @@ class TokenAuth(BaseModel):
 class Config(BaseModel):
     account: str
     auth: TokenAuth
+
     log_level: t.Optional[str] = None
+
+    # TODO ODBC is not yet fully supported, but this is the first step
+    odbc_data_source: t.Literal["NetSuite.com", "NetSuite2.com"] = "NetSuite.com"
 
     # TODO: Support OAuth2
     # auth: Union[OAuth2, TokenAuth]
