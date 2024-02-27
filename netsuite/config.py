@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from .constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION
 
-__all__ = ("Config", "TokenAuth")
+__all__ = ("Config", "TokenAuth", "UsernamePasswordAuth")
 
 
 class TokenAuth(BaseModel):
@@ -16,9 +16,20 @@ class TokenAuth(BaseModel):
     token_secret: str
 
 
+class UsernamePasswordAuth(BaseModel):
+    """
+    This is a very old authentication method that is not recommended for use.
+
+    However, it's the only way to access the netsuite.com (NOT netsuite2.com) data source via ODBC.
+    """
+
+    username: str
+    password: str
+
+
 class Config(BaseModel):
     account: str
-    auth: TokenAuth
+    auth: TokenAuth | UsernamePasswordAuth
 
     log_level: t.Optional[str] = None
 
