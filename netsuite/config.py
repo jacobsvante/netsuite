@@ -29,7 +29,7 @@ class UsernamePasswordAuth(BaseModel):
 
 class Config(BaseModel):
     account: str
-    auth: TokenAuth | UsernamePasswordAuth
+    auth: t.Union[TokenAuth, UsernamePasswordAuth]
 
     log_level: t.Optional[str] = None
 
