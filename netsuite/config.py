@@ -1,5 +1,6 @@
 import configparser
 import os
+import re
 import typing as t
 
 from pydantic import BaseModel
@@ -30,14 +31,25 @@ class UsernamePasswordAuth(BaseModel):
 class Config(BaseModel):
     account: str
     auth: t.Union[TokenAuth, UsernamePasswordAuth]
+    # TODO: Support OAuth2
+    # auth: Union[OAuth2, TokenAuth]
 
     log_level: t.Optional[str] = None
 
     # TODO ODBC is not yet fully supported, but this is the first step
     odbc_data_source: t.Literal["NetSuite.com", "NetSuite2.com"] = "NetSuite.com"
 
-    # TODO: Support OAuth2
-    # auth: Union[OAuth2, TokenAuth]
+    @property
+    def is_token_auth(self) -> bool:
+        return isinstance(self.auth, TokenAuth)
+
+    @property
+    def is_sandbox(self) -> bool:
+        return re.search(r"_SB[\d]+$", self.account) is not None
+
+    @property
+    def account_number(self) -> str:
+        return self.account.split("_")[0]
 
     @property
     def account_slugified(self) -> str:
