@@ -99,7 +99,8 @@ class Config(BaseModel):
             "token_id",
             "token_secret",
             "username",
-            "password" "log_level",
+            "password",
+            "log_level",
         ]
         prefix = "NETSUITE_"
         raw = {
