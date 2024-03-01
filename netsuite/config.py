@@ -64,7 +64,10 @@ class Config(BaseModel):
         reorganized: t.Dict[t.Any, t.Any] = {"auth": {}}
 
         for key, val in raw.items():
-            if key in TokenAuth.model_fields:
+            if (
+                key in TokenAuth.model_fields
+                or key in UsernamePasswordAuth.model_fields
+            ):
                 reorganized["auth"][key] = val
             else:
                 reorganized[key] = val
@@ -81,6 +84,8 @@ class Config(BaseModel):
         - `NETSUITE_CONSUMER_SECRET`: The consumer secret for OAuth.
         - `NETSUITE_TOKEN_ID`: The token ID for OAuth.
         - `NETSUITE_TOKEN_SECRET`: The token secret for OAuth.
+        - `NETSUITE_USERNAME`: The username for login auth (only for odbc).
+        - `NETSUITE_PASSWORD`: The password for login auth (only for odbc).
         - `NETSUITE_LOG_LEVEL`: log level for NetSuite debugging
 
         Returns a dictionary of available config options.
@@ -93,7 +98,8 @@ class Config(BaseModel):
             "consumer_secret",
             "token_id",
             "token_secret",
-            "log_level",
+            "username",
+            "password" "log_level",
         ]
         prefix = "NETSUITE_"
         raw = {
