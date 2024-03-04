@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.12.0](https://github.com/jacobsvante/netsuite/compare/v0.11.0...v0.12.0) (2024-03-01)
+
+
+### Features
+
+* add more account helpers ([a66bf39](https://github.com/jacobsvante/netsuite/commit/a66bf3931f50f602122523ae2e4cd33866de8e55))
+* **odbc:** add username and password auth ([e01f601](https://github.com/jacobsvante/netsuite/commit/e01f60145df0a168841fbafa1ccb9881d3184fa2))
+* **odbc:** adding odbc data source to config ([b5a6a38](https://github.com/jacobsvante/netsuite/commit/b5a6a38c0c7b7a7417608dfaca2a7ce75894f406))
+* source username and password from env ([38b1788](https://github.com/jacobsvante/netsuite/commit/38b178856be2bf7bdc3cd1d6de430d6227e44470))
+
+
+### Bug Fixes
+
+* sourcing username + password from env ([78063b5](https://github.com/jacobsvante/netsuite/commit/78063b536cef0896a10ccba84dda28642d56647f))
+* union typing fix for old py ([a73540e](https://github.com/jacobsvante/netsuite/commit/a73540e99c92996fb4e08e4dd9729ef3fe4bff50))
+
+
+### Documentation
+
+* adding slack link ([4ba6cf9](https://github.com/jacobsvante/netsuite/commit/4ba6cf9bca21df0e88e67cf586d77716ef301a32))
+
 ## [0.11.0](https://github.com/jacobsvante/netsuite/compare/v0.10.1...v0.11.0) (2024-01-25)
 
 
