@@ -1,4 +1,5 @@
 import pytest
+
 from netsuite import Config
 
 
