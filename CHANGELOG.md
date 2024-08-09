@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/jacobsvante/netsuite/compare/v0.12.0...v0.12.1) (2024-07-16)
+
+
+### Documentation
+
+* Added large file download and cache options ([#87](https://github.com/jacobsvante/netsuite/issues/87)) ([b1af9eb](https://github.com/jacobsvante/netsuite/commit/b1af9ebda242e4a63c2626684ff5f68065faf4b3))
+
 ## [0.12.0](https://github.com/jacobsvante/netsuite/compare/v0.11.0...v0.12.0) (2024-03-01)
 
 
