@@ -16,7 +16,7 @@ __all__ = ("NetSuiteSoapApi",)
 
 
 class NetSuiteSoapApi:
-    version = "2021.1.0"
+    version = "2024.2.0"
     wsdl_url_tmpl = "https://{account_slug}.suitetalk.api.netsuite.com/wsdl/v{underscored_version}/netsuite.wsdl"
 
     def __init__(
