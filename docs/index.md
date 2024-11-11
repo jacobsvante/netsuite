@@ -1,4 +1,9 @@
-# netsuite
+---
+hide:
+- navigation
+---
+
+# netsuite python library
 
 Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
 
@@ -25,7 +30,7 @@ With all features:
     pip install netsuite[all]
 
 
-## Programmatic use
+## Programmatic use - Basic Example
 
 ```python
 import asyncio
@@ -58,6 +63,109 @@ if __name__ == "__main__":
 
 ```
 
+## Programmatic use - Search Object by Custom Field Value
+
+```python
+import asyncio
+import zeep.helpers
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+ns = NetSuite(config)
+
+
+async def async_main() -> dict:
+    SearchStringCustomField = ns.soap_api.Core.SearchStringCustomField
+    search_string_custom_field = SearchStringCustomField(
+        scriptId='**CUSTOM_FIELD_ID**',  # Replace with a custom field ID
+        operator='is',
+        searchValue='**TEST_VALUE**'  # Replace with any string value
+    )
+    SearchCustomFieldList = ns.soap_api.Core.SearchCustomFieldList
+    search_custom_field_list = SearchCustomFieldList(customField=[search_string_custom_field])
+    SearchBasic = ns.soap_api.Common.TransactionSearchBasic  # Performing a Transaction Object Search
+    Search = ns.soap_api.Sales.TransactionSearch  # Performing a Transaction Object Search
+    search_basic = SearchBasic(customFieldList=search_custom_field_list)
+    record = Search(basic=search_basic)
+    response = await ns.soap_api.search(record=record)
+    return zeep.helpers.serialize_object(response)  # Return the data as a dict
+
+if __name__ == "__main__":
+    asyncio.run(async_main())
+```
+
+## Programmatic use - Search Object by Custom Field Value - REST API
+
+```python
+import asyncio
+
+from netsuite import NetSuite, Config, TokenAuth
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+ns = NetSuite(config)
+
+async def async_main() -> dict:
+    customer_keyword = 'Test Customer'
+    query_params = {'q':f'Name CONTAIN "{customer_keyword}"'}
+    rest_api_results = await ns.rest_api.get("/record/v1/customer", params=query_params)
+
+    if __name__ == "__main__":
+        asyncio.run(async_main())
+```
+
+## Programmatic use - Download Large Files Using SOAP API
+When working with large files, you might find that responses are truncated if they exceed 10MB. This limitation stems from the default settings in Zeep. To overcome this, enable the `xml_huge_tree` option in the Zeep client settings.
+
+```python
+ns = NetSuite(config)
+# Enable handling of large XML trees
+ns.soap_api.client.settings.xml_huge_tree = True
+```
+## Programmatic use - Adjusting Cache Settings
+When deploying applications with strict permissions, you might encounter issues related to caching and more specifically to the location where Zeep library is trying to write its cache SQLite database. You can adjust the cache settings by passing a custom cache parameter via `soap_api_options` when initializing the `NetSuite` or `NetSuiteSoapApi` class.
+
+### Option 1 - Change SQLite path
+```python
+from netsuite import NetSuite, Config, TokenAuth
+from zeep.cache import SqliteCache
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+# Specify SQLite path in soap_api_options
+soap_api_options = {"cache": SqliteCache(path='/tmp/sqlite.db', timeout=60)}
+
+ns = NetSuite(config, soap_api_options=soap_api_options)
+
+```
+
+### Option-2 Use InMemoryCache
+```python
+from netsuite import NetSuite, Config, TokenAuth
+from zeep.cache import InMemoryCache
+
+config = Config(
+    account="12345",
+    auth=TokenAuth(consumer_key="abc", consumer_secret="123", token_id="xyz", token_secret="456"),
+)
+
+# Specify InMemoryCache in soap_api_options
+soap_api_options = {"cache": InMemoryCache()}
+
+ns = NetSuite(config, soap_api_options=soap_api_options)
+```
+
 ## CLI
 
 ### Configuration
@@ -77,6 +185,18 @@ token_secret = 678901
 You can add multiple sections like this. The `netsuite` section will be read by default, but can be overridden using the `-c` flag.
 
 The default location that will be read is `~/.config/netsuite.ini`. This can overriden with the `-p` flag.
+
+Alternatively, you can source configuration from your environment variables instead (pairs well with [direnv](https://direnv.net)):
+
+```shell
+export NETSUITE_ACCOUNT=DIGITS_SB1
+export NETSUITE_CONSUMER_KEY=LONGALPHANUMERIC
+export NETSUITE_CONSUMER_SECRET=LONGALPHANUMERIC
+export NETSUITE_TOKEN_ID=LONGALPHANUMERIC
+export NETSUITE_TOKEN_SECRET=LONGALPHANUMERIC
+```
+
+And using the `--config-environment` flag when loading the CLI.
 
 Append `--help` to the commands to see full documentation.
 

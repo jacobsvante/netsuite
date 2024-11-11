@@ -2,10 +2,10 @@ import logging
 import re
 from contextlib import contextmanager
 from datetime import datetime
+from functools import cached_property
 from typing import Dict, List, Optional, Sequence
 
 from ..config import Config
-from ..util import cached_property
 from . import helpers, passport, zeep
 from .decorators import WebServiceCall
 from .transports import AsyncNetSuiteTransport
@@ -23,9 +23,9 @@ class NetSuiteSoapApi:
         self,
         config: Config,
         *,
-        version: str = None,
-        wsdl_url: str = None,
-        cache: zeep.cache.Base = None,
+        version: Optional[str] = None,
+        wsdl_url: Optional[str] = None,
+        cache: Optional[zeep.cache.Base] = None,
     ) -> None:
         self._ensure_required_dependencies()
         if version is not None:
@@ -97,13 +97,9 @@ class NetSuiteSoapApi:
     def _generate_cache(self) -> zeep.cache.Base:
         return zeep.cache.SqliteCache(timeout=60 * 60 * 24 * 365)
 
-    def _generate_session(self) -> zeep.requests.Session:
-        return zeep.requests.Session()
-
     def _generate_transport(self) -> zeep.transports.AsyncTransport:
         return AsyncNetSuiteTransport(
             self.wsdl_url,
-            session=self._generate_session(),
             cache=self.cache,
         )
 
@@ -332,7 +328,9 @@ class NetSuiteSoapApi:
     def SupplyChainTypes(self) -> zeep.client.Factory:
         return self._type_factory("types.supplychain", "lists")
 
-    async def request(self, service_name: str, *args, **kw):
+    async def request(
+        self, service_name: str, *args, additionalHeaders: Optional[dict] = None, **kw
+    ):
         """
         Make a web service request to NetSuite
 
@@ -343,7 +341,10 @@ class NetSuiteSoapApi:
             The response from NetSuite
         """
         svc = getattr(self.service, service_name)
-        return await svc(*args, _soapheaders=self.generate_passport(), **kw)
+        headers = self.generate_passport()
+        if additionalHeaders:
+            headers.update(additionalHeaders)
+        return await svc(*args, _soapheaders=headers, **kw)
 
     @WebServiceCall(
         "body.readResponseList.readResponse",
@@ -394,7 +395,11 @@ class NetSuiteSoapApi:
         extract=lambda resp: resp["record"],
     )
     async def get(
-        self, recordType: str, *, internalId: int = None, externalId: str = None
+        self,
+        recordType: str,
+        *,
+        internalId: Optional[int] = None,
+        externalId: Optional[str] = None,
     ) -> zeep.xsd.CompoundValue:
         """Get a single record"""
         if len([v for v in (internalId, externalId) if v is not None]) != 1:
@@ -455,10 +460,24 @@ class NetSuiteSoapApi:
         extract=lambda resp: resp["recordList"]["record"],
     )
     async def search(
-        self, record: zeep.xsd.CompoundValue
+        self, record: zeep.xsd.CompoundValue, additionalHeaders: Optional[dict] = None
     ) -> List[zeep.xsd.CompoundValue]:
         """Search records"""
-        return await self.request("search", searchRecord=record)
+        return await self.request(
+            "search", searchRecord=record, additionalHeaders=additionalHeaders
+        )
+
+    @WebServiceCall(
+        "body.searchResult",
+        extract=lambda resp: resp["recordList"]["record"],
+    )
+    async def searchMoreWithId(
+        self, searchId: str, pageIndex: int
+    ) -> List[zeep.xsd.CompoundValue]:
+        """Search records with pagination"""
+        return await self.request(
+            "searchMoreWithId", searchId=searchId, pageIndex=pageIndex
+        )
 
     @WebServiceCall(
         "body.writeResponseList",
@@ -480,7 +499,7 @@ class NetSuiteSoapApi:
         *,
         internalIds: Optional[Sequence[int]] = None,
         externalIds: Optional[Sequence[str]] = None,
-        lastQtyAvailableChange: datetime = None,
+        lastQtyAvailableChange: Optional[datetime] = None,
     ) -> List[Dict]:
         if internalIds is None:
             internalIds = []

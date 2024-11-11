@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from functools import cached_property
 
 import httpx
 from authlib.integrations.httpx_client import OAuth1Auth
@@ -9,7 +10,6 @@ from oauthlib.oauth1.rfc5849.signature import sign_hmac_sha256
 
 from . import json
 from .exceptions import NetsuiteAPIRequestError, NetsuiteAPIResponseParsingError
-from .util import cached_property
 
 __all__ = ("RestApiBase",)
 
@@ -56,7 +56,7 @@ class RestApiBase:
         self, method: str, subpath: str, **request_kw
     ) -> httpx.Response:
         method = method.upper()
-        url = self._make_url(subpath)
+        url = request_kw.pop("url", self._make_url(subpath))
 
         headers = {**self._make_default_headers(), **request_kw.pop("headers", {})}
 

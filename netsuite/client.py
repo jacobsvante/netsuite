@@ -1,10 +1,10 @@
+from functools import cached_property
 from typing import Any, Dict, Optional
 
 from .config import Config
 from .rest_api import NetSuiteRestApi
 from .restlet import NetSuiteRestlet
 from .soap_api import NetSuiteSoapApi
-from .util import cached_property
 
 __all__ = ("NetSuite",)
 

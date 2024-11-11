@@ -7,12 +7,15 @@
 [![License](https://img.shields.io/pypi/l/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
 [![PyPI status (alpha/beta/stable)](https://img.shields.io/pypi/status/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
+[![Slack Status](https://netsuite-slackin.fly.dev/badge.svg)](https://netsuite-slackin.fly.dev)
 
-Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
+Make async requests to NetSuite SuiteTalk SOAP, REST Web Services, and Restlets. [Detailed documentation available here.](https://jacobsvante.github.io/netsuite/)
 
-## Beta quality disclaimer
+# Help & Support
 
-The project's API is still very much in fluctuation. Please consider pinning your dependency to this package to a minor version (e.g. `poetry add netsuite~0.9` or `pipenv install netsuite~=0.9.0`), which is guaranteed to have no breaking changes. From 1.0 and forward we will keep a stable API.
+Join the [Slack channel](https://netsuite-slackin.fly.dev) for help with NetSuite issues. Please do not post usage questions as issues in GitHub.
+
+There are some additional helpful resources for NetSuite development [listed here](https://dashboard.suitesync.io/docs/resources#netsuite).
 
 ## Installation
 

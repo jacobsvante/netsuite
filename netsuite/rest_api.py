@@ -1,9 +1,9 @@
 import logging
+from functools import cached_property
 from typing import Sequence
 
 from . import rest_api_base
 from .config import Config
-from .util import cached_property
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +28,9 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
     def hostname(self) -> str:
         return self._make_hostname()
 
+    async def request(self, method: str, subpath: str, **request_kw):
+        return await self._request_impl(method, subpath, **request_kw)
+
     async def get(self, subpath: str, **request_kw):
         return await self._request("GET", subpath, **request_kw)
 
@@ -48,8 +51,13 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
         return await self._request("DELETE", subpath, **request_kw)
 
     async def suiteql(self, q: str, limit: int = 10, offset: int = 0, **request_kw):
+        """
+        Example:
+        >>> suiteql(q="SELECT * FROM Transaction", limit=10, offset=0)
+        """
         return await self._request(
             "POST",
+            # https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_156257799794.html#Using-SuiteQL
             "/query/v1/suiteql",
             headers={"Prefer": "transient", **request_kw.pop("headers", {})},
             json={"q": q, **request_kw.pop("json", {})},
@@ -69,7 +77,38 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
             **request_kw,
         )
 
+    async def token_info(self, **request_kw):
+        """
+        Retrieves metadata about the current token. Role, company, etc.
+
+        https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/chapter_157017286140.html#Issue-Token-and-Revoke-Token-REST-Services-for-Token-based-Authentication
+        """
+
+        # this overrides the default URL generation: this specific endpoint hits a completely different host
+        request_kw["url"] = (
+            f"https://{self._config.account_slugified}.restlets.api.netsuite.com/rest/tokeninfo"
+        )
+
+        return await self._request(
+            method="GET",
+            # useless, but required by _request
+            subpath="ignored",
+            **request_kw,
+        )
+
     async def openapi(self, record_types: Sequence[str] = (), **request_kw):
+        """
+        Retrieves the OpenAPI specification (metadata catalog) for the Netsuite REST API. This is the best way to
+        introspect the NetSuite account and return the record structure.
+
+        Args:
+            record_types (Sequence[str]): Optional. List of record types to include in the OpenAPI specification.
+            **request_kw: Optional keyword arguments to be passed to the underlying request.
+
+        Returns:
+            The OpenAPI specification as a JSON object.
+        """
+
         headers = {
             "Accept": "application/swagger+json",
             **request_kw.pop("headers", {}),

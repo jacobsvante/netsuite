@@ -9,7 +9,7 @@ jobs:
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
     steps:
-      - uses: google-github-actions/release-please-action@v3
+      - uses: google-github-actions/release-please-action@v4
         id: release
         with:
           release-type: python
@@ -20,14 +20,17 @@ jobs:
     needs: [release-please]
     if: needs.release-please.outputs.release_created
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v4
+      - name: ASDF Parse
+        uses: kota65535/github-asdf-parse-action@v2.0.0
+        id: versions
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "${{ steps.versions.outputs.python }}"
           architecture: x64
-      - uses: abatilo/actions-poetry@v2.1.4
+      - uses: abatilo/actions-poetry@v3.0.0
         with:
-          poetry-version: '1.1.13'
+          poetry-version: "${{ steps.versions.outputs.poetry }}"
       - run: poetry build
       - run: poetry publish
         env:

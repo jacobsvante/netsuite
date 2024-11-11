@@ -4,14 +4,22 @@ import inspect
 import logging
 import sys
 
+from ..config import Config
 from ..constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION
 from . import helpers, interact, misc, rest_api, restlet, soap_api
+
+# include pretty_traceback if it exists for better dev tracebacks in CLI
+try:
+    import pretty_traceback
+
+    pretty_traceback.install()
+except ImportError:
+    pass
 
 __all__ = ("main",)
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
@@ -19,7 +27,7 @@ def main():
         "-l",
         "--log-level",
         help="The log level to use",
-        default="INFO",
+        default=None,
         choices=("DEBUG", "INFO", "WARNING", "ERROR"),
     )
     parser.add_argument(
@@ -33,6 +41,12 @@ def main():
         "--config-section",
         help="The config section to get settings from",
         default=DEFAULT_INI_SECTION,
+    )
+
+    parser.add_argument(
+        "--config-environment",
+        help="Use environment variables for configuration",
+        action="store_true",
     )
 
     subparser = parser.add_subparsers(help="App CLI", required=True)
@@ -67,10 +81,22 @@ def main():
         restlet_parser.print_help()
         return
 
-    config = helpers.load_config_or_error(parser, args.config_path, args.config_section)
+    config = None
 
-    log_level = getattr(logging, args.log_level)
-    logging.basicConfig(level=log_level)
+    if args.config_environment:
+        config = Config.from_env()
+    else:
+        config = helpers.load_config_or_error(
+            parser, args.config_path, args.config_section
+        )
+
+    log_level = args.log_level
+
+    if log_level is None:
+        log_level = config.log_level
+
+    log_level_number = getattr(logging, log_level)
+    logging.basicConfig(level=log_level_number)
 
     ret = args.func(config, args)
 
