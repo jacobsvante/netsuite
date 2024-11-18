@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "${{ matrix.python-version }}"
           architecture: x64
-      - uses: abatilo/actions-poetry@v3.0.0
+      - uses: abatilo/actions-poetry@v3.0.1
         with:
           poetry-version: "${{ steps.versions.outputs.poetry }}"
       - run: poetry install --extras ${{ matrix.extras }}
@@ -42,7 +42,7 @@ jobs:
         with:
           python-version: "${{ steps.versions.outputs.python }}"
           architecture: x64
-      - uses: abatilo/actions-poetry@v3.0.0
+      - uses: abatilo/actions-poetry@v3.0.1
         with:
           poetry-version: "${{ steps.versions.outputs.poetry }}"
       - run: poetry install --extras all
