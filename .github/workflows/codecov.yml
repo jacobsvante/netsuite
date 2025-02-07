@@ -22,6 +22,6 @@ jobs:
           poetry-version: "${{ steps.versions.outputs.poetry }}"
       - run: poetry install --extras all
       - run: poetry run pytest --cov=netsuite --cov-report=xml --cov-report=term
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           files: ./coverage.xml
