@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.13.0](https://github.com/jacobsvante/netsuite/compare/v0.12.0...v0.13.0) (2025-03-06)
+
+
+### Features
+
+* remove py 3.8, it's EOL ([c8e858a](https://github.com/jacobsvante/netsuite/commit/c8e858ad7814f41483582ba978b5ce89fcaa279a))
+
+
+### Documentation
+
+* Added large file download and cache options ([#87](https://github.com/jacobsvante/netsuite/issues/87)) ([b1af9eb](https://github.com/jacobsvante/netsuite/commit/b1af9ebda242e4a63c2626684ff5f68065faf4b3))
+* minor documentation improvements ([f26f770](https://github.com/jacobsvante/netsuite/commit/f26f770305a7de6a9dee2ce6bead690fecd215db))
+
 ## [0.12.0](https://github.com/jacobsvante/netsuite/compare/v0.11.0...v0.12.0) (2024-03-01)
 
 

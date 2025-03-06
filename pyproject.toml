@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netsuite"
-version = "0.12.0"
+version = "0.13.0"
 description = "Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets"
 authors = ["Jacob Magnusson <m@jacobian.se>", "Mike Bianco <mike@mikebian.co>"]
 license = "MIT"
