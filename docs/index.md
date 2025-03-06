@@ -294,6 +294,11 @@ WARNING:netsuite:Fetching OpenAPI spec for ALL known record types... This will t
 INFO:netsuite:NetSuite REST API docs available at http://127.0.0.1:8001
 ```
 
+You can also pull configuration from your environment:
+
+```shell
+netsuite --config-environment rest-api openapi-serve
+```
 
 ### `interact` - Interact with SOAP/REST web services and restlets
 
@@ -318,6 +323,12 @@ In [1]: rest_api_results = await ns.rest_api.get("
 
 ```
 $ echo '{"savedSearchId": 987}' | netsuite restlet 123 -
+```
+
+### suiteanalytics
+
+```
+brew install unixodbc
 ```
 
 ## Developers

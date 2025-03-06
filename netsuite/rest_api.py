@@ -50,17 +50,22 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
     async def delete(self, subpath: str, **request_kw):
         return await self._request("DELETE", subpath, **request_kw)
 
+    # TODO maybe break out params vs poping?
     async def suiteql(self, q: str, limit: int = 10, offset: int = 0, **request_kw):
         """
         Example:
         >>> suiteql(q="SELECT * FROM Transaction", limit=10, offset=0)
+
+        Documentation:
+
+        - https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_156257799794.html#Using-SuiteQL
         """
         return await self._request(
             "POST",
-            # https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_156257799794.html#Using-SuiteQL
             "/query/v1/suiteql",
             headers={"Prefer": "transient", **request_kw.pop("headers", {})},
             json={"q": q, **request_kw.pop("json", {})},
+            # limit & offset look like the only available params
             params={"limit": limit, "offset": offset, **request_kw.pop("params", {})},
             **request_kw,
         )
@@ -100,6 +105,8 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
         """
         Retrieves the OpenAPI specification (metadata catalog) for the Netsuite REST API. This is the best way to
         introspect the NetSuite account and return the record structure.
+
+        https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1545126526.html
 
         Args:
             record_types (Sequence[str]): Optional. List of record types to include in the OpenAPI specification.
