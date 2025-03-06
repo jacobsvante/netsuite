@@ -12,7 +12,7 @@
       
       
       <link rel="icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.3">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.d7758b05.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.8608ea7d.min.css">
       
       
 
@@ -462,6 +462,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#suiteanalytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      suiteanalytics
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -709,6 +718,15 @@
   <a href="#restlet-make-requests-to-restlets" class="md-nav__link">
     <span class="md-ellipsis">
       restlet - Make requests to restlets
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#suiteanalytics" class="md-nav__link">
+    <span class="md-ellipsis">
+      suiteanalytics
     </span>
   </a>
   
@@ -962,6 +980,9 @@ INFO:netsuite:NetSuite REST API docs available at http://127.0.0.1:8001
 WARNING:netsuite:Fetching OpenAPI spec for ALL known record types... This will take a long time! (Consider providing only the record types of interest by passing their names to this command as positional arguments)
 INFO:netsuite:NetSuite REST API docs available at http://127.0.0.1:8001
 </code></pre>
+<p>You can also pull configuration from your environment:</p>
+<pre><code class="language-shell">netsuite --config-environment rest-api openapi-serve
+</code></pre>
 <h3 id="interact-interact-with-soaprest-web-services-and-restlets"><code>interact</code> - Interact with SOAP/REST web services and restlets</h3>
 <p>Starts an IPython REPL where you can interact with the client.</p>
 <pre><code>$ netsuite interact
@@ -978,6 +999,9 @@ In [1]: rest_api_results = await ns.rest_api.get(&quot;
 </code></pre>
 <h3 id="restlet-make-requests-to-restlets"><code>restlet</code> - Make requests to restlets</h3>
 <pre><code>$ echo '{&quot;savedSearchId&quot;: 987}' | netsuite restlet 123 -
+</code></pre>
+<h3 id="suiteanalytics">suiteanalytics</h3>
+<pre><code>brew install unixodbc
 </code></pre>
 <h2 id="developers">Developers</h2>
 <p>To run the tests, do:</p>
@@ -1046,7 +1070,7 @@ In [1]: rest_api_results = await ns.rest_api.get(&quot;
     <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.f1b6f286.min.js"></script>
+      <script src="assets/javascripts/bundle.c8b220af.min.js"></script>
       
     
   </body>
