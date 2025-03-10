@@ -42,7 +42,7 @@ orjson = ["orjson"]
 all = ["zeep", "ipython", "orjson", "odbc"]
 
 [tool.poetry.dev-dependencies]
-black = "~24"
+black = "~25"
 flake8 = "~7"
 isort = "~6"
 mkdocs-material = "~9"
