@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from functools import cached_property
+import re
 
 import httpx
 from authlib.integrations.httpx_client import OAuth1Auth
@@ -45,6 +46,20 @@ class RestApiBase:
             raise NetsuiteAPIRequestError(resp.status_code, resp.text)
 
         if resp.status_code == 204:
+            # For POST requests that create records, NetSuite returns 204 with Location header
+            # containing the URL of the newly created record. Extract the ID from it.
+            if method.upper() == "POST" and "location" in resp.headers:
+                location = resp.headers["location"]
+                # Extract ID from URL like: https://demo123.suitetalk.api.netsuite.com/services/rest/record/v1/customer/647
+                match = re.search(r'/([^/]+)$', location)
+                if match:
+                    record_id = match.group(1)
+                    try:
+                        # Try to convert to int if it's a numeric ID
+                        return int(record_id)
+                    except ValueError:
+                        # Return as string if it's not numeric (e.g., external ID)
+                        return record_id
             return None
         else:
             try:

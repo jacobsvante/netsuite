@@ -1,6 +1,6 @@
 import logging
 from functools import cached_property
-from typing import Sequence
+from typing import Sequence, Dict, Any, Union
 
 from . import rest_api_base
 from .config import Config
@@ -49,6 +49,32 @@ class NetSuiteRestApi(rest_api_base.RestApiBase):
 
     async def delete(self, subpath: str, **request_kw):
         return await self._request("DELETE", subpath, **request_kw)
+
+    async def create_record(self, record_type: str, record_data: Dict[str, Any], **request_kw) -> Union[int, str]:
+        """
+        Create a new record in NetSuite and return its ID.
+        
+        Args:
+            record_type: The type of record to create (e.g., 'customer', 'salesOrder', 'invoice')
+            record_data: Dictionary containing the record data/fields
+            **request_kw: Additional keyword arguments to pass to the request
+            
+        Returns:
+            The ID of the newly created record (as int if numeric, str if external ID)
+            
+        Example:
+            >>> customer_data = {
+            ...     "entityid": "New Customer", 
+            ...     "companyname": "My Company", 
+            ...     "subsidiary": {"id": "1"}
+            ... }
+            >>> customer_id = await rest_api.create_record("customer", customer_data)
+            >>> print(f"Created customer with ID: {customer_id}")
+        
+        Documentation:
+            https://docs.oracle.com/en/cloud/saas/netsuite/ns-online-help/section_1545141395.html
+        """
+        return await self.post(f"/record/v1/{record_type}", json=record_data, **request_kw)
 
     # TODO maybe break out params vs poping?
     async def suiteql(self, q: str, limit: int = 10, offset: int = 0, **request_kw):

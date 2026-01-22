@@ -9,6 +9,7 @@
 * **odbc:** add username and password auth ([e01f601](https://github.com/jacobsvante/netsuite/commit/e01f60145df0a168841fbafa1ccb9881d3184fa2))
 * **odbc:** adding odbc data source to config ([b5a6a38](https://github.com/jacobsvante/netsuite/commit/b5a6a38c0c7b7a7417608dfaca2a7ce75894f406))
 * source username and password from env ([38b1788](https://github.com/jacobsvante/netsuite/commit/38b178856be2bf7bdc3cd1d6de430d6227e44470))
+* add create_record method which returns new record ID ([08aeca4](https://github.com/jacobsvante/netsuite/pull/118/commits/08aeca42ac765a6164421728f2fe78c07147959d))
 
 
 ### Bug Fixes
