@@ -39,7 +39,7 @@ soap_api = ["zeep"]
 cli = ["ipython"]
 orjson = ["orjson"]
 # TODO doesn't --all-extras solve this for us?
-all = ["zeep", "ipython", "orjson", "odbc"]
+all = ["zeep", "ipython", "orjson", "pyodbc"]
 
 [tool.poetry.dev-dependencies]
 black = "~24"
