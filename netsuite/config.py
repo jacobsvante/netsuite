@@ -18,14 +18,9 @@ class TokenAuth(BaseModel):
 
 
 class UsernamePasswordAuth(BaseModel):
-    """
-    This is a very old authentication method that is not recommended for use.
-
-    However, it's the only way to access the netsuite.com (NOT netsuite2.com) data source via ODBC.
-    """
-
     username: str
     password: str
+    role: str | int
 
 
 class Config(BaseModel):
@@ -36,12 +31,16 @@ class Config(BaseModel):
 
     log_level: t.Optional[str] = None
 
-    # TODO ODBC is not yet fully supported, but this is the first step
     odbc_data_source: t.Literal["NetSuite.com", "NetSuite2.com"] = "NetSuite.com"
+    odbc_driver: str = "{NetSuite Drivers 64bit}"
 
     @property
     def is_token_auth(self) -> bool:
         return isinstance(self.auth, TokenAuth)
+
+    @property
+    def is_password_auth(self) -> bool:
+        return isinstance(self.auth, UsernamePasswordAuth)
 
     @property
     def is_sandbox(self) -> bool:
@@ -86,6 +85,8 @@ class Config(BaseModel):
         - `NETSUITE_TOKEN_SECRET`: The token secret for OAuth.
         - `NETSUITE_USERNAME`: The username for login auth (only for odbc).
         - `NETSUITE_PASSWORD`: The password for login auth (only for odbc).
+        - `NETSUITE_ODBC_DRIVER`: ODBC Driver for SuiteConnect
+        - `NETSUITE_ODBC_DATA_SOURCE`: Netsuite Server Data Source Name (NetSuite2.com)
         - `NETSUITE_LOG_LEVEL`: log level for NetSuite debugging
 
         Returns a dictionary of available config options.
@@ -100,6 +101,9 @@ class Config(BaseModel):
             "token_secret",
             "username",
             "password",
+            "role",
+            "odbc_driver",
+            "odbc_data_source",
             "log_level",
         ]
         prefix = "NETSUITE_"
