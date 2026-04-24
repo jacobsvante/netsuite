@@ -1,4 +1,5 @@
 # TODO need more expanded tests here
+from netsuite import NetSuiteODBC
 
 
 def test_tba(dummy_config):
@@ -22,4 +23,13 @@ def test_username_auth(dummy_username_password_config):
     config = dummy_username_password_config
 
     assert config.auth.username == "username"
+    assert type(config.auth.role) in [int, str]
+    assert config.odbc_data_source in ["NetSuite.com", "NetSuite2.com"]
+    assert config.odbc_driver == "{NetSuite Drivers 64bit}"
     assert not config.is_token_auth
+
+
+def test_correct_config_auth_method(dummy_username_password_config):
+    config = dummy_username_password_config
+    ns = NetSuiteODBC(config)
+    assert ns.hostname == "123456-sb1.connect.api.netsuite.com"

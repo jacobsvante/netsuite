@@ -24,5 +24,6 @@ def dummy_config_with_production_account(dummy_config):
 @pytest.fixture
 def dummy_username_password_config():
     return Config(
-        account="123456_SB1", auth={"username": "username", "password": "password"}
+        account="123456_SB1",
+        auth={"username": "username", "password": "password", "role": 3},
     )
