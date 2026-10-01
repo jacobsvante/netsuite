@@ -17,11 +17,13 @@ class NetSuiteRestlet(rest_api_base.RestApiBase):
         default_timeout: int = 60,
         concurrent_requests: int = 10,
         signature_method: str = rest_api_base.DEFAULT_SIGNATURE_METHOD,
+        max_retries_on_429: int = rest_api_base.DEFAULT_MAX_RETRIES_ON_429,
     ):
         self._config = config
         self._default_timeout = default_timeout
         self._concurrent_requests = concurrent_requests
         self._signature_method = signature_method
+        self._max_retries_on_429 = max_retries_on_429
 
     @cached_property
     def hostname(self) -> str:

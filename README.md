@@ -1,44 +1,39 @@
 # netsuite
 
-[![Continuous Integration Status](https://github.com/jacobsvante/netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/jacobsvante/netsuite/actions/workflows/ci.yml)
-[![Continuous Delivery Status](https://github.com/jacobsvante/netsuite/actions/workflows/cd.yml/badge.svg)](https://github.com/jacobsvante/netsuite/actions/workflows/cd.yml)
-[![Code Coverage](https://img.shields.io/codecov/c/github/jacobsvante/netsuite?color=%2334D058)](https://codecov.io/gh/jacobsvante/netsuite)
-[![PyPI version](https://img.shields.io/pypi/v/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
-[![License](https://img.shields.io/pypi/l/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/netsuite.svg)](https://pypi.org/project/netsuite/)
-[![PyPI status (alpha/beta/stable)](https://img.shields.io/pypi/status/netsuite.svg)](https://pypi.python.org/pypi/netsuite/)
-[![Slack Status](https://netsuite-slackin.fly.dev/badge.svg)](https://netsuite-slackin.fly.dev)
+[![Continuous Integration Status](https://github.com/vlouvet/netsuite/actions/workflows/ci.yml/badge.svg)](https://github.com/vlouvet/netsuite/actions/workflows/ci.yml)
+[![Code Coverage](https://img.shields.io/codecov/c/github/vlouvet/netsuite?color=%2334D058)](https://codecov.io/gh/vlouvet/netsuite)
+[![License](https://img.shields.io/github/license/vlouvet/netsuite.svg)](LICENSE)
 
-Make async requests to NetSuite SuiteTalk SOAP, REST Web Services, and Restlets. [Detailed documentation available here.](https://jacobsvante.github.io/netsuite/)
+Make async requests to NetSuite SuiteTalk SOAP, REST Web Services, and Restlets.
 
-# Help & Support
-
-Join the [Slack channel](https://netsuite-slackin.fly.dev) for help with NetSuite issues. Please do not post usage questions as issues in GitHub.
-
-There are some additional helpful resources for NetSuite development [listed here](https://dashboard.suitesync.io/docs/resources#netsuite).
+This is an unofficial fork. It is not published to PyPI; install directly from this repository.
 
 ## Installation
 
-With default features (REST API + Restlet support):
+Default features (REST API + Restlet support):
 
-    pip install netsuite
+    pip install git+https://github.com/vlouvet/netsuite.git
 
-With Web Services SOAP API support:
+Pin to a specific commit or tag:
 
-    pip install netsuite[soap_api]
+    pip install git+https://github.com/vlouvet/netsuite.git@<commit-sha-or-tag>
+
+With Web Services SOAP API support (deprecated by NetSuite as of the 2027.1 release — prefer REST + OAuth 2.0 for new integrations):
+
+    pip install "netsuite[soap_api] @ git+https://github.com/vlouvet/netsuite.git"
 
 With CLI support:
 
-    pip install netsuite[cli]
+    pip install "netsuite[cli] @ git+https://github.com/vlouvet/netsuite.git"
 
 With `orjson` package (faster JSON handling):
 
-    pip install netsuite[orjson]
+    pip install "netsuite[orjson] @ git+https://github.com/vlouvet/netsuite.git"
 
 With all features:
 
-    pip install netsuite[all]
+    pip install "netsuite[all] @ git+https://github.com/vlouvet/netsuite.git"
 
 ## Documentation
 
-Is found here: https://jacobsvante.github.io/netsuite/
+In-repo documentation lives in [`docs/index.md`](docs/index.md).

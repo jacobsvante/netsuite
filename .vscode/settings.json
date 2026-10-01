@@ -2,5 +2,7 @@
     "python.formatting.provider": "black",
     "files.exclude": {
         "poetry.lock": true
-    }
+    },
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

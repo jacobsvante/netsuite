@@ -1,7 +1,7 @@
 site_name: netsuite
 
-repo_name: jacobsvante/netsuite
-repo_url: https://github.com/jacobsvante/netsuite
+repo_name: vlouvet/netsuite
+repo_url: https://github.com/vlouvet/netsuite
 
 theme:
   name: material

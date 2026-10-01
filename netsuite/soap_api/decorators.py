@@ -1,3 +1,4 @@
+import inspect
 from functools import wraps
 from typing import Any, Callable, Optional
 
@@ -6,6 +7,17 @@ from . import zeep
 from .exceptions import NetsuiteResponseError
 
 __all__ = ("WebServiceCall",)
+
+
+def _is_soap_response(response: Any) -> bool:
+    # SOAP responses returned by zeep are instances of `CompoundValue`
+    # (dynamically generated subclasses produced from the WSDL schema).
+    # The previous implementation checked `isinstance(response,
+    # zeep.xsd.ComplexType)` — but `ComplexType` is the *schema* definition
+    # class, not the runtime value class, so the check was always False and
+    # the decorator silently returned the raw response without status
+    # validation or extraction. See jacobsvante/netsuite#45.
+    return isinstance(response, zeep.xsd.CompoundValue)
 
 
 def WebServiceCall(
@@ -32,9 +44,17 @@ def WebServiceCall(
 
     def decorator(fn):
         @wraps(fn)
-        def wrapper(self, *args, **kw):
+        async def async_wrapper(self, *args, **kw):
+            response = await fn(self, *args, **kw)
+            return _process_response(response)
+
+        @wraps(fn)
+        def sync_wrapper(self, *args, **kw):
             response = fn(self, *args, **kw)
-            if not isinstance(response, zeep.xsd.ComplexType):
+            return _process_response(response)
+
+        def _process_response(response):
+            if not _is_soap_response(response):
                 return response
 
             if path is not None:
@@ -68,6 +88,8 @@ def WebServiceCall(
 
             return response
 
-        return wrapper
+        if inspect.iscoroutinefunction(fn):
+            return async_wrapper
+        return sync_wrapper
 
     return decorator

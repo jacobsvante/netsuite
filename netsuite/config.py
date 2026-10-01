@@ -7,10 +7,23 @@ from pydantic import BaseModel
 
 from .constants import DEFAULT_INI_PATH, DEFAULT_INI_SECTION
 
-__all__ = ("Config", "TokenAuth", "UsernamePasswordAuth")
+__all__ = (
+    "Config",
+    "OAuth2AccessTokenAuth",
+    "OAuth2ClientCredentialsAuth",
+    "TokenAuth",
+    "UsernamePasswordAuth",
+)
 
 
 class TokenAuth(BaseModel):
+    """Legacy OAuth 1.0a Token-Based Authentication (TBA).
+
+    NetSuite continues to support TBA, but OAuth 2.0 is the recommended
+    authentication method for new integrations. See
+    `OAuth2ClientCredentialsAuth` for the M2M replacement.
+    """
+
     consumer_key: str
     consumer_secret: str
     token_id: str
@@ -28,11 +41,47 @@ class UsernamePasswordAuth(BaseModel):
     password: str
 
 
+class OAuth2ClientCredentialsAuth(BaseModel):
+    """OAuth 2.0 Client Credentials with JWT Bearer assertion (M2M).
+
+    The integration uploads a public certificate to NetSuite once, and
+    then signs short-lived JWT assertions with the matching private key
+    to mint access tokens. No browser, no user interaction.
+    """
+
+    client_id: str
+    certificate_id: str
+    private_key_pem: str
+    scope: t.List[str] = ["rest_webservices"]
+    algorithm: str = "PS256"
+
+
+class OAuth2AccessTokenAuth(BaseModel):
+    """Bring-your-own access token.
+
+    For when an upstream auth flow (e.g. Authorization Code Grant
+    handled in your web app) already produced a valid access token and
+    you just want this library to use it. Optional `refresh_token` and
+    `expires_at` are accepted but the library will not refresh
+    automatically — wire that into the upstream flow.
+    """
+
+    access_token: str
+    refresh_token: t.Optional[str] = None
+    expires_at: t.Optional[float] = None
+
+
+_AnyAuth = t.Union[
+    TokenAuth,
+    OAuth2ClientCredentialsAuth,
+    OAuth2AccessTokenAuth,
+    UsernamePasswordAuth,
+]
+
+
 class Config(BaseModel):
     account: str
-    auth: t.Union[TokenAuth, UsernamePasswordAuth]
-    # TODO: Support OAuth2
-    # auth: Union[OAuth2, TokenAuth]
+    auth: _AnyAuth
 
     log_level: t.Optional[str] = None
 
@@ -42,6 +91,12 @@ class Config(BaseModel):
     @property
     def is_token_auth(self) -> bool:
         return isinstance(self.auth, TokenAuth)
+
+    @property
+    def is_oauth2_auth(self) -> bool:
+        return isinstance(
+            self.auth, (OAuth2ClientCredentialsAuth, OAuth2AccessTokenAuth)
+        )
 
     @property
     def is_sandbox(self) -> bool:

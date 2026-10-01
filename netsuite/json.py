@@ -35,8 +35,7 @@ def _orjson_default(obj: Any) -> Any:
     if isinstance(obj, str):
         return str(obj)
     else:
-        encoder = _get_encoder(obj)
-        return encoder(obj)
+        return _get_encoder(obj)
 
 
 def _isoformat(o: Union[datetime.date, datetime.time]) -> str:
@@ -44,6 +43,10 @@ def _isoformat(o: Union[datetime.date, datetime.time]) -> str:
 
 
 def _get_encoder(obj: Any) -> Any:
+    """Return the encoded form of `obj` by walking its MRO for a registered
+    encoder. The function's name is a misnomer kept for backwards
+    compatibility — it returns the *encoded value*, not the encoder callable.
+    """
     for base in obj.__class__.__mro__[:-1]:
         try:
             encoder = _ENCODERS_BY_TYPE[base]

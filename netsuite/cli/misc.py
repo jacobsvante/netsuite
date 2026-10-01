@@ -1,4 +1,4 @@
-import pkg_resources
+from importlib.metadata import version as _package_version
 
 __all__ = ()
 
@@ -10,4 +10,4 @@ def add_parser(parser, subparser):
 
 
 def version() -> str:
-    return pkg_resources.get_distribution("netsuite").version
+    return _package_version("netsuite")

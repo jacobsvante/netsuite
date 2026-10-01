@@ -5,30 +5,126 @@ hide:
 
 # netsuite python library
 
-Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets
+Make async requests to NetSuite SuiteTalk SOAP/REST Web Services and Restlets.
+
+This is an unofficial fork. It is not published to PyPI; install directly from this repository.
 
 ## Installation
 
 With default features (REST API + Restlet support):
 
-    pip install netsuite
+    pip install git+https://github.com/vlouvet/netsuite.git
 
-With Web Services SOAP API support:
+With Web Services SOAP API support (deprecated by NetSuite as of the 2027.1 release):
 
-    pip install netsuite[soap_api]
+    pip install "netsuite[soap_api] @ git+https://github.com/vlouvet/netsuite.git"
 
 With CLI support:
 
-    pip install netsuite[cli]
+    pip install "netsuite[cli] @ git+https://github.com/vlouvet/netsuite.git"
 
 With `orjson` package (faster JSON handling):
 
-    pip install netsuite[orjson]
+    pip install "netsuite[orjson] @ git+https://github.com/vlouvet/netsuite.git"
 
 With all features:
 
-    pip install netsuite[all]
+    pip install "netsuite[all] @ git+https://github.com/vlouvet/netsuite.git"
 
+
+## Authentication
+
+The library supports three authentication methods:
+
+| Auth class | Mechanism | When to use |
+|---|---|---|
+| `OAuth2ClientCredentialsAuth` | OAuth 2.0 Client Credentials w/ JWT Bearer (M2M) | New server-to-server integrations. **Recommended.** |
+| `OAuth2AccessTokenAuth` | Bring-your-own access token | When an upstream auth flow (e.g. Authorization Code in your web app) already has a token. |
+| `TokenAuth` | OAuth 1.0a Token-Based Auth (TBA) | Legacy. Still works, but new integrations should use OAuth 2.0. |
+
+> **Note on SOAP.** NetSuite has announced that SOAP Web Services will be removed in the **2027.1 release**. Plan REST + OAuth 2.0 migrations accordingly. Instantiating `NetSuiteSoapApi` emits a `DeprecationWarning` to surface this at runtime.
+
+### OAuth 2.0 — Client Credentials (M2M, JWT Bearer)
+
+Upload a public key/certificate to your NetSuite integration record, save the certificate ID NetSuite gives you, and supply the matching private key:
+
+```python
+from netsuite import Config, NetSuite, OAuth2ClientCredentialsAuth
+
+config = Config(
+    account="123456_SB1",
+    auth=OAuth2ClientCredentialsAuth(
+        client_id="<your integration consumer key>",
+        certificate_id="<the kid NetSuite assigned when you uploaded the cert>",
+        private_key_pem=open("/path/to/private.pem").read(),
+        scope=["rest_webservices"],   # default; can also include "restlets" or "suite_analytics"
+        algorithm="PS256",            # default; "RS256", "ES256/384/512" also accepted
+    ),
+)
+
+ns = NetSuite(config)
+result = await ns.rest_api.get("/record/v1/customer/1337")
+```
+
+The library transparently mints a JWT, exchanges it at NetSuite's token endpoint, caches the access token until ~1 minute before expiry, and refreshes automatically. No additional code on your side.
+
+### OAuth 2.0 — Authorization Code Grant
+
+Best for apps acting on behalf of a NetSuite user. The library provides helpers for the URL building and token exchange; the redirect dance is yours.
+
+```python
+from netsuite.oauth2 import (
+    build_authorization_url,
+    exchange_authorization_code,
+)
+
+# 1. Send the user here:
+auth_url = build_authorization_url(
+    "123456_SB1",
+    client_id="<your client id>",
+    redirect_uri="https://app.example.com/oauth/callback",
+    scope=["rest_webservices"],
+    state="<opaque CSRF token you stored in the user's session>",
+)
+
+# 2. NetSuite redirects to your callback with `?code=...&state=...`.
+#    After verifying state, exchange the code:
+token = await exchange_authorization_code(
+    "123456_SB1",
+    code=request.args["code"],
+    client_id="<your client id>",
+    client_secret="<your client secret>",   # OR pass certificate_id+private_key_pem
+    redirect_uri="https://app.example.com/oauth/callback",
+)
+
+# 3. Pass the token into the library:
+config = Config(
+    account="123456_SB1",
+    auth=OAuth2AccessTokenAuth(
+        access_token=token.access_token,
+        refresh_token=token.refresh_token,
+        expires_at=token.expires_at,
+    ),
+)
+```
+
+`OAuth2AccessTokenAuth` does *not* refresh automatically — your application is responsible for refreshing using the `refresh_token` and constructing a new `Config`.
+
+### Legacy OAuth 1.0a (TBA)
+
+```python
+from netsuite import Config, NetSuite, TokenAuth
+
+config = Config(
+    account="123456_SB1",
+    auth=TokenAuth(
+        consumer_key="...", consumer_secret="...",
+        token_id="...",     token_secret="...",
+    ),
+)
+```
+
+Still fully supported, but consider migrating: NetSuite is steering integrations toward OAuth 2.0.
 
 ## Programmatic use - Basic Example
 
@@ -121,6 +217,27 @@ async def async_main() -> dict:
     if __name__ == "__main__":
         asyncio.run(async_main())
 ```
+
+## Programmatic use - SuiteQL pagination
+
+NetSuite caps a single SuiteQL response at `limit=1000` rows, and a single query overall at 100,000 rows. To stream every page of a result set without manually wiring up the `next` link, use `suiteql_paginated`:
+
+```python
+async def fetch_all_transactions():
+    rows = []
+    async for page in ns.rest_api.suiteql_paginated(
+        q="SELECT id, tranid FROM transaction",
+        limit=1000,
+    ):
+        rows.extend(page["items"])
+    return rows
+```
+
+Each yielded `page` is the raw NetSuite response dict (with `items`, `count`, `hasMore`, `links`, …). Iteration stops automatically when `hasMore` is False.
+
+To retrieve more than 100,000 rows from a query, partition by a WHERE clause and run multiple paginated queries — for example by `id` ranges or date windows.
+
+> **`ORDER BY` caveat.** NetSuite has a known quirk where a SuiteQL query with `ORDER BY` and a small `limit` (the default 10) can return zero items. Either request a larger page (`limit=1000`) or sort client-side after fetching. See [#29](https://github.com/jacobsvante/netsuite/issues/29).
 
 ## Programmatic use - Download Large Files Using SOAP API
 When working with large files, you might find that responses are truncated if they exceed 10MB. This limitation stems from the default settings in Zeep. To overcome this, enable the `xml_huge_tree` option in the Zeep client settings.
