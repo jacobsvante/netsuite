@@ -31,7 +31,7 @@ orjson = { version = "~3", optional = true }
 ipython = { version = "~8", optional = true, python = "^3.9" }
 zeep = { version = "~4", optional = true, extras = ["async"] }
 pyodbc = { version = "^5.0.1", optional = true }
-oauthlib = "~3"
+oauthlib = ">=3,<5"
 
 [tool.poetry.extras]
 odbc = ["pyodbc"]
